@@ -10,13 +10,13 @@ namespace cpphttp
             request();
             bool isReady();
             void fill(const std::string& data);
-            void setBodySize(uint32_t size);
+            void setExpectedBodySize(uint32_t size);
         private:
 
             void handleHeaderLine(const std::string& line);
 
             bool m_isReady;
-            uint32_t m_bodySize;
+            uint32_t m_expectedBodySize;
             std::string m_body;
     };
 } // namespace cpphttp

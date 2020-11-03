@@ -8,10 +8,10 @@ using namespace cpphttp;
 
 const std::unordered_map<std::string, std::function<void(request *, const std::string &)>> fillFunctions =
     {{"Content-Length", [](request *req, const std::string &s) {
-          req->setBodySize(std::atoi(s.c_str()));
+          req->setExpectedBodySize(std::atoi(s.c_str()));
       }}};
 
-request::request() : m_isReady(false), m_bodySize(0)
+request::request() : m_isReady(false), m_expectedBodySize(0)
 {
 }
 
@@ -20,9 +20,9 @@ bool request::isReady()
     return m_isReady;
 }
 
-void request::setBodySize(uint32_t size)
+void request::setExpectedBodySize(uint32_t size)
 {
-    m_bodySize = size;
+    m_expectedBodySize = size;
 }
 
 void request::handleHeaderLine(const std::string &line)
@@ -47,7 +47,7 @@ void request::fill(const std::string &data)
     while (getline(iss, line))
     {
         if (line.empty())
-            m_isReady = m_body.size() == m_bodySize;
+            m_isReady = m_body.size() == m_expectedBodySize;
         else
             this->handleHeaderLine(line);
     }
