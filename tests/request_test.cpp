@@ -6,7 +6,8 @@
 using namespace cpphttp;
 
 std::string getRequest = readFile("./data/get_request.txt");
-std::string incomplete = readFile("./data/incomplete_request.txt");
+std::string postRequest = readFile("./data/post_request.txt");
+std::string incompletePostRequest = readFile("./data/incomplete_post_request.txt");
 
 TEST(Request, EmptyRequest)
 {
@@ -17,13 +18,20 @@ TEST(Request, EmptyRequest)
 TEST(Request, CompleteRequest)
 {
     request req;
-    req.fill(getRequest);
+    req.fill("GET /index HTTP/1.1\n\n");
     EXPECT_EQ(req.isReady(), true);
 }
 
 TEST(Request, IncompleteRequest)
 {
     request req;
-    req.fill("GET /index.html HTTP/1.1");
+    req.fill("GET /index HTTP/1.1");
+    EXPECT_EQ(req.isReady(), false);
+}
+
+TEST(Request, IncompletePost)
+{
+    request req;
+    req.fill(incompletePostRequest);
     EXPECT_EQ(req.isReady(), false);
 }

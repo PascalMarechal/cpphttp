@@ -1,4 +1,4 @@
 GET /index.html HTTP/1.1
 Host: example.com
-Host: example.com
+Connection: close
 
