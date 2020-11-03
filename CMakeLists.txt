@@ -1,16 +1,18 @@
 cmake_minimum_required(VERSION 3.16)
-project(project CXX)
+project(cpphttp CXX)
+project(cpphttp VERSION 0.0.1)
 
 set (CMAKE_CXX_STANDARD 17)
 option(DEVELOPMENT_BUILD "Build tests" OFF)
 
-file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
-file(GLOB HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h)
+file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h)
 
-add_library(project SHARED
+add_library(cpphttp SHARED
         ${SOURCES}
         ${HEADERS})
-include_directories(project ${CMAKE_CURRENT_SOURCE_DIR}/src)
+include_directories(cpphttp ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set_target_properties(cpphttp PROPERTIES VERSION ${cpphttp_VERSION})
 
 if (DEVELOPMENT_BUILD)
     enable_testing()

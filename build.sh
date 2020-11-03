@@ -27,7 +27,7 @@ cmake --build .
 
 # Compilation has terminated successfully 
 if [ $? -eq 0 ]; then
-    mv project ../bin
+    mv libcpphttp* ../bin
     if [ $dev -eq 1 ]; then
         mv unittest ../bin
         ../bin/unittest
