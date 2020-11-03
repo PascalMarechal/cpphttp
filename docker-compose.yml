@@ -1,0 +1,12 @@
+version: "3"
+services:
+  tester:
+    build:
+      dockerfile: Dockerfile.dev
+      context: .
+    volumes:
+      - /src/build
+      - /src/bin
+      - .:/src
+    # Remove this entrypoint if you want to test on the fly...
+    entrypoint: tail -f /dev/null
