@@ -5,7 +5,7 @@
 
 using namespace cpphttp::request;
 
-header::header() : m_ready(false), m_method(method::UNKNOWN), m_version(version::UNKNOWN)
+header::header() : m_ready(false), m_headerReadComplete(false), m_method(method::UNKNOWN), m_version(version::UNKNOWN)
 {
 }
 
@@ -67,9 +67,9 @@ void header::parse() noexcept
 
 std::size_t header::findEndOfHeaderData(const std::string &data) noexcept
 {
-    // Linux
+    // Linux test
     auto endOfHeader = data.find("\n\n");
-    // Windows
+    // Windows test
     if (endOfHeader == std::string::npos)
         endOfHeader = data.find("\r\n\r\n");
 
@@ -86,13 +86,19 @@ void header::appendRawData(const std::string &data, std::size_t to) noexcept
 
 std::string header::read(const std::string &data) noexcept
 {
+    if(m_headerReadComplete)
+        return data;
+        
     auto endOfHeader = header::findEndOfHeaderData(data);
     appendRawData(data, endOfHeader);
 
-    if (endOfHeader != std::string::npos)
+    m_headerReadComplete = endOfHeader != std::string::npos;
+    if (m_headerReadComplete)
         parse();
-
-    return "";
+    else
+        return "";
+    
+    return data.substr(endOfHeader);
 }
 
 bool header::isReady() noexcept

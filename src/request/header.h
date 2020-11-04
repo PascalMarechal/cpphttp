@@ -33,6 +33,7 @@ namespace cpphttp
             inline void parse() noexcept;
 
             bool m_ready;
+            bool m_headerReadComplete;
             method m_method;
             version m_version;
             std::string m_path;

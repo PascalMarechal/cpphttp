@@ -1,7 +1,12 @@
 #include "request/header.h"
 #include <gtest/gtest.h>
+#include "tools/data_reader.h"
+#include "tools/string.h"
 
 using namespace cpphttp::request;
+
+std::string postRequest = readFile("./data/post_request.txt");
+std::string jsonPostRequest = readFile("./data/post_json_request.txt");
 
 TEST(Header, EmptyHeader)
 {
@@ -70,4 +75,21 @@ TEST(Header, ChunkedHeaderData)
     EXPECT_EQ(head.getMethod(), method::GET);
     EXPECT_EQ(head.getPath(), "/index");
     EXPECT_EQ(head.getVersion(), version::_1);
+}
+
+TEST(Header, RemoveHeaderFromRemainingIncomingData)
+{
+    header head;
+    auto body = head.read(postRequest);
+    EXPECT_EQ(body, "\n\nhome=Cosby&favorite+flavor=flies\n");
+}
+
+TEST(Header, LetRemainingJSONBody)
+{
+    header head;
+    auto splittedRequest = split(jsonPostRequest, '[');
+    std::string lastBodyChunk = "";
+    for(const auto& value : splittedRequest)
+        lastBodyChunk = head.read(value);
+    EXPECT_EQ(lastBodyChunk, "\"diesel\",\"benzin\"]\n}\n");
 }
