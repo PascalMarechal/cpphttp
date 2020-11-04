@@ -28,8 +28,9 @@ namespace cpphttp
             inline void parseRequestLine(const std::string &line) noexcept;
             inline void handleHeaderLine(const std::string &line) noexcept;
 
-            inline size_t endOfHeader(const std::string &data) noexcept;
-            void parse() noexcept;
+            static inline std::size_t findEndOfHeaderData(const std::string &data) noexcept;
+            inline void appendRawData(const std::string &data, std::size_t to) noexcept;
+            inline void parse() noexcept;
 
             bool m_ready;
             method m_method;

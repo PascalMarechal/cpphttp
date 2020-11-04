@@ -65,25 +65,30 @@ void header::parse() noexcept
     m_ready = m_method != method::UNKNOWN && m_version != version::UNKNOWN && m_path.size() > 0;
 }
 
-size_t header::endOfHeader(const std::string &data) noexcept
+std::size_t header::findEndOfHeaderData(const std::string &data) noexcept
 {
     auto endOfHeader = data.find("\n\n");
     if (endOfHeader == std::string::npos)
         endOfHeader = data.find("\r\n\r\n");
-    
+
     return endOfHeader;
+}
+
+void header::appendRawData(const std::string &data, std::size_t to) noexcept
+{
+    if (to == std::string::npos)
+        m_rawData += data;
+    else
+        m_rawData += data.substr(0, to);
 }
 
 std::string header::read(const std::string &data) noexcept
 {
-    auto endOfHeader = this->endOfHeader(data);
-    if (endOfHeader == std::string::npos)
-        m_rawData += data;
-    else
-    {
-        m_rawData += data.substr(0, endOfHeader);
+    auto endOfHeader = header::findEndOfHeaderData(data);
+    appendRawData(data, endOfHeader);
+
+    if (endOfHeader != std::string::npos)
         parse();
-    }
 
     return "";
 }
