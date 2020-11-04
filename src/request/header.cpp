@@ -1,4 +1,5 @@
 #include "header.h"
+#include <sstream>
 
 using namespace cpphttp::request;
 
@@ -13,6 +14,10 @@ bool header::isReady()
 
 std::string header::fill(const std::string &data)
 {
-    m_isReady = true;
+    std::string line;
+    std::istringstream iss(data);
+    while (getline(iss, line))
+        if (line.empty())
+            m_isReady = true;
     return "";
 }

@@ -15,3 +15,10 @@ TEST(Header, CompleteHeader)
     head.fill("GET /index HTTP/1.1\n\n");
     EXPECT_EQ(head.isReady(), true);
 }
+
+TEST(Header, IncompleteHeader)
+{
+    header head;
+    head.fill("GET /index HTTP/1.1");
+    EXPECT_EQ(head.isReady(), false);
+}
