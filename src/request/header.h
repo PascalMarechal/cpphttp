@@ -2,6 +2,7 @@
 
 #include <string>
 #include "method.h"
+#include "version.h"
 
 namespace cpphttp
 {
@@ -11,15 +12,24 @@ namespace cpphttp
         {
         public:
             header();
-            bool isReady();
-            std::string fill(const std::string &data);
+            std::string parse(const std::string &data) noexcept;
 
+            bool isReady() noexcept;
+            method getMethod() noexcept;
+            version getVersion() noexcept;
+            std::string getPath() noexcept;
+
+            void setPath(std::string path) noexcept;
         private:
-            void parseRequestLine(const std::string &line);
-            void handleHeaderLine(const std::string &line);
-            
-            bool m_isReady;
+            inline void parseMethodValue(const std::string &value) noexcept;
+            inline void parseVersionValue(const std::string &value) noexcept;
+            inline void parseRequestLine(const std::string &line) noexcept;
+            inline void handleHeaderLine(const std::string &line) noexcept;
+
+            bool m_ready;
             method m_method;
+            version m_version;
+            std::string m_path;
         };
     } // namespace request
 } // namespace cpphttp
