@@ -67,7 +67,9 @@ void header::parse() noexcept
 
 std::size_t header::findEndOfHeaderData(const std::string &data) noexcept
 {
+    // Linux
     auto endOfHeader = data.find("\n\n");
+    // Windows
     if (endOfHeader == std::string::npos)
         endOfHeader = data.find("\r\n\r\n");
 
