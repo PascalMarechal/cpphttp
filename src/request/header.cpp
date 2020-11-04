@@ -55,15 +55,36 @@ inline void header::handleHeaderLine(const std::string &line) noexcept
         return parseRequestLine(line);
 }
 
-std::string header::parse(const std::string &data) noexcept
+void header::parse() noexcept
 {
     std::string line;
-    std::istringstream iss(data);
+    std::istringstream iss(m_rawData);
     while (getline(iss, line))
-        if (line.empty())
-            m_ready = m_method != method::UNKNOWN && m_version != version::UNKNOWN && m_path.size() > 0;
-        else
-            handleHeaderLine(line);
+        handleHeaderLine(line);
+
+    m_ready = m_method != method::UNKNOWN && m_version != version::UNKNOWN && m_path.size() > 0;
+}
+
+size_t header::endOfHeader(const std::string &data) noexcept
+{
+    auto endOfHeader = data.find("\n\n");
+    if (endOfHeader == std::string::npos)
+        endOfHeader = data.find("\r\n\r\n");
+    
+    return endOfHeader;
+}
+
+std::string header::read(const std::string &data) noexcept
+{
+    auto endOfHeader = this->endOfHeader(data);
+    if (endOfHeader == std::string::npos)
+        m_rawData += data;
+    else
+    {
+        m_rawData += data.substr(0, endOfHeader);
+        parse();
+    }
+
     return "";
 }
 
