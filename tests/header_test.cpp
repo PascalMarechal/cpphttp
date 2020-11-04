@@ -22,3 +22,10 @@ TEST(Header, IncompleteHeader)
     head.fill("GET /index HTTP/1.1");
     EXPECT_EQ(head.isReady(), false);
 }
+
+TEST(Header, MissingRequestLine)
+{
+    header head;
+    head.fill("User-Agent: HTTPTool/1.0\n\n");
+    EXPECT_EQ(head.isReady(), false);
+}
