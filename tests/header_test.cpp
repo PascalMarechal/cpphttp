@@ -1,7 +1,7 @@
 #include "request/header.h"
 #include <gtest/gtest.h>
 
-using namespace cpphttp;
+using namespace cpphttp::request;
 
 TEST(Header, EmptyHeader)
 {

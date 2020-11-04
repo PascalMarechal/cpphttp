@@ -1,6 +1,6 @@
 #include "header.h"
 
-using namespace cpphttp;
+using namespace cpphttp::request;
 
 header::header() : m_isReady(false)
 {

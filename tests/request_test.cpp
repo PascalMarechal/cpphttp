@@ -3,7 +3,7 @@
 #include "tools/data_reader.h"
 #include <unistd.h>
 
-using namespace cpphttp;
+using namespace cpphttp::request;
 
 std::string getRequest = readFile("./data/get_request.txt");
 std::string postRequest = readFile("./data/post_request.txt");

@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <functional>
 
-using namespace cpphttp;
+using namespace cpphttp::request;
 
 const std::unordered_map<std::string, std::function<void(request *, const std::string &)>> fillFunctions =
     {{"Content-Length", [](request *req, const std::string &s) {
