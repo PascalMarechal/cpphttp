@@ -13,5 +13,6 @@ bool request::isReady()
 
 void request::read(const std::string &data)
 {
-    m_header.read(data);
+    auto remainder = m_header.read(data);
+    m_body.appendData(remainder);
 }

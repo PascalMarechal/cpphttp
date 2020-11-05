@@ -3,6 +3,7 @@
 #include <sstream>
 #include <unordered_map>
 #include <functional>
+#include <algorithm>
 
 using namespace cpphttp::request;
 
@@ -29,7 +30,10 @@ inline void header::parseVersionValue(const std::string &value) noexcept
     auto versionInfo = split(value, '/');
     if (versionInfo.size() != 2 || versionInfo[0] != "HTTP")
         return;
-    auto version = versionMapping.find(versionInfo[1]);
+
+    std::string key;
+    std::copy_if(versionInfo[1].begin(), versionInfo[1].end(), std::back_inserter(key), [](char c){return c!='\r';});
+    auto version = versionMapping.find(key);
     if (version == versionMapping.end())
         return;
     m_version = version->second;
@@ -91,9 +95,16 @@ std::size_t header::findEndOfHeaderData(const std::string &data) noexcept
 {
     // Linux test
     auto endOfHeader = data.find("\n\n");
+
     // Windows test
     if (endOfHeader == std::string::npos)
+    {
         endOfHeader = data.find("\r\n\r\n");
+        if (endOfHeader != std::string::npos)
+            endOfHeader += 4; // Reach Windows end of line
+    }
+    else
+        endOfHeader += 2; // Reach Linux end of line
 
     return endOfHeader;
 }

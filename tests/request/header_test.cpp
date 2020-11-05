@@ -90,7 +90,7 @@ TEST(Header, RemoveHeaderFromRemainingIncomingData)
 {
     header head;
     auto body = head.read(postRequest);
-    EXPECT_EQ(body, "\n\nhome=Cosby&favorite+flavor=flies\n");
+    EXPECT_EQ(body, "home=Cosby&favorite+flavor=flies");
 }
 
 TEST(Header, LetRemainingJSONBody)
