@@ -32,7 +32,7 @@ namespace cpphttp
             inline void handleHeaderLine(const std::string &line) noexcept;
 
             static inline std::size_t findEndOfClassicHeaderData(const std::string &data) noexcept;
-            static inline std::size_t findEndOfWindowsHeaderData(const std::string &data) noexcept;
+            static inline std::size_t findEndOfNonClassicHeaderData(const std::string &data) noexcept;
             static inline std::size_t findEndOfHeaderData(const std::string &data) noexcept;
             
             inline void appendRawData(const std::string &data, std::size_t to) noexcept;

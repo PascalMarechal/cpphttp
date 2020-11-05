@@ -95,7 +95,7 @@ void header::parse() noexcept
     m_ready = m_method != method::UNKNOWN && m_version != version::UNKNOWN && m_path.size() > 0;
 }
 
-std::size_t header::findEndOfClassicHeaderData(const std::string &data) noexcept
+std::size_t header::findEndOfNonClassicHeaderData(const std::string &data) noexcept
 {
     auto endOfHeader = data.find("\n\n");
     if (endOfHeader != std::string::npos)
@@ -104,7 +104,7 @@ std::size_t header::findEndOfClassicHeaderData(const std::string &data) noexcept
     return endOfHeader;
 }
 
-std::size_t header::findEndOfWindowsHeaderData(const std::string &data) noexcept
+std::size_t header::findEndOfClassicHeaderData(const std::string &data) noexcept
 {
     auto endOfHeader = data.find("\r\n\r\n");
     if (endOfHeader != std::string::npos)
@@ -117,7 +117,7 @@ std::size_t header::findEndOfHeaderData(const std::string &data) noexcept
 {
     auto endOfHeader = findEndOfClassicHeaderData(data);
     if (endOfHeader == std::string::npos)
-        endOfHeader = findEndOfWindowsHeaderData(data);
+        endOfHeader = findEndOfNonClassicHeaderData(data);
 
     return endOfHeader;
 }
