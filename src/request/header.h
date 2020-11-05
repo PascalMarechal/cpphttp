@@ -36,6 +36,7 @@ namespace cpphttp
             static inline std::size_t findEndOfHeaderData(const std::string &data) noexcept;
             
             inline void appendRawData(const std::string &data, std::size_t to) noexcept;
+            inline void clearCR() noexcept;
             inline void parse() noexcept;
 
             bool m_ready;

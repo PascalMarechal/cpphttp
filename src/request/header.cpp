@@ -31,9 +31,7 @@ inline void header::parseVersionValue(const std::string &value) noexcept
     if (versionInfo.size() != 2 || versionInfo[0] != "HTTP")
         return;
 
-    std::string key;
-    std::copy_if(versionInfo[1].begin(), versionInfo[1].end(), std::back_inserter(key), [](char c) { return c != '\r'; });
-    auto version = versionMapping.find(key);
+    auto version = versionMapping.find(versionInfo[1]);
     if (version == versionMapping.end())
         return;
     m_version = version->second;
@@ -81,8 +79,14 @@ inline void header::handleHeaderLine(const std::string &line) noexcept
     }
 }
 
+void header::clearCR() noexcept
+{
+    m_rawData.erase(std::remove(m_rawData.begin(), m_rawData.end(), '\r'), m_rawData.end());
+}
+
 void header::parse() noexcept
 {
+    clearCR();
     std::string line;
     std::istringstream iss(m_rawData);
     while (getline(iss, line))
