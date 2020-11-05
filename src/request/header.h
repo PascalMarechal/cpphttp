@@ -20,6 +20,7 @@ namespace cpphttp
             version getVersion() noexcept;
             std::string& getPath() noexcept;
             uint32_t getExpectedBodySize() noexcept;
+            bool isCorrupted() noexcept;
             
             void setPath(std::string path) noexcept;
             void setExpectedBodySize(uint32_t size) noexcept;

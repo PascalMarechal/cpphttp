@@ -67,7 +67,7 @@ inline void header::handleHeaderLine(const std::string &line) noexcept
     auto argument = line.substr(colonPosition + 1);
     if (!argument.size())
         return;
-        
+
     try
     {
         toCall->second(this, argument);
@@ -138,7 +138,7 @@ version header::getVersion() noexcept
     return m_version;
 }
 
-std::string& header::getPath() noexcept
+std::string &header::getPath() noexcept
 {
     return m_path;
 }
@@ -146,6 +146,11 @@ std::string& header::getPath() noexcept
 uint32_t header::getExpectedBodySize() noexcept
 {
     return m_expectedBodysize;
+}
+
+bool header::isCorrupted() noexcept
+{
+    return m_headerReadComplete && !m_ready;
 }
 
 void header::setPath(std::string path) noexcept
