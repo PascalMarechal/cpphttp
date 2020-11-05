@@ -42,3 +42,10 @@ TEST(Request, FullPostRequest)
     req.read(postRequest);
     EXPECT_EQ(req.isReady(), true);
 }
+
+TEST(Request, FullWindowsPostRequest)
+{
+    request req;
+    req.read("POST /path/script.cgi HTTP/1.0\r\nContent-Length: 32\r\n\r\nhome=Cosby&favorite+flavor=flies");
+    EXPECT_EQ(req.isReady(), true);
+}

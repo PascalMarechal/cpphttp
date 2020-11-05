@@ -32,7 +32,7 @@ inline void header::parseVersionValue(const std::string &value) noexcept
         return;
 
     std::string key;
-    std::copy_if(versionInfo[1].begin(), versionInfo[1].end(), std::back_inserter(key), [](char c){return c!='\r';});
+    std::copy_if(versionInfo[1].begin(), versionInfo[1].end(), std::back_inserter(key), [](char c) { return c != '\r'; });
     auto version = versionMapping.find(key);
     if (version == versionMapping.end())
         return;
@@ -91,20 +91,29 @@ void header::parse() noexcept
     m_ready = m_method != method::UNKNOWN && m_version != version::UNKNOWN && m_path.size() > 0;
 }
 
+std::size_t header::findEndOfClassicHeaderData(const std::string &data) noexcept
+{
+    auto endOfHeader = data.find("\n\n");
+    if (endOfHeader != std::string::npos)
+        endOfHeader += 2;
+
+    return endOfHeader;
+}
+
+std::size_t header::findEndOfWindowsHeaderData(const std::string &data) noexcept
+{
+    auto endOfHeader = data.find("\r\n\r\n");
+    if (endOfHeader != std::string::npos)
+        endOfHeader += 4;
+
+    return endOfHeader;
+}
+
 std::size_t header::findEndOfHeaderData(const std::string &data) noexcept
 {
-    // Linux test
-    auto endOfHeader = data.find("\n\n");
-
-    // Windows test
+    auto endOfHeader = findEndOfClassicHeaderData(data);
     if (endOfHeader == std::string::npos)
-    {
-        endOfHeader = data.find("\r\n\r\n");
-        if (endOfHeader != std::string::npos)
-            endOfHeader += 4; // Reach Windows end of line
-    }
-    else
-        endOfHeader += 2; // Reach Linux end of line
+        endOfHeader = findEndOfWindowsHeaderData(data);
 
     return endOfHeader;
 }
