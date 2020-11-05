@@ -7,6 +7,7 @@ using namespace cpphttp::request;
 
 std::string postRequest = readFile("./data/post_request.txt");
 std::string jsonPostRequest = readFile("./data/post_json_request.txt");
+std::string postRequestWithIncorrectLength = readFile("./data/post_request_incorrect_length.txt");
 
 TEST(Header, EmptyHeader)
 {
@@ -92,4 +93,18 @@ TEST(Header, LetRemainingJSONBody)
     for(const auto& value : splittedRequest)
         lastBodyChunk = head.read(value);
     EXPECT_EQ(lastBodyChunk, "\"diesel\",\"benzin\"]\n}\n");
+}
+
+TEST(Header, ReadExpectedBodySize)
+{
+    header head;
+    auto body = head.read(postRequest);
+    EXPECT_EQ(head.getExpectedBodySize(), 32);
+}
+
+TEST(Header, IncorrectBodySizeValue)
+{
+    header head;
+    auto body = head.read(postRequestWithIncorrectLength);
+    EXPECT_EQ(head.getExpectedBodySize(), 0);
 }

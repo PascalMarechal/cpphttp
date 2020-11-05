@@ -19,9 +19,11 @@ namespace cpphttp
             method getMethod() noexcept;
             version getVersion() noexcept;
             std::string getPath() noexcept;
+            uint32_t getExpectedBodySize() noexcept;
 
             void setPath(std::string path) noexcept;
-
+            void setExpectedBodySize(uint32_t size) noexcept;
+            
         private:
             inline void parseMethodValue(const std::string &value) noexcept;
             inline void parseVersionValue(const std::string &value) noexcept;
@@ -36,8 +38,9 @@ namespace cpphttp
             bool m_headerReadComplete;
             method m_method;
             version m_version;
-            std::string m_path;
+            uint32_t m_expectedBodysize;
 
+            std::string m_path;
             std::string m_rawData;
         };
     } // namespace request

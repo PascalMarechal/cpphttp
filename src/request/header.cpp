@@ -2,10 +2,11 @@
 #include "../tools/string.h"
 #include <sstream>
 #include <unordered_map>
+#include <functional>
 
 using namespace cpphttp::request;
 
-header::header() : m_ready(false), m_headerReadComplete(false), m_method(method::UNKNOWN), m_version(version::UNKNOWN)
+header::header() : m_ready(false), m_headerReadComplete(false), m_method(method::UNKNOWN), m_version(version::UNKNOWN), m_expectedBodysize(0)
 {
 }
 
@@ -48,11 +49,32 @@ inline void header::parseRequestLine(const std::string &line) noexcept
     parseMethodValue(values[0]);
 }
 
+const std::unordered_map<std::string, std::function<void(header *, const std::string &)>> fillFunctions =
+    {{"Content-Length", [](header *head, const std::string &s) {
+          head->setExpectedBodySize(std::stoul(s));
+      }}};
+
 inline void header::handleHeaderLine(const std::string &line) noexcept
 {
     auto colonPosition = line.find(':');
     if (colonPosition == std::string::npos)
         return parseRequestLine(line);
+
+    auto toCall = fillFunctions.find(line.substr(0, colonPosition));
+    if (toCall == fillFunctions.end())
+        return;
+
+    auto argument = line.substr(colonPosition + 1);
+    if (!argument.size())
+        return;
+        
+    try
+    {
+        toCall->second(this, argument);
+    }
+    catch (...)
+    {
+    }
 }
 
 void header::parse() noexcept
@@ -86,9 +108,9 @@ void header::appendRawData(const std::string &data, std::size_t to) noexcept
 
 std::string header::read(const std::string &data) noexcept
 {
-    if(m_headerReadComplete)
+    if (m_headerReadComplete)
         return data;
-        
+
     auto endOfHeader = header::findEndOfHeaderData(data);
     appendRawData(data, endOfHeader);
 
@@ -97,7 +119,7 @@ std::string header::read(const std::string &data) noexcept
         parse();
     else
         return "";
-    
+
     return data.substr(endOfHeader);
 }
 
@@ -121,7 +143,17 @@ std::string header::getPath() noexcept
     return m_path;
 }
 
+uint32_t header::getExpectedBodySize() noexcept
+{
+    return m_expectedBodysize;
+}
+
 void header::setPath(std::string path) noexcept
 {
     m_path = path;
+}
+
+void header::setExpectedBodySize(uint32_t size) noexcept
+{
+    m_expectedBodysize = size;
 }
