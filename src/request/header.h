@@ -18,9 +18,9 @@ namespace cpphttp
             bool isReady() noexcept;
             method getMethod() noexcept;
             version getVersion() noexcept;
-            std::string getPath() noexcept;
+            std::string& getPath() noexcept;
             uint32_t getExpectedBodySize() noexcept;
-
+            
             void setPath(std::string path) noexcept;
             void setExpectedBodySize(uint32_t size) noexcept;
             

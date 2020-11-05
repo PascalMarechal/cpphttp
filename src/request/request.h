@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include "header.h"
+#include "body.h"
 
 namespace cpphttp
 {
@@ -9,17 +11,12 @@ namespace cpphttp
         class request
         {
         public:
-            request();
             bool isReady();
-            void fill(const std::string &data);
-            void setExpectedBodySize(uint32_t size);
+            void read(const std::string &data);
 
         private:
-            void handleHeaderLine(const std::string &line);
-
-            bool m_isReady;
-            uint32_t m_expectedBodySize;
-            std::string m_body;
+           header m_header;
+           body m_body;
         };
     } // namespace request
 } // namespace cpphttp

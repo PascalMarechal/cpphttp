@@ -138,7 +138,7 @@ version header::getVersion() noexcept
     return m_version;
 }
 
-std::string header::getPath() noexcept
+std::string& header::getPath() noexcept
 {
     return m_path;
 }

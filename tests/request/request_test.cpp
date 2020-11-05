@@ -1,6 +1,6 @@
 #include "request/request.h"
 #include <gtest/gtest.h>
-#include "tools/data_reader.h"
+#include "../tools/data_reader.h"
 #include <unistd.h>
 
 using namespace cpphttp::request;
@@ -17,20 +17,20 @@ TEST(Request, EmptyRequest)
 TEST(Request, CompleteRequest)
 {
     request req;
-    req.fill("GET /index HTTP/1.1\n\n");
+    req.read("GET /index HTTP/1.1\n\n");
     EXPECT_EQ(req.isReady(), true);
 }
 
 TEST(Request, IncompleteRequest)
 {
     request req;
-    req.fill("GET /index HTTP/1.1");
+    req.read("GET /index HTTP/1.1");
     EXPECT_EQ(req.isReady(), false);
 }
 
 TEST(Request, IncompletePost)
 {
     request req;
-    req.fill(incompletePostRequest);
+    req.read(incompletePostRequest);
     EXPECT_EQ(req.isReady(), false);
 }
