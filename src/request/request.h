@@ -15,8 +15,11 @@ namespace cpphttp
             std::string read(const std::string &data);
 
         private:
-           header m_header;
-           body m_body;
+
+            inline std::string appendToBody(const std::string& data) noexcept;
+
+            header m_header;
+            body m_body;
         };
     } // namespace request
 } // namespace cpphttp
