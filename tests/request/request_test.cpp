@@ -1,6 +1,7 @@
 #include "request/request.h"
 #include <gtest/gtest.h>
 #include "../tools/data_reader.h"
+#include "tools/string.h"
 #include <unistd.h>
 
 using namespace cpphttp::request;
@@ -9,6 +10,7 @@ std::string getRequest = readFile("./data/get_request.txt");
 std::string incompletePostRequest = readFile("./data/incomplete_post_request.txt");
 std::string twoPostRequest = readFile("./data/two_post_requests.txt");
 extern std::string postRequest;
+extern std::string jsonPostRequest;
 
 TEST(Request, EmptyRequest)
 {
@@ -59,4 +61,13 @@ TEST(Request, TwoFullPostRequest)
     request req2;
     req2.read(remainder);
     EXPECT_EQ(req2.isReady(), true);
+}
+
+TEST(Request, SplittedJSON)
+{
+    request req;
+    auto splittedRequest = split(jsonPostRequest, '[');
+    for(const auto& value : splittedRequest)
+        req.read(value);
+    EXPECT_EQ(req.isReady(), true);
 }

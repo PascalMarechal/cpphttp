@@ -28,3 +28,13 @@ std::string request::read(const std::string &data)
     auto remainder = m_header.read(data);
     return appendToBody(remainder);
 }
+
+body &request::getBody()
+{
+    return m_body;
+}
+
+header &request::getHeader()
+{
+    return m_header;
+}

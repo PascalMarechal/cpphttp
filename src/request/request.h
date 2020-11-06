@@ -14,9 +14,10 @@ namespace cpphttp
             bool isReady();
             std::string read(const std::string &data);
 
+            body &getBody();
+            header &getHeader();
         private:
-
-            inline std::string appendToBody(const std::string& data) noexcept;
+            inline std::string appendToBody(const std::string &data) noexcept;
 
             header m_header;
             body m_body;
