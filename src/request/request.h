@@ -12,7 +12,7 @@ namespace cpphttp
         {
         public:
             bool isReady();
-            void read(const std::string &data);
+            std::string read(const std::string &data);
 
         private:
            header m_header;

@@ -7,6 +7,7 @@ using namespace cpphttp::request;
 
 std::string getRequest = readFile("./data/get_request.txt");
 std::string incompletePostRequest = readFile("./data/incomplete_post_request.txt");
+std::string twoPostRequest = readFile("./data/two_post_requests.txt");
 extern std::string postRequest;
 
 TEST(Request, EmptyRequest)
@@ -48,4 +49,14 @@ TEST(Request, FullWindowsPostRequest)
     request req;
     req.read("POST /path/script.cgi HTTP/1.0\r\nContent-Length: 32\r\n\r\nhome=Cosby&favorite+flavor=flies");
     EXPECT_EQ(req.isReady(), true);
+}
+
+TEST(Request, TwoFullPostRequest)
+{
+    request req;
+    auto remainder = req.read(twoPostRequest);
+    EXPECT_EQ(req.isReady(), true);
+    request req2;
+    req2.read(remainder);
+    EXPECT_EQ(req2.isReady(), true);
 }
