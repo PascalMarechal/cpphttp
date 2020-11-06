@@ -67,7 +67,31 @@ TEST(Request, SplittedJSON)
 {
     request req;
     auto splittedRequest = split(jsonPostRequest, '[');
-    for(const auto& value : splittedRequest)
+    for (auto i = 0; i < splittedRequest.size() - 1; ++i)
+        splittedRequest[i] += '[';
+
+    for (const auto &value : splittedRequest)
         req.read(value);
     EXPECT_EQ(req.isReady(), true);
+}
+
+TEST(Request, TwoFullSplittedPostRequest)
+{
+    request req, req2;
+    request *currentReq = &req;
+    auto splittedRequest = split(twoPostRequest, '&');
+    for (auto i = 0; i < splittedRequest.size() - 1; ++i)
+        splittedRequest[i] += '&';
+
+    for (const auto &value : splittedRequest)
+    {
+        auto remainder = currentReq->read(value);
+        if (remainder.size() > 0)
+        {
+            currentReq = &req2;
+            currentReq->read(remainder);
+        }
+    }
+    EXPECT_EQ(req.isReady(), true);
+    EXPECT_EQ(req2.isReady(), true);
 }
