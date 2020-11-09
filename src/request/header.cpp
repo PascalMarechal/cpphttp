@@ -6,6 +6,7 @@
 #include <algorithm>
 
 using namespace cpphttp::request;
+using namespace cpphttp::tools;
 
 header::header() : m_ready(false), m_headerReadComplete(false), m_method(method::UNKNOWN), m_version(version::UNKNOWN), m_expectedBodysize(0)
 {

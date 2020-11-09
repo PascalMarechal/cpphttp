@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 using namespace cpphttp::request;
+using namespace cpphttp::tools;
 
 std::string getRequest = readFile("./data/get_request.txt");
 std::string incompletePostRequest = readFile("./data/incomplete_post_request.txt");

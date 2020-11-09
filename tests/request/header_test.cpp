@@ -4,6 +4,7 @@
 #include "tools/string.h"
 
 using namespace cpphttp::request;
+using namespace cpphttp::tools;
 
 std::string postRequest = readFile("./data/post_request.txt");
 std::string jsonPostRequest = readFile("./data/post_json_request.txt");
