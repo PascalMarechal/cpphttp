@@ -6,6 +6,7 @@ RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get install -y build
 
 RUN wget -qO- "https://sourceforge.net/projects/asio/files/asio/1.18.0%20%28Stable%29/asio-1.18.0.tar.gz" | tar xvz \
     && cd asio-1.18.0/include && rm Makefile* && cp -r * /usr/include/ \
-    && rm -rf /src/*
+    && rm -rf /src/* \
+    && cp -r /usr/src/googletest/googlemock/include/gmock /usr/include
 
 CMD ["./build.sh", "dev"]
