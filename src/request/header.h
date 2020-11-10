@@ -4,7 +4,7 @@
 #include "method.h"
 #include "version.h"
 
-#define MAX_HEADER_SIZE 48 * 1024
+#define MAX_HEADER_SIZE 8 * 1024
 
 namespace cpphttp
 {
