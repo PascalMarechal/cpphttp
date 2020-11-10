@@ -4,6 +4,8 @@
 #include "method.h"
 #include "version.h"
 
+#define MAX_HEADER_SIZE 48 * 1024
+
 namespace cpphttp
 {
     namespace request
@@ -18,13 +20,13 @@ namespace cpphttp
             bool isReady() noexcept;
             method getMethod() noexcept;
             version getVersion() noexcept;
-            std::string& getPath() noexcept;
+            std::string &getPath() noexcept;
             uint32_t getExpectedBodySize() noexcept;
             bool isCorrupted() noexcept;
-            
+
             void setPath(std::string path) noexcept;
             void setExpectedBodySize(uint32_t size) noexcept;
-            
+
         private:
             inline void parseMethodValue(const std::string &value) noexcept;
             inline void parseVersionValue(const std::string &value) noexcept;
@@ -34,7 +36,7 @@ namespace cpphttp
             static inline std::size_t findEndOfClassicHeaderData(const std::string &data) noexcept;
             static inline std::size_t findEndOfNonClassicHeaderData(const std::string &data) noexcept;
             static inline std::size_t findEndOfHeaderData(const std::string &data) noexcept;
-            
+
             inline void appendRawData(const std::string &data, std::size_t to) noexcept;
             inline void clearCR() noexcept;
             inline void parse() noexcept;
