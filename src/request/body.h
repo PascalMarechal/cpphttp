@@ -8,8 +8,8 @@ namespace cpphttp
     {
         class body{
             public:
-                void appendData(const std::string& data);
-                std::string& getData() noexcept;
+                body(const std::string& data);
+                const std::string& getData() noexcept;
                 std::size_t getSize() noexcept;
             private:
                 std::string m_data;

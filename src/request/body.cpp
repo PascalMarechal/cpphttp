@@ -2,12 +2,11 @@
 
 using namespace cpphttp::request;
 
-void body::appendData(const std::string &data)
+body::body(const std::string& data):m_data(data)
 {
-    m_data += data;
 }
 
-std::string &body::getData() noexcept
+const std::string &body::getData() noexcept
 {
     return m_data;
 }
