@@ -13,9 +13,7 @@ namespace cpphttp
         class header
         {
         public:
-            header();
-
-            std::string read(const std::string &data) noexcept;
+            header(const std::string& data);
 
             bool isReady() noexcept;
             method getMethod() noexcept;
@@ -23,31 +21,22 @@ namespace cpphttp
             std::string &getPath() noexcept;
             uint32_t getExpectedBodySize() noexcept;
 
-            void setPath(std::string path) noexcept;
+            void setPath(std::string_view path) noexcept;
             void setExpectedBodySize(uint32_t size) noexcept;
 
         private:
-            inline void parseMethodValue(const std::string &value) noexcept;
-            inline void parseVersionValue(const std::string &value) noexcept;
-            inline void parseRequestLine(const std::string &line) noexcept;
-            inline void handleHeaderLine(const std::string &line) noexcept;
-
-            static inline std::size_t findEndOfClassicHeaderData(const std::string &data) noexcept;
-            static inline std::size_t findEndOfNonClassicHeaderData(const std::string &data) noexcept;
-            static inline std::size_t findEndOfHeaderData(const std::string &data) noexcept;
-
-            inline void appendRawData(const std::string &data, std::size_t to) noexcept;
-            inline void clearCR() noexcept;
-            inline void parse() noexcept;
+            inline void parseMethodValue(std::string_view value) noexcept;
+            inline void parseVersionValue(std::string_view value) noexcept;
+            inline void parseRequestLine(std::string_view line) noexcept;
+            inline void handleHeaderLine(std::string_view line) noexcept;
+            inline void parse(const std::string& data) noexcept;
 
             bool m_ready;
-            bool m_headerReadComplete;
             method m_method;
             version m_version;
             uint32_t m_expectedBodysize;
 
             std::string m_path;
-            std::string m_rawData;
         };
     } // namespace request
 } // namespace cpphttp

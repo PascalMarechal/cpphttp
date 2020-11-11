@@ -3,19 +3,19 @@
 #include <sstream>
 #include <unordered_map>
 #include <functional>
-#include <algorithm>
 
 using namespace cpphttp::request;
 using namespace cpphttp::tools;
 
-header::header() : m_ready(false), m_headerReadComplete(false), m_method(method::UNKNOWN), m_version(version::UNKNOWN), m_expectedBodysize(0)
+header::header(const std::string &data) : m_ready(false), m_method(method::UNKNOWN), m_version(version::UNKNOWN), m_expectedBodysize(0)
 {
+    parse(data);
 }
 
-const std::unordered_map<std::string, method> methodMapping =
+const std::unordered_map<std::string_view, method> methodMapping =
     {{"GET", method::GET}, {"POST", method::POST}, {"DELETE", method::DELETE}, {"PUT", method::PUT}, {"HEAD", method::HEAD}, {"PATCH", method::PATCH}};
 
-inline void header::parseMethodValue(const std::string &value) noexcept
+inline void header::parseMethodValue(std::string_view value) noexcept
 {
     auto method = methodMapping.find(value);
     if (method == methodMapping.end())
@@ -23,12 +23,12 @@ inline void header::parseMethodValue(const std::string &value) noexcept
     m_method = method->second;
 }
 
-const std::unordered_map<std::string, version> versionMapping =
+const std::unordered_map<std::string_view, version> versionMapping =
     {{"1.0", version::_1}, {"1.1", version::_1_1}};
 
-inline void header::parseVersionValue(const std::string &value) noexcept
+inline void header::parseVersionValue(std::string_view value) noexcept
 {
-    auto versionInfo = split(value, '/');
+    auto versionInfo = split(value, "/");
     if (versionInfo.size() != 2 || versionInfo[0] != "HTTP")
         return;
 
@@ -38,12 +38,12 @@ inline void header::parseVersionValue(const std::string &value) noexcept
     m_version = version->second;
 }
 
-inline void header::parseRequestLine(const std::string &line) noexcept
+inline void header::parseRequestLine(std::string_view line) noexcept
 {
     if (getMethod() != method::UNKNOWN)
         return;
 
-    auto values = split(line, ' ');
+    auto values = split(line, " ");
     if (values.size() != 3)
         return;
 
@@ -52,13 +52,16 @@ inline void header::parseRequestLine(const std::string &line) noexcept
     parseMethodValue(values[0]);
 }
 
-const std::unordered_map<std::string, std::function<void(header *, const std::string &)>> fillFunctions =
-    {{"Content-Length", [](header *head, const std::string &s) {
+const std::unordered_map<std::string_view, std::function<void(header *, std::string &&)>> fillFunctions =
+    {{"Content-Length", [](header *head, std::string &&s) {
           head->setExpectedBodySize(std::stoul(s));
       }}};
 
-inline void header::handleHeaderLine(const std::string &line) noexcept
+inline void header::handleHeaderLine(std::string_view line) noexcept
 {
+    if (!line.size())
+        return;
+
     auto colonPosition = line.find(':');
     if (colonPosition == std::string::npos)
         return parseRequestLine(line);
@@ -73,79 +76,20 @@ inline void header::handleHeaderLine(const std::string &line) noexcept
 
     try
     {
-        toCall->second(this, argument);
+        toCall->second(this, std::string(argument));
     }
     catch (...)
     {
     }
 }
 
-void header::clearCR() noexcept
+void header::parse(const std::string &data) noexcept
 {
-    m_rawData.erase(std::remove(m_rawData.begin(), m_rawData.end(), '\r'), m_rawData.end());
-}
-
-void header::parse() noexcept
-{
-    clearCR();
-    std::string line;
-    std::istringstream iss(m_rawData);
-    while (getline(iss, line))
+    auto lines = split(data, "\r\n");
+    for (auto line : lines)
         handleHeaderLine(line);
 
     m_ready = m_method != method::UNKNOWN && m_version != version::UNKNOWN && m_path.size() > 0;
-}
-
-std::size_t header::findEndOfNonClassicHeaderData(const std::string &data) noexcept
-{
-    auto endOfHeader = data.find("\n\n");
-    if (endOfHeader != std::string::npos)
-        endOfHeader += 2;
-
-    return endOfHeader;
-}
-
-std::size_t header::findEndOfClassicHeaderData(const std::string &data) noexcept
-{
-    auto endOfHeader = data.find("\r\n\r\n");
-    if (endOfHeader != std::string::npos)
-        endOfHeader += 4;
-
-    return endOfHeader;
-}
-
-std::size_t header::findEndOfHeaderData(const std::string &data) noexcept
-{
-    auto endOfHeader = findEndOfClassicHeaderData(data);
-    if (endOfHeader == std::string::npos)
-        endOfHeader = findEndOfNonClassicHeaderData(data);
-
-    return endOfHeader;
-}
-
-void header::appendRawData(const std::string &data, std::size_t to) noexcept
-{
-    if (to == std::string::npos)
-        m_rawData += data;
-    else
-        m_rawData += data.substr(0, to);
-}
-
-std::string header::read(const std::string &data) noexcept
-{
-    if (m_headerReadComplete)
-        return data;
-
-    auto endOfHeader = header::findEndOfHeaderData(data);
-    appendRawData(data, endOfHeader);
-
-    m_headerReadComplete = endOfHeader != std::string::npos;
-    if (m_headerReadComplete)
-        parse();
-    else
-        return "";
-
-    return data.substr(endOfHeader);
 }
 
 bool header::isReady() noexcept
@@ -173,7 +117,7 @@ uint32_t header::getExpectedBodySize() noexcept
     return m_expectedBodysize;
 }
 
-void header::setPath(std::string path) noexcept
+void header::setPath(std::string_view path) noexcept
 {
     m_path = path;
 }

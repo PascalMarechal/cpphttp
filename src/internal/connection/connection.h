@@ -1,7 +1,7 @@
 #pragma once
 #include <functional>
 #include "internal/asio.h"
-#include "request/request.h"
+//#include "request/request.h"
 #include "match_end_of_header.h"
 
 namespace cpphttp
@@ -14,10 +14,7 @@ namespace cpphttp
         public:
             using buffer_iterator = asio::buffers_iterator<asio::streambuf::const_buffers_type>;
 
-            connection(asio::ip::tcp::socket &&sock) : m_socket(std::move(sock))
-            {
-                m_headerBuffer.reserve(MAX_HEADER_SIZE);
-            };
+            connection(asio::ip::tcp::socket &&sock) : m_socket(std::move(sock)){};
 
             void start()
             {
