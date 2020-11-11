@@ -1,13 +1,10 @@
 #include "request/header.h"
 #include <gtest/gtest.h>
-#include "../tools/data_reader.h"
 #include "tools/string.h"
+#include "common/requests.h"
 
 using namespace cpphttp::request;
 using namespace cpphttp::tools;
-
-std::string postRequestHeader = readFile("./data/headers/post_request.txt");
-std::string postRequestHeaderWithIncorrectLength = readFile("./data/headers/post_request_incorrect_length.txt");
 
 TEST(Header, EmptyHeader)
 {

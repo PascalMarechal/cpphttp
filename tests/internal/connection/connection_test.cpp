@@ -1,10 +1,9 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include "internal/connection/connection.h"
+#include "common/requests.h"
 
 using namespace cpphttp::internal;
-
-extern std::string postRequestHeader;
 
 class AsyncFunctions
 {

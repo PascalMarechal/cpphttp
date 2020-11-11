@@ -1,11 +1,8 @@
 #include "request/request.h"
 #include <gtest/gtest.h>
-#include "../tools/data_reader.h"
+#include "common/requests.h"
 
 using namespace cpphttp::request;
-
-std::string postRequestBody = readFile("./data/body/post_request.txt");
-extern std::string postRequestHeader;
 
 TEST(Request, CompleteHeaderWithNoBody)
 {
