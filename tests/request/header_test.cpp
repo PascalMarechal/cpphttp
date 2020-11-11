@@ -6,8 +6,8 @@
 using namespace cpphttp::request;
 using namespace cpphttp::tools;
 
-std::string postRequest = readFile("./data/headers/post_request.txt");
-std::string postRequestWithIncorrectLength = readFile("./data/headers/post_request_incorrect_length.txt");
+std::string postRequestHeader = readFile("./data/headers/post_request.txt");
+std::string postRequestHeaderWithIncorrectLength = readFile("./data/headers/post_request_incorrect_length.txt");
 
 TEST(Header, EmptyHeader)
 {
@@ -56,12 +56,12 @@ TEST(Header, CompleteHeaderData)
 
 TEST(Header, ReadExpectedBodySize)
 {
-    header head(postRequest);
+    header head(postRequestHeader);
     EXPECT_EQ(head.getExpectedBodySize(), 32);
 }
 
 TEST(Header, IncorrectBodySizeValue)
 {
-    header head(postRequestWithIncorrectLength);
+    header head(postRequestHeaderWithIncorrectLength);
     EXPECT_EQ(head.getExpectedBodySize(), 0);
 }
