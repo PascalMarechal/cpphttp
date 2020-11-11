@@ -21,12 +21,12 @@ namespace cpphttp
 
             void start()
             {
-                m_async_functions.async_read_until(m_socket, asio::dynamic_buffer(m_headerBuffer), m_matcher, std::bind(&connection::on_read, this, std::placeholders::_1, std::placeholders::_2));
+                m_async_functions.async_read_until(m_socket, asio::dynamic_buffer(m_headerBuffer), m_matcher, std::bind(&connection::on_read, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
                 //asio::async_read_until(m_socket, asio::dynamic_buffer(m_headerBuffer), matcher, std::bind(&connection::on_read, this, std::placeholders::_1, std::placeholders::_2));
             }
 
         private:
-            inline void on_read(asio::error_code error, std::size_t bytes_transferred)
+            void on_read(asio::error_code error, std::size_t bytes_transferred)
             {
                 std::cout << "READ\n";
             }

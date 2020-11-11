@@ -33,7 +33,7 @@ TEST(Connection, Creation)
 {
   asio::io_context context;
   asio::ip::tcp::socket sock(context);
-  connection<AsyncFunctions> c(std::move(sock));
+  auto c = std::make_shared<connection<AsyncFunctions>>(std::move(sock));
 }
 
 TEST(Connection, Read)
@@ -41,6 +41,6 @@ TEST(Connection, Read)
   AsyncFunctions::expected_read_call_count = 1;
   asio::io_context context;
   asio::ip::tcp::socket sock(context);
-  connection<AsyncFunctions> c(std::move(sock));
-  c.start();
+  auto c = std::make_shared<connection<AsyncFunctions>>(std::move(sock));
+  c->start();
 }
