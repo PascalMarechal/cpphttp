@@ -173,11 +173,6 @@ uint32_t header::getExpectedBodySize() noexcept
     return m_expectedBodysize;
 }
 
-bool header::isCorrupted() noexcept
-{
-    return m_headerReadComplete && !m_ready;
-}
-
 void header::setPath(std::string path) noexcept
 {
     m_path = path;
