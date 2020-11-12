@@ -19,9 +19,10 @@ namespace cpphttp
             request(request &&toCopy) noexcept;
             request &operator=(request &&toCopy) noexcept;
 
-            bool isReady();
-            void setHeader(const std::string &data);
-            void setBody(const std::string &data);
+            bool isReady() const noexcept;
+            void setHeader(const std::string &data) noexcept;
+            void setBody(const std::string &data) noexcept;
+            const header *getHeader() const noexcept;
 
         private:
             std::unique_ptr<header> m_header;
