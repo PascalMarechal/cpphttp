@@ -8,13 +8,13 @@ namespace cpphttp
 {
     namespace internal
     {
-        template <typename AsyncFunctions>
-        class connection : public std::enable_shared_from_this<connection<AsyncFunctions>>
+        template <typename ConnectionFunctions>
+        class connection : public std::enable_shared_from_this<connection<ConnectionFunctions>>
         {
         public:
             using buffer_iterator = asio::buffers_iterator<asio::streambuf::const_buffers_type>;
 
-            connection(asio::ip::tcp::socket &&sock) : m_socket(std::move(sock)){};
+            connection(asio::ip::tcp::socket &&sock, const ConnectionFunctions &functions) : m_socket(std::move(sock)), m_functions(functions){};
 
             void start()
             {
@@ -25,18 +25,17 @@ namespace cpphttp
         private:
             inline void readHeader()
             {
-                m_asyncFunctions.async_read_until(m_socket, asio::dynamic_buffer(m_headerBuffer), m_matcher, std::bind(&connection::onReadHeader, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+                m_functions.async_read_until(m_socket, asio::dynamic_buffer(m_headerBuffer), m_matcher, std::bind(&connection::onReadHeader, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
             }
 
             void onReadHeader(asio::error_code error, std::size_t bytes_transferred)
             {
-                
             }
 
             asio::ip::tcp::socket m_socket;
             std::string m_headerBuffer;
+            const ConnectionFunctions &m_functions;
 
-            AsyncFunctions m_asyncFunctions;
             static inline match_end_of_header m_matcher;
             std::unique_ptr<cpphttp::request::request> m_currentReq;
         };
