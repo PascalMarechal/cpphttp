@@ -54,3 +54,30 @@ TEST(Request, MoveOperators)
     EXPECT_FALSE(req2.isReady());
     EXPECT_EQ(req2.getHeader(), nullptr);
 }
+
+TEST(Request, EqualityOperators)
+{
+    request req;
+    req.setHeader(postRequestHeader);
+    req.setBody(postRequestBody);
+    request req2;
+    req2.setHeader(postRequestHeader);
+    req2.setBody(postRequestBody);
+    EXPECT_TRUE(req == req2);
+
+    request req3, req4;
+    EXPECT_TRUE(req3 == req4);
+    EXPECT_TRUE(req != req3);
+
+    req3.setHeader(postRequestHeader);
+    EXPECT_TRUE(req3 != req);
+
+    req3.setBody("nooope");
+    EXPECT_TRUE(req3 != req);
+
+    req4.setBody(postRequestBody);
+    EXPECT_TRUE(req4 != req);
+
+    req2.setHeader("noope");
+    EXPECT_TRUE(req != req2);
+}

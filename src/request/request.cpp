@@ -42,3 +42,28 @@ request &request::operator=(request &&toCopy) noexcept
     m_body = std::move(toCopy.m_body);
     return *this;
 }
+
+namespace cpphttp
+{
+    namespace request
+    {
+        bool operator==(const request &lhs, const request &rhs) noexcept
+        {
+            if ((lhs.m_header == nullptr && rhs.m_header != nullptr) ||
+                (lhs.m_header != nullptr && rhs.m_header == nullptr) ||
+                (lhs.m_body == nullptr && rhs.m_body != nullptr) ||
+                (lhs.m_body != nullptr && rhs.m_body == nullptr))
+                return false;
+
+            return (lhs.m_header == nullptr && rhs.m_header == nullptr ||
+                    *lhs.m_header == *rhs.m_header) &&
+                   (lhs.m_body == nullptr && rhs.m_body == nullptr ||
+                    *lhs.m_body == *rhs.m_body);
+        }
+
+        bool operator!=(const request &lhs, const request &rhs) noexcept
+        {
+            return !(lhs == rhs);
+        }
+    } // namespace request
+} // namespace cpphttp

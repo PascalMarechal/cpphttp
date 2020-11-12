@@ -24,6 +24,9 @@ namespace cpphttp
             void setBody(const std::string &data) noexcept;
             const header *getHeader() const noexcept;
 
+            friend bool operator==(const request &lhs, const request &rhs) noexcept;
+            friend bool operator!=(const request &lhs, const request &rhs) noexcept;
+
         private:
             std::unique_ptr<header> m_header;
             std::unique_ptr<body> m_body;
