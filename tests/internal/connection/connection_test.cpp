@@ -3,6 +3,7 @@
 #include "internal/connection/connection.h"
 #include "common/requests.h"
 #include "request/request.h"
+#include "common/request_matcher.h"
 
 using namespace cpphttp::internal;
 
@@ -74,7 +75,7 @@ TEST(Connection, ReadRequestWithBody)
   EXPECT_CALL(functionsMock, async_read_until).Times(1);
   EXPECT_CALL(functionsMock, async_read_exactly).Times(1);
   EXPECT_CALL(functionsMock, async_work).Times(1);
-  EXPECT_CALL(routerMock, process).Times(1);
+  EXPECT_CALL(routerMock, process(SameRequest(postRequestHeader, postRequestBody))).Times(1);
   auto c = std::make_shared<connection<ConnectionFunctionsMock, RouterMock>>(std::move(sock), functionsMock, routerMock);
   c->start();
 }

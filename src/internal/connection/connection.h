@@ -40,6 +40,8 @@ namespace cpphttp
 
             void onReadBody(asio::error_code error, std::size_t bytes_transferred)
             {
+                m_currentRequest.setBody(m_bodyBuffer);
+                m_bodyBuffer.clear();
                 m_functions.async_work(m_socket.get_executor(), [from = this->shared_from_this()]() mutable -> void {
                     from->processRequests();
                 });
