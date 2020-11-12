@@ -22,3 +22,18 @@ void request::setBody(const std::string &data)
 {
     m_body = std::make_unique<body>(data);
 }
+
+request::request(request &&toCopy) noexcept
+{
+    m_header = std::move(toCopy.m_header);
+    m_body = std::move(toCopy.m_body);
+}
+
+request &request::operator=(request &&toCopy) noexcept
+{
+    if (this == &toCopy)
+        return *this;
+    m_header = std::move(toCopy.m_header);
+    m_body = std::move(toCopy.m_body);
+    return *this;
+}
