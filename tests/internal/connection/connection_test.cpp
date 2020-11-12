@@ -9,7 +9,7 @@ using namespace cpphttp::internal;
 class RouterMock
 {
 public:
-  MOCK_CONST_METHOD1(process, std::string(cpphttp::request::request &&));
+  MOCK_CONST_METHOD1(process, std::string(const cpphttp::request::request &));
 };
 
 class ConnectionFunctionsMock

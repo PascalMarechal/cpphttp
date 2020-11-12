@@ -41,10 +41,6 @@ namespace cpphttp
 
             void onReadBody(asio::error_code error, std::size_t bytes_transferred)
             {
-                // asio::post(m_socket.get_executor(), [reqCapute = std::move(this->m_currentReq), this]() mutable -> void {
-                //     std::cout << "LOL";
-                //     m_router.process(std::move(reqCapute));
-                // });
                 m_functions.async_work(m_socket.get_executor(), [this]() mutable -> void {
                     this->processRequests();
                 });
@@ -52,7 +48,7 @@ namespace cpphttp
 
             void processRequests()
             {
-                m_router.process(std::move(m_currentReq));
+                m_router.process(m_currentReq);
             }
 
             asio::ip::tcp::socket m_socket;
