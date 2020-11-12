@@ -28,9 +28,9 @@ namespace cpphttp
 
             inline void readBody()
             {
-                m_currentReq.setHeader(m_headerBuffer);
+                m_currentRequest.setHeader(m_headerBuffer);
                 m_headerBuffer.clear();
-                m_functions.async_read_exactly(m_socket, asio::dynamic_buffer(m_bodyBuffer), asio::transfer_exactly(m_currentReq.getHeader()->getExpectedBodySize()), std::bind(&connection::onReadBody, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+                m_functions.async_read_exactly(m_socket, asio::dynamic_buffer(m_bodyBuffer), asio::transfer_exactly(m_currentRequest.getHeader()->getExpectedBodySize()), std::bind(&connection::onReadBody, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
             }
 
             void onReadHeader(asio::error_code error, std::size_t bytes_transferred)
@@ -47,7 +47,7 @@ namespace cpphttp
 
             void processRequests()
             {
-                m_router.process(m_currentReq);
+                m_router.process(m_currentRequest);
             }
 
             asio::ip::tcp::socket m_socket;
@@ -57,7 +57,7 @@ namespace cpphttp
             const Router &m_router;
 
             static inline match_end_of_header m_matcher;
-            cpphttp::request::request m_currentReq;
+            cpphttp::request::request m_currentRequest;
         };
     } // namespace internal
 } // namespace cpphttp
