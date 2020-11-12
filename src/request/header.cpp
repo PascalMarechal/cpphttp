@@ -92,27 +92,27 @@ void header::parse(const std::string &data) noexcept
     m_ready = m_method != method::UNKNOWN && m_version != version::UNKNOWN && m_path.size() > 0;
 }
 
-bool header::isReady() noexcept
+bool header::isReady() const noexcept
 {
     return m_ready;
 }
 
-method header::getMethod() noexcept
+method header::getMethod() const noexcept
 {
     return m_method;
 }
 
-version header::getVersion() noexcept
+version header::getVersion() const noexcept
 {
     return m_version;
 }
 
-std::string &header::getPath() noexcept
+const std::string &header::getPath() const noexcept
 {
     return m_path;
 }
 
-uint32_t header::getExpectedBodySize() noexcept
+uint32_t header::getExpectedBodySize() const noexcept
 {
     return m_expectedBodysize;
 }

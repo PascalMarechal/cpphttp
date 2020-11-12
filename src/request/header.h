@@ -15,11 +15,11 @@ namespace cpphttp
         public:
             header(const std::string& data);
 
-            bool isReady() noexcept;
-            method getMethod() noexcept;
-            version getVersion() noexcept;
-            std::string &getPath() noexcept;
-            uint32_t getExpectedBodySize() noexcept;
+            bool isReady() const noexcept;
+            method getMethod() const noexcept;
+            version getVersion() const noexcept;
+            const std::string &getPath() const noexcept;
+            uint32_t getExpectedBodySize() const noexcept;
 
             void setPath(std::string_view path) noexcept;
             void setExpectedBodySize(uint32_t size) noexcept;
