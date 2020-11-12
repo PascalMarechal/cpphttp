@@ -13,7 +13,7 @@ namespace cpphttp
         class header
         {
         public:
-            header(const std::string& data);
+            header(const std::string &data);
 
             bool isReady() const noexcept;
             method getMethod() const noexcept;
@@ -24,18 +24,20 @@ namespace cpphttp
             void setPath(std::string_view path) noexcept;
             void setExpectedBodySize(uint32_t size) noexcept;
 
+            friend bool operator==(const header &lhs, const header &rhs) noexcept;
+            friend bool operator!=(const header &lhs, const header &rhs) noexcept;
+            
         private:
             inline void parseMethodValue(std::string_view value) noexcept;
             inline void parseVersionValue(std::string_view value) noexcept;
             inline void parseRequestLine(std::string_view line) noexcept;
             inline void handleHeaderLine(std::string_view line) noexcept;
-            inline void parse(const std::string& data) noexcept;
+            inline void parse(const std::string &data) noexcept;
 
             bool m_ready;
             method m_method;
             version m_version;
             uint32_t m_expectedBodysize;
-
             std::string m_path;
         };
     } // namespace request

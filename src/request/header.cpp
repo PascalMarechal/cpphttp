@@ -126,3 +126,23 @@ void header::setExpectedBodySize(uint32_t size) noexcept
 {
     m_expectedBodysize = size;
 }
+
+namespace cpphttp
+{
+    namespace request
+    {
+        bool operator==(const header &lhs, const header &rhs) noexcept
+        {
+            return lhs.m_ready == rhs.m_ready &&
+                   lhs.m_method == rhs.m_method &&
+                   lhs.m_version == rhs.m_version &&
+                   lhs.m_expectedBodysize == rhs.m_expectedBodysize &&
+                   lhs.m_path == rhs.m_path;
+        }
+
+        bool operator!=(const header &lhs, const header &rhs) noexcept
+        {
+            return !(lhs == rhs);
+        }
+    } // namespace request
+} // namespace cpphttp

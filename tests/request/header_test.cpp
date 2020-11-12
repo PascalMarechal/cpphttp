@@ -62,3 +62,16 @@ TEST(Header, IncorrectBodySizeValue)
     header head(postRequestHeaderWithIncorrectLength);
     EXPECT_EQ(head.getExpectedBodySize(), 0);
 }
+
+TEST(Header, EqualityOperators)
+{
+    header head("GET /index HTTP/1.0\n\n");
+    header head2("GET /index HTTP/1.0\n\n");
+    EXPECT_TRUE(head == head2);
+    header head3("POST /index HTTP/1.0\n\n");
+    EXPECT_TRUE(head != head3);
+    header head4("GET /path42 HTTP/1.0\n\n");
+    EXPECT_TRUE(head != head4);
+    header head5("GET /index HTTP/1.1\n\n");
+    EXPECT_TRUE(head != head5);
+}
