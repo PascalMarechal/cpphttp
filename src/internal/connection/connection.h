@@ -18,7 +18,6 @@ namespace cpphttp
             void start()
             {
                 readHeader();
-                //asio::async_read_until(m_socket, asio::dynamic_buffer(m_headerBuffer), matcher, std::bind(&connection::onRead, this, std::placeholders::_1, std::placeholders::_2));
             }
 
         private:
