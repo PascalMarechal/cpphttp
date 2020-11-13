@@ -22,7 +22,7 @@ namespace cpphttp
             bool isReady() const noexcept;
             void setHeader(const std::string &data) noexcept;
             void setBody(const std::string &data) noexcept;
-            const cpphttp::request::header *header() const noexcept;
+            const cpphttp::request::header& header() const;
 
             friend bool operator==(const request &lhs, const request &rhs) noexcept;
             friend bool operator!=(const request &lhs, const request &rhs) noexcept;

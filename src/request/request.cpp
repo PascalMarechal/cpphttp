@@ -14,9 +14,11 @@ bool request::isReady() const noexcept
     return false;
 }
 
-const header *request::header() const noexcept
+const header &request::header() const
 {
-    return m_header.get();
+    if (m_header == nullptr)
+        throw std::invalid_argument("Header is NULL");
+    return *(m_header.get());
 }
 
 void request::setHeader(const std::string &data) noexcept
