@@ -23,6 +23,7 @@ public:
 
   MOCK_CONST_METHOD4(async_read_until, void(asio::ip::tcp::socket &, asio::dynamic_string_buffer<char, std::char_traits<char>, std::allocator<char>>, match_end_of_header &, std::function<void(std::error_code, std::size_t)>));
   MOCK_CONST_METHOD4(async_read_exactly, void(asio::ip::tcp::socket &, asio::dynamic_string_buffer<char, std::char_traits<char>, std::allocator<char>>, asio::detail::transfer_exactly_t, std::function<void(std::error_code, std::size_t)>));
+  MOCK_CONST_METHOD2(close_socket, void(asio::ip::tcp::socket &, std::error_code));
 
   void createFakePostReadMethods(uint32_t loops)
   {
@@ -34,6 +35,23 @@ public:
   {
     createFakeReadUntilMethod(loops, getRequestHeader);
     createFakeReadExactlyMethod(loops, "");
+  }
+
+  void createErrorInHeaderRead()
+  {
+    ON_CALL(*this, async_read_until).WillByDefault([this](asio::ip::tcp::socket &socket, asio::dynamic_string_buffer<char, std::char_traits<char>, std::allocator<char>> buffer, match_end_of_header &matcher, std::function<void(std::error_code, std::size_t)> callback) {
+      // Call handler
+      callback(std::make_error_code(std::errc::io_error), 0);
+    });
+  }
+
+  void createErrorInBodyRead()
+  {
+    createFakeReadUntilMethod(1, postRequestHeader);
+    ON_CALL(*this, async_read_exactly).WillByDefault([this](asio::ip::tcp::socket &socket, asio::dynamic_string_buffer<char, std::char_traits<char>, std::allocator<char>> buffer, asio::detail::transfer_exactly_t end, std::function<void(std::error_code, std::size_t)> callback) {
+      // Call handler
+      callback(std::make_error_code(std::errc::io_error), 0);
+    });
   }
 
   void createFakeReadUntilMethod(uint32_t loops, const std::string &dataToRead)
@@ -96,6 +114,36 @@ TEST(Connection, ReadRequestWithoutBody)
   EXPECT_CALL(functionsMock, async_read_until).Times(2);
   EXPECT_CALL(functionsMock, async_read_exactly).Times(0);
   EXPECT_CALL(routerMock, process(SameRequest(getRequestHeader, ""))).Times(1);
+  auto c = std::make_shared<connection<ConnectionFunctionsMock, RouterMock>>(std::move(sock), functionsMock, routerMock);
+  c->start();
+}
+
+TEST(Connection, ErrorInHeaderRead)
+{
+  asio::io_context context;
+  asio::ip::tcp::socket sock(context);
+  ConnectionFunctionsMock functionsMock;
+  functionsMock.createErrorInHeaderRead();
+  RouterMock routerMock;
+  EXPECT_CALL(functionsMock, async_read_until).Times(1);
+  EXPECT_CALL(functionsMock, async_read_exactly).Times(0);
+  EXPECT_CALL(routerMock, process).Times(0);
+  EXPECT_CALL(functionsMock, close_socket).Times(1);
+  auto c = std::make_shared<connection<ConnectionFunctionsMock, RouterMock>>(std::move(sock), functionsMock, routerMock);
+  c->start();
+}
+
+TEST(Connection, ErrorInBodyRead)
+{
+  asio::io_context context;
+  asio::ip::tcp::socket sock(context);
+  ConnectionFunctionsMock functionsMock;
+  functionsMock.createErrorInBodyRead();
+  RouterMock routerMock;
+  EXPECT_CALL(functionsMock, async_read_until).Times(1);
+  EXPECT_CALL(functionsMock, async_read_exactly).Times(1);
+  EXPECT_CALL(routerMock, process).Times(0);
+  EXPECT_CALL(functionsMock, close_socket).Times(1);
   auto c = std::make_shared<connection<ConnectionFunctionsMock, RouterMock>>(std::move(sock), functionsMock, routerMock);
   c->start();
 }
