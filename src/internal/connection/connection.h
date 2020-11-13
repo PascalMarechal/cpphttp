@@ -28,28 +28,28 @@ namespace cpphttp
 
             inline void readBody()
             {
-                m_currentRequest.setHeader(m_headerBuffer);
-                m_headerBuffer.clear();
                 m_functions.async_read_exactly(m_socket, asio::dynamic_buffer(m_bodyBuffer), asio::transfer_exactly(m_currentRequest.getHeader()->getExpectedBodySize()), std::bind(&connection::onReadBody, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
             }
 
             void onReadHeader(asio::error_code error, std::size_t bytes_transferred)
             {
-                readBody();
+                m_currentRequest.setHeader(m_headerBuffer);
+                m_headerBuffer.clear();
+                if (m_currentRequest.getHeader()->getExpectedBodySize() > 0)
+                    readBody();
+                else
+                {
+                    m_router.process(m_currentRequest);
+                    readHeader();
+                }
             }
 
             void onReadBody(asio::error_code error, std::size_t bytes_transferred)
             {
                 m_currentRequest.setBody(m_bodyBuffer);
                 m_bodyBuffer.clear();
-                m_functions.async_work(m_socket.get_executor(), [from = this->shared_from_this()]() mutable -> void {
-                    from->processRequests();
-                });
-            }
-
-            void processRequests()
-            {
                 m_router.process(m_currentRequest);
+                readHeader();
             }
 
             asio::ip::tcp::socket m_socket;
