@@ -1,5 +1,5 @@
 #include "requests.h"
-#include "tools/data_reader.h"
+#include "common/tools/data_reader.h"
 
 std::string Requests::PostRequestHeader = readFile("./data/headers/post_request.txt");
 std::string Requests::GetRequestHeader = readFile("./data/headers/get_request.txt");
