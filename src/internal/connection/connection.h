@@ -33,7 +33,8 @@ namespace cpphttp
 
             void processAndReadNextRequest()
             {
-                m_router.process(m_currentRequest);
+                auto response = m_router.process(m_currentRequest);
+                m_functions.write(m_socket, response);
                 readHeader();
             }
 

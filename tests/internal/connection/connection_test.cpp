@@ -7,10 +7,17 @@
 
 using namespace cpphttp::internal;
 
+std::string expectedRouterResult = "<h1>Router Result</h1>";
+
 class RouterMock
 {
 public:
   MOCK_CONST_METHOD1(process, std::string(const cpphttp::request::request &));
+
+  void createFakeProcess()
+  {
+    ON_CALL(*this, process).WillByDefault(testing::Return(expectedRouterResult));
+  }
 };
 
 class ConnectionFunctionsMock
@@ -24,6 +31,7 @@ public:
   MOCK_CONST_METHOD4(async_read_until, void(asio::ip::tcp::socket &, asio::dynamic_string_buffer<char, std::char_traits<char>, std::allocator<char>>, match_end_of_header &, std::function<void(std::error_code, std::size_t)>));
   MOCK_CONST_METHOD4(async_read_exactly, void(asio::ip::tcp::socket &, asio::dynamic_string_buffer<char, std::char_traits<char>, std::allocator<char>>, asio::detail::transfer_exactly_t, std::function<void(std::error_code, std::size_t)>));
   MOCK_CONST_METHOD2(close_socket, void(asio::ip::tcp::socket &, std::error_code));
+  MOCK_CONST_METHOD2(write, void(asio::ip::tcp::socket &, const std::string &));
 
   void createFakePostReadMethods(uint32_t loops)
   {
@@ -40,7 +48,6 @@ public:
   void createErrorInHeaderRead()
   {
     ON_CALL(*this, async_read_until).WillByDefault([this](asio::ip::tcp::socket &socket, asio::dynamic_string_buffer<char, std::char_traits<char>, std::allocator<char>> buffer, match_end_of_header &matcher, std::function<void(std::error_code, std::size_t)> callback) {
-      // Call handler
       callback(std::make_error_code(std::errc::io_error), 0);
     });
   }
@@ -54,7 +61,6 @@ public:
   {
     createFakeReadUntilMethod(1, postRequestHeader);
     ON_CALL(*this, async_read_exactly).WillByDefault([this](asio::ip::tcp::socket &socket, asio::dynamic_string_buffer<char, std::char_traits<char>, std::allocator<char>> buffer, asio::detail::transfer_exactly_t end, std::function<void(std::error_code, std::size_t)> callback) {
-      // Call handler
       callback(std::make_error_code(std::errc::io_error), 0);
     });
   }
@@ -67,7 +73,6 @@ public:
 
       buffer.grow(dataToRead.size());
       memcpy(buffer.data(0, dataToRead.size()).data(), dataToRead.c_str(), dataToRead.size());
-      // Call handler
       callback(std::error_code(), buffer.size());
     });
   }
@@ -79,7 +84,6 @@ public:
         return;
       buffer.grow(dataToRead.size());
       memcpy(buffer.data(0, dataToRead.size()).data(), dataToRead.c_str(), dataToRead.size());
-      // Call handler
       callback(std::error_code(), buffer.size());
     });
   }
@@ -101,11 +105,17 @@ TEST(Connection, ReadRequestWithBody)
   ConnectionFunctionsMock functionsMock;
   functionsMock.createFakePostReadMethods(2);
   RouterMock routerMock;
+  routerMock.createFakeProcess();
+  std::string writtenValue;
+
   EXPECT_CALL(functionsMock, async_read_until).Times(3);
   EXPECT_CALL(functionsMock, async_read_exactly).Times(2);
   EXPECT_CALL(routerMock, process(SameRequest(postRequestHeader, postRequestBody))).Times(2);
+  EXPECT_CALL(functionsMock, write).Times(2).WillOnce(testing::SaveArg<1>(&writtenValue));
   auto c = std::make_shared<connection<ConnectionFunctionsMock, RouterMock>>(std::move(sock), functionsMock, routerMock);
   c->start();
+
+  EXPECT_EQ(writtenValue, expectedRouterResult);
 }
 
 TEST(Connection, ReadRequestWithoutBody)
@@ -116,6 +126,7 @@ TEST(Connection, ReadRequestWithoutBody)
   EXPECT_CALL(functionsMock, async_read_until).Times(2);
   EXPECT_CALL(functionsMock, async_read_exactly).Times(0);
   EXPECT_CALL(routerMock, process(SameRequest(getRequestHeader, ""))).Times(1);
+  EXPECT_CALL(functionsMock, write).Times(1);
   auto c = std::make_shared<connection<ConnectionFunctionsMock, RouterMock>>(std::move(sock), functionsMock, routerMock);
   c->start();
 }
