@@ -7,7 +7,7 @@ using namespace cpphttp::request;
 TEST(Request, CompleteHeaderWithNoBody)
 {
     request req;
-    req.setHeader("GET /index HTTP/1.0\n\n");
+    req.setHeader(getRequestHeader);
     EXPECT_TRUE(req.isReady());
 }
 
