@@ -14,14 +14,14 @@ bool request::isReady() const noexcept
     return false;
 }
 
-const header *request::getHeader() const noexcept
+const header *request::header() const noexcept
 {
     return m_header.get();
 }
 
 void request::setHeader(const std::string &data) noexcept
 {
-    m_header = std::make_unique<header>(data);
+    m_header = std::make_unique<cpphttp::request::header>(data);
 }
 void request::setBody(const std::string &data) noexcept
 {

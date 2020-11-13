@@ -22,13 +22,13 @@ namespace cpphttp
             bool isReady() const noexcept;
             void setHeader(const std::string &data) noexcept;
             void setBody(const std::string &data) noexcept;
-            const header *getHeader() const noexcept;
+            const cpphttp::request::header *header() const noexcept;
 
             friend bool operator==(const request &lhs, const request &rhs) noexcept;
             friend bool operator!=(const request &lhs, const request &rhs) noexcept;
 
         private:
-            std::unique_ptr<header> m_header;
+            std::unique_ptr<cpphttp::request::header> m_header;
             std::unique_ptr<body> m_body;
         };
     } // namespace request

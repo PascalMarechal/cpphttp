@@ -28,7 +28,7 @@ namespace cpphttp
 
             inline void readBody()
             {
-                m_functions.async_read_exactly(m_socket, asio::dynamic_buffer(m_bodyBuffer), asio::transfer_exactly(m_currentRequest.getHeader()->getExpectedBodySize()), std::bind(&connection::onReadBody, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+                m_functions.async_read_exactly(m_socket, asio::dynamic_buffer(m_bodyBuffer), asio::transfer_exactly(m_currentRequest.header()->getExpectedBodySize()), std::bind(&connection::onReadBody, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
             }
 
             void processAndReadNextRequest()
@@ -45,10 +45,10 @@ namespace cpphttp
                 m_currentRequest.setHeader(m_headerBuffer);
                 m_headerBuffer.clear();
 
-                if (!m_currentRequest.getHeader()->isReady())
+                if (!m_currentRequest.header()->isReady())
                     return m_functions.close_socket(m_socket, error);
 
-                if (m_currentRequest.getHeader()->getExpectedBodySize() > 0)
+                if (m_currentRequest.header()->getExpectedBodySize() > 0)
                     readBody();
                 else
                     processAndReadNextRequest();
