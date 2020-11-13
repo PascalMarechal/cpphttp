@@ -53,13 +53,13 @@ TEST(Header, CompleteHeaderData)
 
 TEST(Header, ReadExpectedBodySize)
 {
-    header head(postRequestHeader);
+    header head(Requests::PostRequestHeader);
     EXPECT_EQ(head.getExpectedBodySize(), 32);
 }
 
 TEST(Header, IncorrectBodySizeValue)
 {
-    header head(postRequestHeaderWithIncorrectLength);
+    header head(Requests::PostRequestHeaderWithIncorrectLength);
     EXPECT_EQ(head.getExpectedBodySize(), 0);
 }
 

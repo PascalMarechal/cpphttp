@@ -7,21 +7,21 @@ using namespace cpphttp::request;
 TEST(Request, CompleteHeaderWithNoBody)
 {
     request req;
-    req.setHeader(getRequestHeader);
+    req.setHeader(Requests::GetRequestHeader);
     EXPECT_TRUE(req.isReady());
 }
 
 TEST(Request, CompleteHeaderWithMissingBody)
 {
     request req;
-    req.setHeader(postRequestHeader);
+    req.setHeader(Requests::PostRequestHeader);
     EXPECT_FALSE(req.isReady());
 }
 
 TEST(Request, CompleteHeaderWithIncompleteBody)
 {
     request req;
-    req.setHeader(postRequestHeader);
+    req.setHeader(Requests::PostRequestHeader);
     req.setBody("too short");
     EXPECT_FALSE(req.isReady());
 }
@@ -29,16 +29,16 @@ TEST(Request, CompleteHeaderWithIncompleteBody)
 TEST(Request, CompleteHeaderWithCompleteBody)
 {
     request req;
-    req.setHeader(postRequestHeader);
-    req.setBody(postRequestBody);
+    req.setHeader(Requests::PostRequestHeader);
+    req.setBody(Requests::PostRequestBody);
     EXPECT_TRUE(req.isReady());
 }
 
 TEST(Request, MoveOperators)
 {
     request req;
-    req.setHeader(postRequestHeader);
-    req.setBody(postRequestBody);
+    req.setHeader(Requests::PostRequestHeader);
+    req.setBody(Requests::PostRequestBody);
 
     // Copy constructor
     auto req2 = std::move(req);
@@ -64,24 +64,24 @@ TEST(Request, GetHeader)
 TEST(Request, EqualityOperators)
 {
     request req;
-    req.setHeader(postRequestHeader);
-    req.setBody(postRequestBody);
+    req.setHeader(Requests::PostRequestHeader);
+    req.setBody(Requests::PostRequestBody);
     request req2;
-    req2.setHeader(postRequestHeader);
-    req2.setBody(postRequestBody);
+    req2.setHeader(Requests::PostRequestHeader);
+    req2.setBody(Requests::PostRequestBody);
     EXPECT_TRUE(req == req2);
 
     request req3, req4;
     EXPECT_TRUE(req3 == req4);
     EXPECT_TRUE(req != req3);
 
-    req3.setHeader(postRequestHeader);
+    req3.setHeader(Requests::PostRequestHeader);
     EXPECT_TRUE(req3 != req);
 
     req3.setBody("nooope");
     EXPECT_TRUE(req3 != req);
 
-    req4.setBody(postRequestBody);
+    req4.setBody(Requests::PostRequestBody);
     EXPECT_TRUE(req4 != req);
 
     req2.setHeader("noope");
