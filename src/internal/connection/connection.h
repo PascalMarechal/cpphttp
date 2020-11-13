@@ -8,11 +8,11 @@ namespace cpphttp
 {
     namespace internal
     {
-        template <typename ConnectionFunctions, typename Router>
-        class connection : public std::enable_shared_from_this<connection<ConnectionFunctions, Router>>
+        template <typename Socket, typename ConnectionFunctions, typename Router>
+        class connection : public std::enable_shared_from_this<connection<Socket, ConnectionFunctions, Router>>
         {
         public:
-            connection(asio::ip::tcp::socket &&sock, const ConnectionFunctions &functions, const Router &router)
+            connection(Socket &&sock, const ConnectionFunctions &functions, const Router &router)
                 : m_socket(std::move(sock)), m_functions(functions), m_router(router){};
 
             void start()
@@ -41,13 +41,13 @@ namespace cpphttp
             void onReadHeader(asio::error_code error, std::size_t bytes_transferred)
             {
                 if (error)
-                    return m_functions.close_socket(m_socket, error);
+                    return m_socket.close(error);
 
                 m_currentRequest.setHeader(m_headerBuffer);
                 m_headerBuffer.clear();
 
                 if (!m_currentRequest.header().isReady())
-                    return m_functions.close_socket(m_socket, error);
+                    return m_socket.close(error);
 
                 if (m_currentRequest.header().getExpectedBodySize() > 0)
                     readBody();
@@ -58,14 +58,14 @@ namespace cpphttp
             void onReadBody(asio::error_code error, std::size_t bytes_transferred)
             {
                 if (error)
-                    return m_functions.close_socket(m_socket, error);
+                    return m_socket.close(error);
 
                 m_currentRequest.setBody(m_bodyBuffer);
                 m_bodyBuffer.clear();
                 processAndReadNextRequest();
             }
 
-            asio::ip::tcp::socket m_socket;
+            Socket m_socket;
             std::string m_headerBuffer;
             std::string m_bodyBuffer;
             const ConnectionFunctions &m_functions;
