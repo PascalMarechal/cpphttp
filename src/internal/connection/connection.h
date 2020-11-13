@@ -44,6 +44,10 @@ namespace cpphttp
 
                 m_currentRequest.setHeader(m_headerBuffer);
                 m_headerBuffer.clear();
+
+                if (!m_currentRequest.getHeader()->isReady())
+                    return m_functions.close_socket(m_socket, error);
+
                 if (m_currentRequest.getHeader()->getExpectedBodySize() > 0)
                     readBody();
                 else

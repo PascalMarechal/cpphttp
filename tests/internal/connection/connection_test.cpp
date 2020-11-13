@@ -45,6 +45,11 @@ public:
     });
   }
 
+  void createReadIncorrectHeaderData()
+  {
+    createFakeReadUntilMethod(1, "wrongHeaderData\r\n\r\n");
+  }
+
   void createErrorInBodyRead()
   {
     createFakeReadUntilMethod(1, postRequestHeader);
@@ -80,10 +85,11 @@ public:
   }
 };
 
+asio::io_context context;
+asio::ip::tcp::socket sock(context);
+
 TEST(Connection, Creation)
 {
-  asio::io_context context;
-  asio::ip::tcp::socket sock(context);
   ConnectionFunctionsMock functionsMock;
   RouterMock routerMock;
   EXPECT_CALL(functionsMock, async_read_until).Times(0);
@@ -92,8 +98,6 @@ TEST(Connection, Creation)
 
 TEST(Connection, ReadRequestWithBody)
 {
-  asio::io_context context;
-  asio::ip::tcp::socket sock(context);
   ConnectionFunctionsMock functionsMock;
   functionsMock.createFakePostReadMethods(2);
   RouterMock routerMock;
@@ -106,8 +110,6 @@ TEST(Connection, ReadRequestWithBody)
 
 TEST(Connection, ReadRequestWithoutBody)
 {
-  asio::io_context context;
-  asio::ip::tcp::socket sock(context);
   ConnectionFunctionsMock functionsMock;
   functionsMock.createFakeGetReadMethods(1);
   RouterMock routerMock;
@@ -120,8 +122,6 @@ TEST(Connection, ReadRequestWithoutBody)
 
 TEST(Connection, ErrorInHeaderRead)
 {
-  asio::io_context context;
-  asio::ip::tcp::socket sock(context);
   ConnectionFunctionsMock functionsMock;
   functionsMock.createErrorInHeaderRead();
   RouterMock routerMock;
@@ -135,13 +135,24 @@ TEST(Connection, ErrorInHeaderRead)
 
 TEST(Connection, ErrorInBodyRead)
 {
-  asio::io_context context;
-  asio::ip::tcp::socket sock(context);
   ConnectionFunctionsMock functionsMock;
   functionsMock.createErrorInBodyRead();
   RouterMock routerMock;
   EXPECT_CALL(functionsMock, async_read_until).Times(1);
   EXPECT_CALL(functionsMock, async_read_exactly).Times(1);
+  EXPECT_CALL(routerMock, process).Times(0);
+  EXPECT_CALL(functionsMock, close_socket).Times(1);
+  auto c = std::make_shared<connection<ConnectionFunctionsMock, RouterMock>>(std::move(sock), functionsMock, routerMock);
+  c->start();
+}
+
+TEST(Connection, IncorrectHeaderData)
+{
+  ConnectionFunctionsMock functionsMock;
+  functionsMock.createReadIncorrectHeaderData();
+  RouterMock routerMock;
+  EXPECT_CALL(functionsMock, async_read_until).Times(1);
+  EXPECT_CALL(functionsMock, async_read_exactly).Times(0);
   EXPECT_CALL(routerMock, process).Times(0);
   EXPECT_CALL(functionsMock, close_socket).Times(1);
   auto c = std::make_shared<connection<ConnectionFunctionsMock, RouterMock>>(std::move(sock), functionsMock, routerMock);
