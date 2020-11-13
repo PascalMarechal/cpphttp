@@ -39,20 +39,26 @@ TEST(Request, MoveOperators)
     request req;
     req.setHeader(postRequestHeader);
     req.setBody(postRequestBody);
-    EXPECT_NE(req.header(), nullptr);
 
     // Copy constructor
     auto req2 = std::move(req);
     EXPECT_TRUE(req2.isReady());
     EXPECT_FALSE(req.isReady());
-    EXPECT_EQ(req.header(), nullptr);
 
     // Asignement
     request req3;
     req3 = std::move(req2);
     EXPECT_TRUE(req3.isReady());
     EXPECT_FALSE(req2.isReady());
-    EXPECT_EQ(req2.header(), nullptr);
+}
+
+TEST(Request, GetHeader)
+{
+    request req;
+    EXPECT_THROW(req.header(), std::invalid_argument);
+
+    req.setHeader("Something");
+    EXPECT_NO_THROW(req.header());
 }
 
 TEST(Request, EqualityOperators)
