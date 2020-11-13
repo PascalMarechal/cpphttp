@@ -1,24 +1,13 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+
 #include "internal/connection/connection.h"
 #include "common/requests.h"
 #include "request/request.h"
-#include "common/request_matcher.h"
+#include "common/matchers/request_matcher.h"
+#include "common/mocks/router_mock.h"
 
 using namespace cpphttp::internal;
-
-std::string expectedRouterResult = "<h1>Router Result</h1>";
-
-class RouterMock
-{
-public:
-  MOCK_CONST_METHOD1(process, std::string(const cpphttp::request::request &));
-
-  void createFakeProcess()
-  {
-    ON_CALL(*this, process).WillByDefault(testing::Return(expectedRouterResult));
-  }
-};
 
 class SocketMock
 {
@@ -146,7 +135,7 @@ TEST(Connection, ReadRequestWithBody)
   auto c = std::make_shared<connection<SocketMockWrapper, ConnectionFunctionsMock, RouterMock>>(SocketMockWrapper(socketMock), functionsMock, routerMock);
   c->start();
 
-  EXPECT_EQ(writtenValue, expectedRouterResult);
+  EXPECT_EQ(writtenValue, RouterMock::ExpectedFakeResult);
 }
 
 TEST(Connection, ReadRequestWithoutBody)
