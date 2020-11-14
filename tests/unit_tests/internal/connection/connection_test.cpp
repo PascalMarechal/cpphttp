@@ -9,6 +9,7 @@
 #include "common/mocks/connection_functions_mock.h"
 
 using namespace cpphttp::internal;
+using namespace ::testing;
 
 TEST(Connection, Creation)
 {
@@ -32,7 +33,7 @@ TEST(Connection, ReadRequestWithBody)
   EXPECT_CALL(functionsMock, async_read_until).Times(3);
   EXPECT_CALL(functionsMock, async_read_exactly).Times(2);
   EXPECT_CALL(routerMock, process(SameRequest(Requests::PostRequestHeader, Requests::PostRequestBody))).Times(2);
-  EXPECT_CALL(functionsMock, write(testing::AllOf(testing::Property(&SocketMockWrapper::getSocket, socketMock)), RouterMock::ExpectedFakeResult)).Times(2);
+  EXPECT_CALL(functionsMock, write(AllOf(Property(&SocketMockWrapper::getSocket, socketMock)), RouterMock::ExpectedFakeResult)).Times(2);
   EXPECT_CALL(*socketMock, close).Times(0);
 
   auto c = std::make_shared<connection<SocketMockWrapper, ConnectionFunctionsMock, RouterMock>>(SocketMockWrapper(socketMock), functionsMock, routerMock);
