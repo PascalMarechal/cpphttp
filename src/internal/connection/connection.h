@@ -23,12 +23,12 @@ namespace cpphttp
         private:
             inline void readHeader()
             {
-                m_functions.async_read_until(m_socket, asio::dynamic_buffer(m_headerBuffer), m_matcher, std::bind(&connection::onReadHeader, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+                m_functions.async_read_until(m_socket, m_functions.createBuffer(m_headerBuffer), m_matcher, std::bind(&connection::onReadHeader, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
             }
 
             inline void readBody()
             {
-                m_functions.async_read_exactly(m_socket, asio::dynamic_buffer(m_bodyBuffer), asio::transfer_exactly(m_currentRequest.header().getExpectedBodySize()), std::bind(&connection::onReadBody, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+                m_functions.async_read_exactly(m_socket, m_functions.createBuffer(m_bodyBuffer), asio::transfer_exactly(m_currentRequest.header().getExpectedBodySize()), std::bind(&connection::onReadBody, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
             }
 
             void processAndReadNextRequest()
@@ -38,7 +38,7 @@ namespace cpphttp
                 readHeader();
             }
 
-            void onReadHeader(asio::error_code error, std::size_t bytes_transferred)
+            void onReadHeader(std::error_code error, std::size_t bytes_transferred)
             {
                 if (error)
                     return m_socket.close(error);
@@ -55,7 +55,7 @@ namespace cpphttp
                     processAndReadNextRequest();
             }
 
-            void onReadBody(asio::error_code error, std::size_t bytes_transferred)
+            void onReadBody(std::error_code error, std::size_t bytes_transferred)
             {
                 if (error)
                     return m_socket.close(error);
