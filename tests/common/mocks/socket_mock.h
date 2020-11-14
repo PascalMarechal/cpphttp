@@ -15,6 +15,7 @@ public:
     ~SocketMockWrapper();
 
     void close(std::error_code e);
+    SocketMock* getSocket() const;
 
 private:
     SocketMock *m_socket;

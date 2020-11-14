@@ -24,7 +24,7 @@ TEST(Connection, ReadRequestWithBody)
   auto socketMock = new SocketMock();
   ConnectionFunctionsMock functionsMock;
   RouterMock routerMock;
-  std::string writtenValue;
+  SocketMockWrapper* wrapper;
 
   functionsMock.createFakePostReadMethods(2);
   routerMock.createFakeProcess();
@@ -32,13 +32,11 @@ TEST(Connection, ReadRequestWithBody)
   EXPECT_CALL(functionsMock, async_read_until).Times(3);
   EXPECT_CALL(functionsMock, async_read_exactly).Times(2);
   EXPECT_CALL(routerMock, process(SameRequest(Requests::PostRequestHeader, Requests::PostRequestBody))).Times(2);
-  EXPECT_CALL(functionsMock, write).Times(2).WillRepeatedly(testing::SaveArg<1>(&writtenValue));
+  EXPECT_CALL(functionsMock, write(testing::AllOf(testing::Property(&SocketMockWrapper::getSocket, socketMock)), RouterMock::ExpectedFakeResult)).Times(2);
   EXPECT_CALL(*socketMock, close).Times(0);
 
   auto c = std::make_shared<connection<SocketMockWrapper, ConnectionFunctionsMock, RouterMock>>(SocketMockWrapper(socketMock), functionsMock, routerMock);
   c->start();
-
-  EXPECT_EQ(writtenValue, RouterMock::ExpectedFakeResult);
 }
 
 TEST(Connection, ReadRequestWithoutBody)

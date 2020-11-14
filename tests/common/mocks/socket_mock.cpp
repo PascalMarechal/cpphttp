@@ -17,3 +17,8 @@ void SocketMockWrapper::close(std::error_code e)
 {
     m_socket->close(e);
 }
+
+SocketMock *SocketMockWrapper::getSocket() const
+{
+    return m_socket;
+}
