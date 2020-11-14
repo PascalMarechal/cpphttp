@@ -11,6 +11,11 @@
 using namespace cpphttp::internal;
 using namespace ::testing;
 
+auto matchSocketMock(SocketMock* toMatch)
+{
+  return AllOf(Property(&SocketMockWrapper::getSocket, toMatch));
+}
+
 TEST(Connection, Creation)
 {
   ConnectionFunctionsMock functionsMock;
@@ -25,15 +30,15 @@ TEST(Connection, ReadRequestWithBody)
   auto socketMock = new SocketMock();
   ConnectionFunctionsMock functionsMock;
   RouterMock routerMock;
-  SocketMockWrapper* wrapper;
+  SocketMockWrapper *wrapper;
 
   functionsMock.createFakePostReadMethods(2);
   routerMock.createFakeProcess();
 
-  EXPECT_CALL(functionsMock, async_read_until).Times(3);
-  EXPECT_CALL(functionsMock, async_read_exactly).Times(2);
+  EXPECT_CALL(functionsMock, async_read_until(matchSocketMock(socketMock), _, _, _)).Times(3);
+  EXPECT_CALL(functionsMock, async_read_exactly(matchSocketMock(socketMock), _, _, _)).Times(2);
   EXPECT_CALL(routerMock, process(SameRequest(Requests::PostRequestHeader, Requests::PostRequestBody))).Times(2);
-  EXPECT_CALL(functionsMock, write(AllOf(Property(&SocketMockWrapper::getSocket, socketMock)), RouterMock::ExpectedFakeResult)).Times(2);
+  EXPECT_CALL(functionsMock, write(matchSocketMock(socketMock), RouterMock::ExpectedFakeResult)).Times(2);
   EXPECT_CALL(*socketMock, close).Times(0);
 
   auto c = std::make_shared<connection<SocketMockWrapper, ConnectionFunctionsMock, RouterMock>>(SocketMockWrapper(socketMock), functionsMock, routerMock);
@@ -48,8 +53,8 @@ TEST(Connection, ReadRequestWithoutBody)
 
   functionsMock.createFakeGetReadMethods(1);
 
-  EXPECT_CALL(functionsMock, async_read_until).Times(2);
-  EXPECT_CALL(functionsMock, async_read_exactly).Times(0);
+  EXPECT_CALL(functionsMock, async_read_until(matchSocketMock(socketMock), _, _, _)).Times(2);
+  EXPECT_CALL(functionsMock, async_read_exactly(matchSocketMock(socketMock), _, _, _)).Times(0);
   EXPECT_CALL(routerMock, process(SameRequest(Requests::GetRequestHeader, ""))).Times(1);
   EXPECT_CALL(functionsMock, write).Times(1);
   EXPECT_CALL(*socketMock, close).Times(0);
@@ -66,7 +71,7 @@ TEST(Connection, ErrorInHeaderRead)
 
   functionsMock.createErrorInHeaderRead();
 
-  EXPECT_CALL(functionsMock, async_read_until).Times(1);
+  EXPECT_CALL(functionsMock, async_read_until(matchSocketMock(socketMock), _, _, _)).Times(1);
   EXPECT_CALL(functionsMock, async_read_exactly).Times(0);
   EXPECT_CALL(routerMock, process).Times(0);
   EXPECT_CALL(*socketMock, close).Times(1);
@@ -83,8 +88,8 @@ TEST(Connection, ErrorInBodyRead)
 
   functionsMock.createErrorInBodyRead();
 
-  EXPECT_CALL(functionsMock, async_read_until).Times(1);
-  EXPECT_CALL(functionsMock, async_read_exactly).Times(1);
+  EXPECT_CALL(functionsMock, async_read_until(matchSocketMock(socketMock), _, _, _)).Times(1);
+  EXPECT_CALL(functionsMock, async_read_exactly(matchSocketMock(socketMock), _, _, _)).Times(1);
   EXPECT_CALL(routerMock, process).Times(0);
   EXPECT_CALL(*socketMock, close).Times(1);
 
@@ -100,7 +105,7 @@ TEST(Connection, IncorrectHeaderData)
 
   functionsMock.createReadIncorrectHeaderData();
 
-  EXPECT_CALL(functionsMock, async_read_until).Times(1);
+  EXPECT_CALL(functionsMock, async_read_until(matchSocketMock(socketMock), _, _, _)).Times(1);
   EXPECT_CALL(functionsMock, async_read_exactly).Times(0);
   EXPECT_CALL(routerMock, process).Times(0);
   EXPECT_CALL(*socketMock, close).Times(1);
