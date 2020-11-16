@@ -1,8 +1,6 @@
 #pragma once
 #include <functional>
-#include "internal/asio.h"
 #include "request/request.h"
-#include "match_end_of_header.h"
 
 namespace cpphttp
 {
@@ -23,12 +21,12 @@ namespace cpphttp
         private:
             inline void readHeader()
             {
-                m_functions.async_read_header(m_socket, m_functions.createBuffer(m_headerBuffer), m_matcher, std::bind(&connection::onReadHeader, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+                m_functions.async_read_header(m_socket, m_functions.createBuffer(m_headerBuffer), m_functions.headerEndMatcher(), std::bind(&connection::onReadHeader, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
             }
 
             inline void readBody()
             {
-                m_functions.async_read_body(m_socket, m_functions.createBuffer(m_bodyBuffer), asio::transfer_exactly(m_currentRequest.header().getExpectedBodySize()), std::bind(&connection::onReadBody, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+                m_functions.async_read_body(m_socket, m_functions.createBuffer(m_bodyBuffer), m_functions.bodyEndMatcher(m_currentRequest.header().getExpectedBodySize()), std::bind(&connection::onReadBody, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
             }
 
             void processAndReadNextRequest()
@@ -66,12 +64,11 @@ namespace cpphttp
             }
 
             Socket m_socket;
-            std::string m_headerBuffer;
-            std::string m_bodyBuffer;
             const ConnectionFunctions &m_functions;
             const Router &m_router;
 
-            static inline match_end_of_header m_matcher;
+            std::string m_headerBuffer;
+            std::string m_bodyBuffer;
             cpphttp::request::request m_currentRequest;
         };
     } // namespace internal
