@@ -2,8 +2,9 @@
 Make websites with cpp.
 
 ## Before You Begin
-You need to install cmake & google test with mocks on your system or use docker.
-Check "Dockerfile.dev" for more information.
+You need to install cmake to build the library.\
+You also need libcurl4 & gtest with mocks on your system to run tests.\
+If you have docker you can also run your test using the docker-compose file. (check "Dockerfile.dev" for more information)
 
 ## Docker
 In order to test the project with docker you have to make sure your environment is up by using.
