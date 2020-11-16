@@ -23,12 +23,12 @@ namespace cpphttp
         private:
             inline void readHeader()
             {
-                m_functions.async_read_until(m_socket, m_functions.createBuffer(m_headerBuffer), m_matcher, std::bind(&connection::onReadHeader, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+                m_functions.async_read_header(m_socket, m_functions.createBuffer(m_headerBuffer), m_matcher, std::bind(&connection::onReadHeader, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
             }
 
             inline void readBody()
             {
-                m_functions.async_read_exactly(m_socket, m_functions.createBuffer(m_bodyBuffer), asio::transfer_exactly(m_currentRequest.header().getExpectedBodySize()), std::bind(&connection::onReadBody, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+                m_functions.async_read_body(m_socket, m_functions.createBuffer(m_bodyBuffer), asio::transfer_exactly(m_currentRequest.header().getExpectedBodySize()), std::bind(&connection::onReadBody, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
             }
 
             void processAndReadNextRequest()

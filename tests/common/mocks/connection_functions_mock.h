@@ -9,8 +9,8 @@ class ConnectionFunctionsMock
 public:
     ConnectionFunctionsMock();
 
-    MOCK_CONST_METHOD4(async_read_until, void(SocketMockWrapper &, std::string&, cpphttp::internal::match_end_of_header &, std::function<void(std::error_code, std::size_t)>));
-    MOCK_CONST_METHOD4(async_read_exactly, void(SocketMockWrapper &, std::string&, asio::detail::transfer_exactly_t, std::function<void(std::error_code, std::size_t)>));
+    MOCK_CONST_METHOD4(async_read_header, void(SocketMockWrapper &, std::string&, cpphttp::internal::match_end_of_header &, std::function<void(std::error_code, std::size_t)>));
+    MOCK_CONST_METHOD4(async_read_body, void(SocketMockWrapper &, std::string&, asio::detail::transfer_exactly_t, std::function<void(std::error_code, std::size_t)>));
     MOCK_CONST_METHOD2(write, void(SocketMockWrapper &, const std::string &));
     MOCK_CONST_METHOD1(createBuffer, std::string&(std::string&));
 
