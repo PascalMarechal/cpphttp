@@ -19,7 +19,7 @@ TEST(ResponseHeader, StatusShouldBe200AtStart)
 TEST(ResponseHeader, StatusCanBeChanged)
 {
     header head;
-    head.setStatus(status::_404);
+    head.status(status::_404);
     EXPECT_EQ(head.status(), status::_404);
 }
 
@@ -37,7 +37,7 @@ TEST(ResponseHeader, ToString)
 {
     header head;
     EXPECT_EQ(head.toString(), "HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n");
-    head.setStatus(status::_202);
+    head.status(status::_202);
     head.setContentLength(450);
     EXPECT_EQ(head.toString(), "HTTP/1.1 202 Accepted\r\nContent-Length: 450\r\n\r\n");
 }

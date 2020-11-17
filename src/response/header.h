@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <memory>
 #include "request/version.h"
 #include "response/status.h"
 
@@ -12,16 +12,17 @@ namespace cpphttp
         {
         public:
             header();
+            ~header();
             request::version version() const noexcept;
             response::status status() const noexcept;
             uint32_t contentLength() const noexcept;
-            void setStatus(response::status status) noexcept;
+            void status(response::status status) noexcept;
             void setContentLength(uint32_t length) noexcept;
             std::string toString() const noexcept;
 
         private:
-            response::status m_status;
-            uint32_t m_contentLength;
+            class impl;
+            std::unique_ptr<impl> m_impl;
         };
     } // namespace response
 } // namespace cpphttp

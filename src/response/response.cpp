@@ -8,7 +8,7 @@ class response::impl
 public:
     void status(cpphttp::response::status s) noexcept
     {
-        m_header.setStatus(s);
+        m_header.status(s);
     }
     std::string toString() const noexcept
     {

@@ -5,37 +5,47 @@
 using namespace cpphttp;
 using namespace response;
 
-header::header() : m_status(status::_200), m_contentLength(0)
+class header::impl
 {
-}
+public:
+    impl() : m_status(status::_200), m_contentLength(0)
+    {
+    }
+    request::version version() const noexcept
+    {
+        return request::version::_1_1;
+    }
+    response::status status() const noexcept
+    {
+        return m_status;
+    }
+    uint32_t contentLength() const noexcept
+    {
+        return m_contentLength;
+    }
+    void status(response::status status) noexcept
+    {
+        m_status = status;
+    }
+    void setContentLength(uint32_t length) noexcept
+    {
+        m_contentLength = length;
+    }
+    std::string toString() const noexcept
+    {
+        std::ostringstream result;
 
-request::version header::version() const noexcept
-{
-    return request::version::_1_1;
-}
+        auto statusText = m_statusMapping.find(m_status);
+        result << "HTTP/1.1 " << statusText->second
+               << "\r\nContent-Length: " << m_contentLength << "\r\n\r\n";
+        return result.str();
+    }
 
-status header::status() const noexcept
-{
-    return m_status;
-}
+private:
+    response::status m_status;
+    uint32_t m_contentLength;
 
-void header::setStatus(response::status status) noexcept
-{
-    m_status = status;
-}
-
-uint32_t header::contentLength() const noexcept
-{
-    return m_contentLength;
-}
-
-void header::setContentLength(uint32_t length) noexcept
-{
-    m_contentLength = length;
-}
-
-const std::unordered_map<status, std::string>
-    statusMapping =
+    const inline static std::unordered_map<response::status, std::string> m_statusMapping =
         {{status::_200, "200 OK"},
          {status::_201, "201 Created"},
          {status::_202, "202 Accepted"},
@@ -53,13 +63,40 @@ const std::unordered_map<status, std::string>
          {status::_403, "403 Forbidden"},
          {status::_404, "404 Not Found"},
          {status::_405, "405 Method Not Allowed"}};
+};
+
+header::header() : m_impl(std::make_unique<impl>())
+{
+}
+
+header::~header() {}
+
+request::version header::version() const noexcept
+{
+    return m_impl->version();
+}
+
+status header::status() const noexcept
+{
+    return m_impl->status();
+}
+
+void header::status(response::status s) noexcept
+{
+    m_impl->status(s);
+}
+
+uint32_t header::contentLength() const noexcept
+{
+    return m_impl->contentLength();
+}
+
+void header::setContentLength(uint32_t length) noexcept
+{
+    return m_impl->setContentLength(length);
+}
 
 std::string header::toString() const noexcept
 {
-    std::ostringstream result;
-
-    auto statusText = statusMapping.find(m_status);
-    result << "HTTP/1.1 " << statusText->second
-           << "\r\nContent-Length: " << m_contentLength << "\r\n\r\n";
-    return result.str();
+    return m_impl->toString();
 }
