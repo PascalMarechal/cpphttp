@@ -34,24 +34,6 @@ TEST(Request, CompleteHeaderWithCompleteBody)
     EXPECT_TRUE(req.isReady());
 }
 
-TEST(Request, MoveOperators)
-{
-    request req;
-    req.setHeader(Requests::PostRequestHeader);
-    req.setBody(Requests::PostRequestBody);
-
-    // Copy constructor
-    auto req2 = std::move(req);
-    EXPECT_TRUE(req2.isReady());
-    EXPECT_FALSE(req.isReady());
-
-    // Asignement
-    request req3;
-    req3 = std::move(req2);
-    EXPECT_TRUE(req3.isReady());
-    EXPECT_FALSE(req2.isReady());
-}
-
 TEST(Request, GetHeader)
 {
     request req;

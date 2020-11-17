@@ -11,13 +11,13 @@ namespace cpphttp
         class request
         {
         public:
-            request() = default;
+            request();
+            ~request();
             // No Copy
             request(const request &) = delete;
             request &operator=(const request &) = delete;
-            // rValue Copy only
-            request(request &&toCopy) noexcept;
-            request &operator=(request &&toCopy) noexcept;
+            request(request &&toCopy) = delete;
+            request &operator=(request &&toCopy) = delete;
 
             bool isReady() const noexcept;
             void setHeader(const std::string &data) noexcept;
@@ -28,8 +28,8 @@ namespace cpphttp
             friend bool operator!=(const request &lhs, const request &rhs) noexcept;
 
         private:
-            std::unique_ptr<cpphttp::request::header> m_header;
-            std::unique_ptr<body> m_body;
+            class impl;
+            std::unique_ptr<impl> m_impl;
         };
     } // namespace request
 } // namespace cpphttp
