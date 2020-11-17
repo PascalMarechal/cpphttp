@@ -6,25 +6,48 @@ using namespace cpphttp::response;
 class response::impl
 {
 public:
-    void status(cpphttp::response::status s) noexcept
+    impl() : m_bodyLength(0), m_end(false) {}
+
+    inline void status(cpphttp::response::status s) noexcept
     {
         m_header.status(s);
     }
-    std::string toString() const noexcept
+
+    inline std::string toString() const noexcept
     {
         return m_header.toString() + m_body.str();
     }
-    void write(const std::string &data) noexcept
+
+    inline void write(const std::string &data) noexcept
     {
+        if (hasEnded())
+            return;
         m_bodyLength += data.size();
         m_header.setContentLength(m_bodyLength);
         m_body << data;
+    }
+
+    inline void send(const std::string &data) noexcept
+    {
+        write(data);
+        end();
+    }
+
+    inline void end() noexcept
+    {
+        m_end = true;
+    }
+
+    inline bool hasEnded() const noexcept
+    {
+        return m_end;
     }
 
 private:
     header m_header;
     std::ostringstream m_body;
     uint32_t m_bodyLength;
+    bool m_end;
 };
 
 response::response() : m_impl(std::make_unique<impl>())
@@ -46,4 +69,19 @@ std::string response::toString() const noexcept
 void response::write(const std::string &data) noexcept
 {
     m_impl->write(data);
+}
+
+void response::end() noexcept
+{
+    m_impl->end();
+}
+
+bool response::hasEnded() const noexcept
+{
+    return m_impl->hasEnded();
+}
+
+void response::send(const std::string &data) noexcept
+{
+    m_impl->send(data);
 }

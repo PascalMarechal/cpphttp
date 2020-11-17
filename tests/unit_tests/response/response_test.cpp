@@ -18,3 +18,23 @@ TEST(Response, Write)
     res.write("<p>Some Text</p>");
     EXPECT_EQ(res.toString(), "HTTP/1.1 200 OK\r\nContent-Length: 37\r\n\r\n<h1>Hello World!</h1><p>Some Text</p>");
 }
+
+TEST(Response, End)
+{
+    response res;
+    EXPECT_FALSE(res.hasEnded());
+    res.write("Something");
+    res.end();
+    res.write("Something");
+    EXPECT_EQ(res.toString(), "HTTP/1.1 200 OK\r\nContent-Length: 9\r\n\r\nSomething");
+    EXPECT_TRUE(res.hasEnded());
+}
+
+TEST(Response, Send)
+{
+    response res;
+    EXPECT_FALSE(res.hasEnded());
+    res.send("Something");
+    res.send("Something");
+    EXPECT_EQ(res.toString(), "HTTP/1.1 200 OK\r\nContent-Length: 9\r\n\r\nSomething");
+}

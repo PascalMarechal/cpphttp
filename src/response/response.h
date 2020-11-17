@@ -16,6 +16,9 @@ namespace cpphttp
             void status(cpphttp::response::status) noexcept;
             std::string toString() const noexcept;
             void write(const std::string &data) noexcept;
+            void send(const std::string &data) noexcept;
+            void end() noexcept;
+            bool hasEnded() const noexcept;
 
         private:
             class impl;
