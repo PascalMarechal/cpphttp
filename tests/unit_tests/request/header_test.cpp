@@ -6,43 +6,43 @@
 using namespace cpphttp::request;
 using namespace cpphttp::tools;
 
-TEST(Header, EmptyHeader)
+TEST(RequestHeader, EmptyHeader)
 {
     header head("");
     EXPECT_EQ(head.isReady(), false);
 }
 
-TEST(Header, CompleteHeader)
+TEST(RequestHeader, CompleteHeader)
 {
     header head("GET /index HTTP/1.0\n\n");
     EXPECT_EQ(head.isReady(), true);
 }
 
-TEST(Header, CompleteWindowsHeader)
+TEST(RequestHeader, CompleteWindowsHeader)
 {
     header head("GET /index HTTP/1.0\r\n\r\n");
     EXPECT_EQ(head.isReady(), true);
 }
 
-TEST(Header, MissingRequestLine)
+TEST(RequestHeader, MissingRequestLine)
 {
     header head("User-Agent: HTTPTool/1.0\n\n");
     EXPECT_EQ(head.isReady(), false);
 }
 
-TEST(Header, IncompleteRequestLine)
+TEST(RequestHeader, IncompleteRequestLine)
 {
     header head("GET HTTP/1.0\n\n");
     EXPECT_EQ(head.isReady(), false);
 }
 
-TEST(Header, WrongOrderRequestLine)
+TEST(RequestHeader, WrongOrderRequestLine)
 {
     header head("GET HTTP/1.0 /hello\n\n");
     EXPECT_EQ(head.isReady(), false);
 }
 
-TEST(Header, CompleteHeaderData)
+TEST(RequestHeader, CompleteHeaderData)
 {
     header head("GET /index HTTP/1.0\n\n");
     EXPECT_EQ(head.isReady(), true);
@@ -51,19 +51,19 @@ TEST(Header, CompleteHeaderData)
     EXPECT_EQ(head.getVersion(), version::_1);
 }
 
-TEST(Header, ReadExpectedBodySize)
+TEST(RequestHeader, ReadExpectedBodySize)
 {
     header head(Requests::PostRequestHeader);
     EXPECT_EQ(head.getExpectedBodySize(), 32);
 }
 
-TEST(Header, IncorrectBodySizeValue)
+TEST(RequestHeader, IncorrectBodySizeValue)
 {
     header head(Requests::PostRequestHeaderWithIncorrectLength);
     EXPECT_EQ(head.getExpectedBodySize(), 0);
 }
 
-TEST(Header, EqualityOperators)
+TEST(RequestHeader, EqualityOperators)
 {
     header head("GET /index HTTP/1.0\n\n");
     header head2("GET /index HTTP/1.0\n\n");
