@@ -2,6 +2,7 @@
 
 #include "status.h"
 #include "header.h"
+#include <memory>
 
 namespace cpphttp
 {
@@ -10,14 +11,15 @@ namespace cpphttp
         class response
         {
         public:
+            response();
+            ~response();
             void status(cpphttp::response::status) noexcept;
-            std::string toString() noexcept;
-            void write(const std::string& data) noexcept;
-        private:
-            void setHeaderLength() noexcept;
+            std::string toString() const noexcept;
+            void write(const std::string &data) noexcept;
 
-            header m_header;
-            std::string m_body;
+        private:
+            class impl;
+            std::unique_ptr<impl> m_impl;
         };
     } // namespace response
 } // namespace cpphttp
