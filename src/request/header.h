@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <memory>
 #include "method.h"
 #include "version.h"
 
@@ -14,6 +14,7 @@ namespace cpphttp
         {
         public:
             header(const std::string &data);
+            ~header();
 
             bool isReady() const noexcept;
             method getMethod() const noexcept;
@@ -21,24 +22,12 @@ namespace cpphttp
             const std::string &getPath() const noexcept;
             uint32_t getExpectedBodySize() const noexcept;
 
-            void setPath(std::string_view path) noexcept;
-            void setExpectedBodySize(uint32_t size) noexcept;
-
             friend bool operator==(const header &lhs, const header &rhs) noexcept;
             friend bool operator!=(const header &lhs, const header &rhs) noexcept;
-            
-        private:
-            inline void parseMethodValue(std::string_view value) noexcept;
-            inline void parseVersionValue(std::string_view value) noexcept;
-            inline void parseRequestLine(std::string_view line) noexcept;
-            inline void handleHeaderLine(std::string_view line) noexcept;
-            inline void parse(const std::string &data) noexcept;
 
-            bool m_ready;
-            method m_method;
-            version m_version;
-            uint32_t m_expectedBodysize;
-            std::string m_path;
+        private:
+            class impl;
+            std::unique_ptr<impl> m_impl;
         };
     } // namespace request
 } // namespace cpphttp
