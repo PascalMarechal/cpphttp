@@ -35,7 +35,7 @@ public:
     {
         std::ostringstream result;
 
-        auto statusText = m_statusMapping.find(m_status);
+        auto statusText = statusMapping.find(m_status);
         result << "HTTP/1.1 " << statusText->second
                << "\r\nContent-Length: " << m_contentLength << "\r\n\r\n";
         return result.str();
@@ -45,7 +45,7 @@ private:
     response::status m_status;
     uint32_t m_contentLength;
 
-    const inline static std::unordered_map<response::status, std::string> m_statusMapping =
+    const inline static std::unordered_map<response::status, std::string> statusMapping =
         {{status::_200, "200 OK"},
          {status::_201, "201 Created"},
          {status::_202, "202 Accepted"},
