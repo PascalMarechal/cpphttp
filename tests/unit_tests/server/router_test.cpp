@@ -82,3 +82,22 @@ TEST(Router, ShouldStopErrorFunctionsAtFirstSend)
     auto result = router.process(*postRequest);
     EXPECT_THAT(result, HasSubstr("501 Not Implemented"));
 }
+
+TEST(Router, ShouldHaveVariadicErrorFunctionSetter)
+{
+    router router;
+    auto errorFunction = [](const std::string &error, request &req, response &res) {
+        res.status(status::_501);
+    };
+    auto errorFunction2 = [](const std::string &error, request &req, response &res) {
+        res.write("<h1>Whoops</h1>");
+    };
+    auto errorFunction3 = [](const std::string &error, request &req, response &res) {
+        res.send("<h2>Heyyyy</h2>");
+    };
+    router.error(errorFunction, errorFunction2, errorFunction3);
+    auto result = router.process(*postRequest);
+    EXPECT_THAT(result, HasSubstr("501 Not Implemented"));
+    EXPECT_THAT(result, HasSubstr("<h1>Whoops</h1>"));
+    EXPECT_THAT(result, HasSubstr("<h2>Heyyyy</h2>"));
+}

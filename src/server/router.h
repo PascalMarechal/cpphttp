@@ -15,7 +15,16 @@ namespace cpphttp
             router();
             ~router();
             std::string process(cpphttp::request::request &);
+
             void error(error_function f);
+
+            template <typename T, typename... T2, typename std::enable_if<0 != sizeof...(T2), int>::type = 0>
+            void error(T f, T2... others)
+            {
+                static_assert(std::is_convertible_v<T, error_function>, "Is not a function");
+                error(f);
+                error(others...);
+            }
 
         private:
             class impl;
