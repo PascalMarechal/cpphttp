@@ -17,10 +17,10 @@ public:
 
         callErrorFunctions("error", req, res);
 
-        if (res.hasEnded())
-            return res.toString();
+        if (!res.hasEnded())
+            defaultError(res);
 
-        return "500 Internal Server Error";
+        return res.toString();
     }
 
     void error(error_function f)
@@ -39,6 +39,12 @@ private:
                 break;
             f(error, req, res);
         }
+    }
+
+    void defaultError(response::response &res)
+    {
+        res.status(status::_500);
+        res.send("Internal Server Error Detected.");
     }
 };
 
