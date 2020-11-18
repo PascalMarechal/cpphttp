@@ -23,7 +23,8 @@ namespace cpphttp
             _403,
             _404,
             _405,
-            _500
+            _500,
+            _501
         };
     }
 } // namespace cpphttp

@@ -63,7 +63,8 @@ private:
          {status::_403, "403 Forbidden"},
          {status::_404, "404 Not Found"},
          {status::_405, "405 Method Not Allowed"},
-         {status::_500, "500 Internal Server Error"}};
+         {status::_500, "500 Internal Server Error"},
+         {status::_501, "501 Not Implemented"}};
 };
 
 header::header() : m_impl(std::make_unique<impl>())
