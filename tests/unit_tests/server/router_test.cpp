@@ -51,3 +51,37 @@ TEST(Router, ShouldBeAbleToUseOtherErrorFunctions)
     EXPECT_THAT(router.process(*req), HasSubstr("501 Not Implemented"));
     EXPECT_THAT(router.process(*req), HasSubstr("<h1> Error !!! </h1>"));
 }
+
+TEST(Router, ShouldBeAbleToUseOtherErrorFunctionsInCascade)
+{
+    router router;
+    auto errorFunction = [](const std::string &error, request &req, response &res) {
+        res.status(status::_501);
+    };
+    auto errorFunction2 = [](const std::string &error, request &req, response &res) {
+        res.send("<h1>Whoops</h1>");
+    };
+    router.error(errorFunction);
+    router.error(errorFunction2);
+    auto req = getCorrectPostRequest();
+    auto result = router.process(*req);
+    EXPECT_THAT(result, HasSubstr("501 Not Implemented"));
+    EXPECT_THAT(result, HasSubstr("<h1>Whoops</h1>"));
+}
+
+TEST(Router, ShouldStopErrorFunctionsAtFirstSend)
+{
+    router router;
+    auto errorFunction = [](const std::string &error, request &req, response &res) {
+        res.status(status::_501);
+        res.send("<h1>Something</h1>");
+    };
+    auto errorFunction2 = [](const std::string &error, request &req, response &res) {
+        res.status(status::_500);
+    };
+    router.error(errorFunction);
+    router.error(errorFunction2);
+    auto req = getCorrectPostRequest();
+    auto result = router.process(*req);
+    EXPECT_THAT(result, HasSubstr("501 Not Implemented"));
+}

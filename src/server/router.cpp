@@ -1,5 +1,7 @@
 #include "router.h"
 
+#include <deque>
+
 using namespace cpphttp::server;
 using namespace cpphttp::response;
 
@@ -13,8 +15,7 @@ public:
 
         response::response res;
 
-        if (m_errorFunction)
-            m_errorFunction("error", req, res);
+        callErrorFunctions("error", req, res);
 
         if (res.hasEnded())
             return res.toString();
@@ -24,11 +25,21 @@ public:
 
     void error(error_function f)
     {
-        m_errorFunction = f;
+        m_errorFunctions.push_back(f);
     }
 
 private:
-    error_function m_errorFunction = nullptr;
+    std::deque<error_function> m_errorFunctions;
+
+    void callErrorFunctions(const std::string &error, request::request &req, response::response &res)
+    {
+        for (error_function f : m_errorFunctions)
+        {
+            if (res.hasEnded())
+                break;
+            f(error, req, res);
+        }
+    }
 };
 
 router::router() : m_impl(std::make_unique<impl>()) {}
