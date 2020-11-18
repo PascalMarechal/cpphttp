@@ -18,6 +18,8 @@ std::unique_ptr<request> getCorrectPostRequest()
     return req;
 }
 
+auto postRequest = getCorrectPostRequest();
+
 TEST(Router, ShouldThrowWithInvalidRequest)
 {
     router router;
@@ -28,15 +30,13 @@ TEST(Router, ShouldThrowWithInvalidRequest)
 TEST(Router, ShouldNotThrowWithValidRequest)
 {
     router router;
-    auto req = getCorrectPostRequest();
-    EXPECT_NO_THROW(router.process(*req));
+    EXPECT_NO_THROW(router.process(*postRequest));
 }
 
 TEST(Router, ShouldHaveDefaultInternalErrorResponse)
 {
     router router;
-    auto req = getCorrectPostRequest();
-    EXPECT_THAT(router.process(*req), HasSubstr("500 Internal Server Error"));
+    EXPECT_THAT(router.process(*postRequest), HasSubstr("500 Internal Server Error"));
 }
 
 TEST(Router, ShouldBeAbleToUseOtherErrorFunctions)
@@ -47,9 +47,8 @@ TEST(Router, ShouldBeAbleToUseOtherErrorFunctions)
         res.send("<h1> Error !!! </h1>");
     };
     router.error(errorFunction);
-    auto req = getCorrectPostRequest();
-    EXPECT_THAT(router.process(*req), HasSubstr("501 Not Implemented"));
-    EXPECT_THAT(router.process(*req), HasSubstr("<h1> Error !!! </h1>"));
+    EXPECT_THAT(router.process(*postRequest), HasSubstr("501 Not Implemented"));
+    EXPECT_THAT(router.process(*postRequest), HasSubstr("<h1> Error !!! </h1>"));
 }
 
 TEST(Router, ShouldBeAbleToUseOtherErrorFunctionsInCascade)
@@ -63,8 +62,7 @@ TEST(Router, ShouldBeAbleToUseOtherErrorFunctionsInCascade)
     };
     router.error(errorFunction);
     router.error(errorFunction2);
-    auto req = getCorrectPostRequest();
-    auto result = router.process(*req);
+    auto result = router.process(*postRequest);
     EXPECT_THAT(result, HasSubstr("501 Not Implemented"));
     EXPECT_THAT(result, HasSubstr("<h1>Whoops</h1>"));
 }
@@ -81,7 +79,6 @@ TEST(Router, ShouldStopErrorFunctionsAtFirstSend)
     };
     router.error(errorFunction);
     router.error(errorFunction2);
-    auto req = getCorrectPostRequest();
-    auto result = router.process(*req);
+    auto result = router.process(*postRequest);
     EXPECT_THAT(result, HasSubstr("501 Not Implemented"));
 }
