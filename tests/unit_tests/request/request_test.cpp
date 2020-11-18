@@ -4,21 +4,21 @@
 
 using namespace cpphttp::request;
 
-TEST(Request, CompleteHeaderWithNoBody)
+TEST(Request, CompleteRequestWithNoBody)
 {
     request req;
     req.setHeader(Requests::GetRequestHeader);
     EXPECT_TRUE(req.isReady());
 }
 
-TEST(Request, CompleteHeaderWithMissingBody)
+TEST(Request, CompleteRequestWithMissingBody)
 {
     request req;
     req.setHeader(Requests::PostRequestHeader);
     EXPECT_FALSE(req.isReady());
 }
 
-TEST(Request, CompleteHeaderWithIncompleteBody)
+TEST(Request, CompleteRequestWithIncompleteBody)
 {
     request req;
     req.setHeader(Requests::PostRequestHeader);
@@ -26,7 +26,7 @@ TEST(Request, CompleteHeaderWithIncompleteBody)
     EXPECT_FALSE(req.isReady());
 }
 
-TEST(Request, CompleteHeaderWithCompleteBody)
+TEST(Request, CompleteRequestWithCompleteBody)
 {
     request req;
     req.setHeader(Requests::PostRequestHeader);
