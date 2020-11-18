@@ -21,7 +21,8 @@ namespace cpphttp
             template <typename T, typename... T2, typename std::enable_if<0 != sizeof...(T2), int>::type = 0>
             void error(T f, T2... others)
             {
-                static_assert(std::is_convertible_v<T, error_function>, "Is not a function");
+                static_assert(std::is_convertible_v<T, error_function>, "parameter is not an error function.");
+                static_assert(std::is_convertible_v<std::tuple_element_t<0, std::tuple<T2...>>, error_function>, "parameter is not an error function.");
                 error(f);
                 error(others...);
             }
