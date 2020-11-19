@@ -31,6 +31,15 @@ namespace cpphttp
 
             void use(std::string pathStartingWith, router_function function) noexcept;
 
+            template <typename T, typename... T2, typename std::enable_if<0 != sizeof...(T2), int>::type = 0>
+            void use(std::string pathStartingWith, T f, T2... others) noexcept
+            {
+                static_assert(std::is_convertible_v<T, router_function>, "parameter is not a router function.");
+                static_assert(std::is_convertible_v<std::tuple_element_t<0, std::tuple<T2...>>, router_function>, "parameter is not a router function.");
+                use(pathStartingWith, f);
+                use(pathStartingWith, others...);
+            }
+
         private:
             class impl;
             std::unique_ptr<impl> m_impl;

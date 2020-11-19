@@ -129,14 +129,19 @@ auto secondFunction = [](request &req, response &res, error_callback error) {
     res.send("Second Function Called");
 };
 
+void testFirstAndSecondFunction(const std::string &result)
+{
+    EXPECT_THAT(result, HasSubstr("First Function Called"));
+    EXPECT_THAT(result, HasSubstr("Second Function Called"));
+}
+
 TEST(Router, Should_be_able_to_use_functions_in_cascade)
 {
     router router;
     router.use("/", firstFunction);
     router.use("/", secondFunction);
     auto result = router.process(*postRequest);
-    EXPECT_THAT(result, HasSubstr("First Function Called"));
-    EXPECT_THAT(result, HasSubstr("Second Function Called"));
+    testFirstAndSecondFunction(result);
 }
 
 TEST(Router, Should_stop_using_functions_when_response_ended)
@@ -146,8 +151,7 @@ TEST(Router, Should_stop_using_functions_when_response_ended)
     router.use("/", secondFunction);
     router.use("/", [](request &req, response &res, error_callback error) { res.status(status::_204); });
     auto result = router.process(*postRequest);
-    EXPECT_THAT(result, HasSubstr("First Function Called"));
-    EXPECT_THAT(result, HasSubstr("Second Function Called"));
+    testFirstAndSecondFunction(result);
     EXPECT_THAT(result, Not(HasSubstr("204")));
 }
 
@@ -185,6 +189,15 @@ TEST(Router, Should_use_regex_in_path_variable)
     router.use("/pa(bc)?th", firstFunction);
     router.use(".*", secondFunction);
     auto result = router.process(*postRequest);
-    EXPECT_THAT(result, HasSubstr("First Function Called"));
-    EXPECT_THAT(result, HasSubstr("Second Function Called"));
+    testFirstAndSecondFunction(result);
+}
+
+TEST(Router, Should_have_variadic_use_function)
+{
+    router router;
+    router.use(
+        "/", firstFunction, [](request &req, response &res, error_callback error) { res.write("Middle Function"); }, secondFunction);
+    auto result = router.process(*postRequest);
+    testFirstAndSecondFunction(result);
+    EXPECT_THAT(result, HasSubstr("Middle Function"));
 }
