@@ -101,3 +101,39 @@ TEST(Router, ShouldHaveVariadicErrorFunctionSetter)
     EXPECT_THAT(result, HasSubstr("<h1>Whoops</h1>"));
     EXPECT_THAT(result, HasSubstr("<h2>Heyyyy</h2>"));
 }
+
+auto rootFunction = [](request &req, response &res, error_callback error) {
+    res.send("Root Function Called");
+};
+
+TEST(Router, Should_be_able_to_use_functions_for_paths_starting_with)
+{
+    router router;
+    router.use("/", rootFunction);
+    auto result = router.process(*postRequest);
+    EXPECT_THAT(result, HasSubstr("Root Function Called"));
+}
+
+TEST(Router, Should_avoid_using_functions_with_wrong_path)
+{
+    router router;
+    router.use("/wrongpath", rootFunction);
+    auto result = router.process(*postRequest);
+    EXPECT_THAT(router.process(*postRequest), HasSubstr("500 Internal Server Error"));
+}
+
+TEST(Router, Should_be_able_to_use_functions_in_cascade)
+{
+    router router;
+    auto firstFunction = [](request &req, response &res, error_callback error) {
+        res.write("First Function Called");
+    };
+    auto secondFunction = [](request &req, response &res, error_callback error) {
+        res.write("Second Function Called");
+    };
+    router.use("/", firstFunction);
+    router.use("/", secondFunction);
+    auto result = router.process(*postRequest);
+    EXPECT_THAT(result, HasSubstr("First Function Called"));
+    EXPECT_THAT(result, HasSubstr("Second Function Called"));
+}
