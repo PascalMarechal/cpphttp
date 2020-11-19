@@ -178,3 +178,13 @@ TEST(Router, Should_switch_to_error_function_when_triggered_without_text)
     router.use("/", secondFunction);
     EXPECT_THAT(router.process(*postRequest), HasSubstr("500 Internal Server Error"));
 }
+
+TEST(Router, Should_use_regex_in_path_variable)
+{
+    router router;
+    router.use("/pa(bc)?th", firstFunction);
+    router.use(".*", secondFunction);
+    auto result = router.process(*postRequest);
+    EXPECT_THAT(result, HasSubstr("First Function Called"));
+    EXPECT_THAT(result, HasSubstr("Second Function Called"));
+}
