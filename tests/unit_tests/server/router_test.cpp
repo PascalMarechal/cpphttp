@@ -150,3 +150,31 @@ TEST(Router, Should_stop_using_functions_when_response_ended)
     EXPECT_THAT(result, HasSubstr("Second Function Called"));
     EXPECT_THAT(result, Not(HasSubstr("204")));
 }
+
+TEST(Router, Should_avoid_using_functions_with_wrong_path_along_with_correct_one)
+{
+    router router;
+    router.use("/wrongpath", firstFunction);
+    router.use("/", secondFunction);
+    auto result = router.process(*postRequest);
+    EXPECT_THAT(result, Not(HasSubstr("First Function Called")));
+    EXPECT_THAT(result, HasSubstr("Second Function Called"));
+}
+
+TEST(Router, Should_switch_to_error_function_when_triggered)
+{
+    router router;
+    router.use("/", firstFunction);
+    router.use("/", [](request &req, response &res, error_callback error) { error("something bad happened!"); });
+    router.use("/", secondFunction);
+    EXPECT_THAT(router.process(*postRequest), HasSubstr("500 Internal Server Error"));
+}
+
+TEST(Router, Should_switch_to_error_function_when_triggered_without_text)
+{
+    router router;
+    router.use("/", firstFunction);
+    router.use("/", [](request &req, response &res, error_callback error) { error(""); });
+    router.use("/", secondFunction);
+    EXPECT_THAT(router.process(*postRequest), HasSubstr("500 Internal Server Error"));
+}

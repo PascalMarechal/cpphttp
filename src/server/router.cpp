@@ -16,8 +16,9 @@ public:
 
         response::response res;
 
-        if (std::regex_search(req.header().getPath(), std::regex(m_path), std::regex_constants::match_continuous))
-            callFunctions(req, res);
+        callFunctions(req, res);
+        if (res.hasEnded())
+            return res.toString();
 
         callErrorFunctions("error", req, res);
 
@@ -34,23 +35,34 @@ public:
 
     inline void use(std::string pathStartingWith, router_function function) noexcept
     {
-        m_functions.push_back(function);
-        m_path = pathStartingWith;
+        m_functions.push_back({std::regex(pathStartingWith), function});
     }
 
 private:
     std::deque<error_function> m_errorFunctions;
-    std::deque<router_function> m_functions;
-    std::string m_path;
+    std::deque<std::tuple<std::regex, router_function>> m_functions;
+
+    static inline bool pathStartWith(const std::string &path, const std::regex &startWith)
+    {
+        return std::regex_search(path, startWith, std::regex_constants::match_continuous);
+    }
 
     inline void callFunctions(request::request &req, response::response &res) const noexcept
     {
-        auto errorCallback = [](std::string value) {};
-        for (auto f : m_functions)
+        std::string errorVal;
+        auto errorCallback = [&errorVal](std::string value) {
+            if (value.size())
+                errorVal = value;
+            else
+                errorVal = "Server Error!";
+        };
+        for (auto &funcInfo : m_functions)
         {
-            if (res.hasEnded())
+            if (res.hasEnded() || errorVal.size())
                 return;
-            f(req, res, errorCallback);
+
+            if (pathStartWith(req.header().getPath(), std::get<0>(funcInfo)))
+                std::get<1>(funcInfo)(req, res, errorCallback);
         }
     }
 
@@ -64,7 +76,7 @@ private:
         }
     }
 
-    inline void defaultError(response::response &res) const noexcept
+    static inline void defaultError(response::response &res) noexcept
     {
         res.status(status::_500);
         res.send("Internal Server Error Detected.");
