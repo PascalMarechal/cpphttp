@@ -20,26 +20,26 @@ std::unique_ptr<request> getCorrectPostRequest()
 
 auto postRequest = getCorrectPostRequest();
 
-TEST(Router, ShouldThrowWithInvalidRequest)
+TEST(Router, Should_throw_with_invalid_request)
 {
     router router;
     request req;
     EXPECT_THROW(router.process(req), std::invalid_argument);
 }
 
-TEST(Router, ShouldNotThrowWithValidRequest)
+TEST(Router, Should_not_throw_with_valid_request)
 {
     router router;
     EXPECT_NO_THROW(router.process(*postRequest));
 }
 
-TEST(Router, ShouldHaveDefaultInternalErrorResponse)
+TEST(Router, Should_have_default_internal_error_response)
 {
     router router;
     EXPECT_THAT(router.process(*postRequest), HasSubstr("500 Internal Server Error"));
 }
 
-TEST(Router, ShouldBeAbleToUseOtherErrorFunctions)
+TEST(Router, Should_be_able_to_use_other_error_functions)
 {
     router router;
     auto errorFunction = [](const std::string &error, request &req, response &res) {
@@ -51,7 +51,7 @@ TEST(Router, ShouldBeAbleToUseOtherErrorFunctions)
     EXPECT_THAT(router.process(*postRequest), HasSubstr("<h1> Error !!! </h1>"));
 }
 
-TEST(Router, ShouldBeAbleToUseOtherErrorFunctionsInCascade)
+TEST(Router, Should_be_able_to_use_other_error_functions_in_cascade)
 {
     router router;
     auto errorFunction = [](const std::string &error, request &req, response &res) {
@@ -67,7 +67,7 @@ TEST(Router, ShouldBeAbleToUseOtherErrorFunctionsInCascade)
     EXPECT_THAT(result, HasSubstr("<h1>Whoops</h1>"));
 }
 
-TEST(Router, ShouldStopErrorFunctionsAtFirstSend)
+TEST(Router, Should_stop_error_functions_at_first_send)
 {
     router router;
     auto errorFunction = [](const std::string &error, request &req, response &res) {
@@ -83,7 +83,7 @@ TEST(Router, ShouldStopErrorFunctionsAtFirstSend)
     EXPECT_THAT(result, HasSubstr("501 Not Implemented"));
 }
 
-TEST(Router, ShouldHaveVariadicErrorFunctionSetter)
+TEST(Router, Should_have_variadic_error_functions_setter)
 {
     router router;
     auto errorFunction = [](const std::string &error, request &req, response &res) {
@@ -122,18 +122,31 @@ TEST(Router, Should_avoid_using_functions_with_wrong_path)
     EXPECT_THAT(router.process(*postRequest), HasSubstr("500 Internal Server Error"));
 }
 
+auto firstFunction = [](request &req, response &res, error_callback error) {
+    res.write("First Function Called");
+};
+auto secondFunction = [](request &req, response &res, error_callback error) {
+    res.send("Second Function Called");
+};
+
 TEST(Router, Should_be_able_to_use_functions_in_cascade)
 {
     router router;
-    auto firstFunction = [](request &req, response &res, error_callback error) {
-        res.write("First Function Called");
-    };
-    auto secondFunction = [](request &req, response &res, error_callback error) {
-        res.write("Second Function Called");
-    };
     router.use("/", firstFunction);
     router.use("/", secondFunction);
     auto result = router.process(*postRequest);
     EXPECT_THAT(result, HasSubstr("First Function Called"));
     EXPECT_THAT(result, HasSubstr("Second Function Called"));
+}
+
+TEST(Router, Should_stop_using_functions_when_response_ended)
+{
+    router router;
+    router.use("/", firstFunction);
+    router.use("/", secondFunction);
+    router.use("/", [](request &req, response &res, error_callback error) { res.status(status::_204); });
+    auto result = router.process(*postRequest);
+    EXPECT_THAT(result, HasSubstr("First Function Called"));
+    EXPECT_THAT(result, HasSubstr("Second Function Called"));
+    EXPECT_THAT(result, Not(HasSubstr("204")));
 }

@@ -48,6 +48,8 @@ private:
         auto errorCallback = [](std::string value) {};
         for (auto f : m_functions)
         {
+            if (res.hasEnded())
+                return;
             f(req, res, errorCallback);
         }
     }
