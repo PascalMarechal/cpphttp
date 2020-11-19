@@ -3,7 +3,7 @@
 
 using namespace cpphttp::response;
 
-TEST(Response, SetStatus)
+TEST(Response, Set_status)
 {
     response res;
     res.status(status::_204);

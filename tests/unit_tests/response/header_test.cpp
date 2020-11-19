@@ -4,26 +4,26 @@
 using namespace cpphttp;
 using namespace response;
 
-TEST(ResponseHeader, ShouldBeV1_1ByDefault)
+TEST(ResponseHeader, Should_beV1_1_by_default)
 {
     header head;
     EXPECT_EQ(head.version(), request::version::_1_1);
 }
 
-TEST(ResponseHeader, StatusShouldBe200AtStart)
+TEST(ResponseHeader, Status_should_be_200_at_start)
 {
     header head;
     EXPECT_EQ(head.status(), status::_200);
 }
 
-TEST(ResponseHeader, StatusCanBeChanged)
+TEST(ResponseHeader, Status_can_be_changed)
 {
     header head;
     head.status(status::_404);
     EXPECT_EQ(head.status(), status::_404);
 }
 
-TEST(ResponseHeader, GetAndSetContentLength)
+TEST(ResponseHeader, Get_and_set_content_length)
 {
     header head;
     EXPECT_EQ(head.contentLength(), 0);
@@ -33,7 +33,7 @@ TEST(ResponseHeader, GetAndSetContentLength)
     EXPECT_EQ(head.contentLength(), 720);
 }
 
-TEST(ResponseHeader, ToString)
+TEST(ResponseHeader, To_string)
 {
     header head;
     EXPECT_EQ(head.toString(), "HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n");

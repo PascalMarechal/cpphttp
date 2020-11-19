@@ -30,7 +30,7 @@ TEST(Connection, Creation)
   std::make_shared<connection<SocketMockWrapper, ConnectionFunctionsMock, RouterMock>>(SocketMockWrapper(new SocketMock()), functionsMock, routerMock);
 }
 
-TEST(Connection, ReadRequestWithBody)
+TEST(Connection, Read_request_with_body)
 {
   auto socketMock = new SocketMock();
   ConnectionFunctionsMock functionsMock;
@@ -53,7 +53,7 @@ TEST(Connection, ReadRequestWithBody)
   c->start();
 }
 
-TEST(Connection, ReadRequestWithoutBody)
+TEST(Connection, Read_request_without_body)
 {
   auto socketMock = new SocketMock();
   ConnectionFunctionsMock functionsMock;
@@ -73,7 +73,7 @@ TEST(Connection, ReadRequestWithoutBody)
   c->start();
 }
 
-TEST(Connection, ErrorInHeaderRead)
+TEST(Connection, Error_in_header_read)
 {
   auto socketMock = new SocketMock();
   ConnectionFunctionsMock functionsMock;
@@ -92,7 +92,7 @@ TEST(Connection, ErrorInHeaderRead)
   c->start();
 }
 
-TEST(Connection, ErrorInBodyRead)
+TEST(Connection, Error_in_body_read)
 {
   auto socketMock = new SocketMock();
   ConnectionFunctionsMock functionsMock;
@@ -112,7 +112,7 @@ TEST(Connection, ErrorInBodyRead)
   c->start();
 }
 
-TEST(Connection, IncorrectHeaderData)
+TEST(Connection, Incorrect_header_data)
 {
   auto socketMock = new SocketMock();
   ConnectionFunctionsMock functionsMock;
