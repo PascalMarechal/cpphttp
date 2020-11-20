@@ -25,8 +25,16 @@ std::unique_ptr<request> getCorrectGetRequest()
     return req;
 }
 
+std::unique_ptr<request> getGetRequestWithParam()
+{
+    auto req = std::make_unique<request>();
+    req->setHeader(Requests::GetRequestHeaderWithParam);
+    return req;
+}
+
 auto postRequest = getCorrectPostRequest();
 auto getRequest = getCorrectGetRequest();
+auto getRequestWithParam = getGetRequestWithParam();
 
 TEST(Router, Should_throw_with_invalid_request)
 {
@@ -226,4 +234,12 @@ TEST(Router, Get_functions_should_fail_if_path_is_different_or_incomplete)
     router.get("/ind", getFunction);
     auto result = router.process(*getRequest);
     EXPECT_THAT(result, Not(HasSubstr("Get function called")));
+}
+
+TEST(Router, Get_functions_should_match_with_param_in_url)
+{
+    router router;
+    router.get("/item/:id", getFunction);
+    auto result = router.process(*getRequestWithParam);
+    EXPECT_THAT(result, HasSubstr("Get function called"));
 }

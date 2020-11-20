@@ -1,5 +1,6 @@
 #include "router.h"
 #include "request/method.h"
+#include "internal/tools/string.h"
 
 #include <deque>
 #include <regex>
@@ -38,17 +39,30 @@ public:
 
     inline void use(std::string pathStartingWith, router_function function) noexcept
     {
-        m_functions.push_back({std::regex(pathStartingWith), function, method::UNKNOWN});
+        m_functions.push_back({pathStartingWith, std::regex(pathStartingWith), function, method::UNKNOWN});
     }
 
     inline void get(std::string path, router_function function) noexcept
     {
-        m_functions.push_back({std::regex(path), function, method::GET});
+        auto splittedPath = tools::split(path, "/");
+        std::string regexPath = "/";
+        for (auto &value : splittedPath)
+        {
+            if (value.size() && value[0] == ':')
+                regexPath += "(.*)";
+            else
+                regexPath += value;
+            regexPath += "/";
+        }
+        regexPath.pop_back();
+
+        m_functions.push_back({path, std::regex(regexPath), function, method::GET});
     }
 
 private:
     struct functionInfo
     {
+        std::string path;
         std::regex regex;
         router_function function;
         method functionMethod;
