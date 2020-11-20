@@ -69,3 +69,18 @@ TEST(Request, Equality_operators)
     req2.setHeader("noope");
     EXPECT_TRUE(req != req2);
 }
+
+TEST(Request, SetTempVariables)
+{
+    request req;
+    req.set("name", "value");
+    req.set("name2", "value2");
+    req.set("int", 12);
+    req.set("float", 12.54f);
+
+    EXPECT_EQ(req.get("name"), "value");
+    EXPECT_EQ(req.get("name2"), "value2");
+    EXPECT_EQ(req.get("nothere"), "");
+    EXPECT_EQ(req.get("int"), "12");
+    EXPECT_EQ(req.get("float"), "12.540000");
+}

@@ -1,5 +1,7 @@
 #include "request.h"
 
+#include <unordered_map>
+
 using namespace cpphttp::request;
 
 class request::impl
@@ -46,9 +48,24 @@ public:
                 *lhs.m_body == *rhs.m_body);
     }
 
+    void set(const std::string &name, std::string value) noexcept
+    {
+        m_values[name] = value;
+    }
+
+    const std::string &get(const std::string &name) const noexcept
+    {
+        static const std::string empty = "";
+        auto val = m_values.find(name);
+        if (val != m_values.cend())
+            return val->second;
+        return empty;
+    }
+
 private:
     std::unique_ptr<cpphttp::request::header> m_header;
     std::unique_ptr<body> m_body;
+    std::unordered_map<std::string, std::string> m_values;
 };
 
 request::request() : m_impl(std::make_unique<impl>()) {}
@@ -73,6 +90,16 @@ void request::setHeader(const std::string &data) noexcept
 void request::setBody(const std::string &data) noexcept
 {
     m_impl->setBody(data);
+}
+
+void request::set(const std::string &name, std::string value) noexcept
+{
+    m_impl->set(name, value);
+}
+
+const std::string &request::get(const std::string &name) const noexcept
+{
+    return m_impl->get(name);
 }
 
 namespace cpphttp
