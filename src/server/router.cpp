@@ -44,19 +44,7 @@ public:
 
     inline void get(std::string path, router_function function) noexcept
     {
-        auto splittedPath = tools::split(path, "/");
-        std::string regexPath = "/";
-        for (auto &value : splittedPath)
-        {
-            if (value.size() && value[0] == ':')
-                regexPath += "(.*)";
-            else
-                regexPath += value;
-            regexPath += "/";
-        }
-        regexPath.pop_back();
-
-        m_functions.push_back({path, std::regex(regexPath), function, method::GET});
+        m_functions.push_back({path, extractRegexFromPath(path), function, method::GET});
     }
 
 private:
@@ -111,6 +99,21 @@ private:
     {
         res.status(status::_500);
         res.send("Internal Server Error Detected.");
+    }
+
+    static inline std::regex extractRegexFromPath(const std::string &path) noexcept
+    {
+        auto splittedPath = tools::split(path, "/");
+        std::string regexPath = "";
+        for (auto &value : splittedPath)
+        {
+            regexPath += "/";
+            if (value.size() && value[0] == ':')
+                regexPath += "(.*)";
+            else
+                regexPath += value;
+        }
+        return std::regex(regexPath);
     }
 };
 
