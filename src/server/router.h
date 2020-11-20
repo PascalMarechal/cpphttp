@@ -20,7 +20,7 @@ namespace cpphttp
 
             void error(error_function f) noexcept;
 
-            template <typename T, typename... T2, typename std::enable_if<0 != sizeof...(T2), int>::type = 0>
+            template <typename T, typename... T2, typename std::enable_if_t<0 != sizeof...(T2), int> = 0>
             void error(T f, T2... others) noexcept
             {
                 static_assert(std::is_convertible_v<T, error_function>, "parameter is not an error function.");
@@ -31,7 +31,7 @@ namespace cpphttp
 
             void use(std::string pathStartingWith, router_function function) noexcept;
 
-            template <typename T, typename... T2, typename std::enable_if<0 != sizeof...(T2), int>::type = 0>
+            template <typename T, typename... T2, typename std::enable_if_t<0 != sizeof...(T2), int> = 0>
             void use(std::string pathStartingWith, T f, T2... others) noexcept
             {
                 static_assert(std::is_convertible_v<T, router_function>, "parameter is not a router function.");
