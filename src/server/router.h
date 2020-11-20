@@ -40,6 +40,8 @@ namespace cpphttp
                 use(pathStartingWith, others...);
             }
 
+            void get(std::string path, router_function function) noexcept;
+
         private:
             class impl;
             std::unique_ptr<impl> m_impl;

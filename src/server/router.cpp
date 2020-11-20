@@ -1,10 +1,13 @@
 #include "router.h"
+#include "request/method.h"
 
 #include <deque>
 #include <regex>
 
-using namespace cpphttp::server;
-using namespace cpphttp::response;
+using namespace cpphttp;
+using namespace response;
+using namespace server;
+using namespace request;
 
 class router::impl
 {
@@ -35,16 +38,30 @@ public:
 
     inline void use(std::string pathStartingWith, router_function function) noexcept
     {
-        m_functions.push_back({std::regex(pathStartingWith), function});
+        m_functions.push_back({std::regex(pathStartingWith), function, method::UNKNOWN});
+    }
+
+    inline void get(std::string path, router_function function) noexcept
+    {
+        m_functions.push_back({std::regex(path), function, method::GET});
     }
 
 private:
-    std::deque<error_function> m_errorFunctions;
-    std::deque<std::tuple<std::regex, router_function>> m_functions;
-
-    static inline bool pathStartWith(const std::string &path, const std::regex &startWith)
+    struct functionInfo
     {
-        return std::regex_search(path, startWith, std::regex_constants::match_continuous);
+        std::regex regex;
+        router_function function;
+        method functionMethod;
+    };
+
+    std::deque<error_function> m_errorFunctions;
+    std::deque<functionInfo> m_functions;
+
+    static inline bool validPath(const std::string &path, const functionInfo &info)
+    {
+        if (info.functionMethod == method::UNKNOWN)
+            return std::regex_search(path, info.regex, std::regex_constants::match_continuous);
+        return std::regex_match(path, info.regex);
     }
 
     inline void callFunctions(request::request &req, response::response &res) const noexcept
@@ -61,8 +78,8 @@ private:
             if (res.hasEnded() || errorVal.size())
                 return;
 
-            if (pathStartWith(req.header().getPath(), std::get<0>(funcInfo)))
-                std::get<1>(funcInfo)(req, res, errorCallback);
+            if (validPath(req.header().getPath(), funcInfo))
+                funcInfo.function(req, res, errorCallback);
         }
     }
 
@@ -100,4 +117,9 @@ void router::error(error_function f) noexcept
 void router::use(std::string pathStartingWith, router_function function) noexcept
 {
     m_impl->use(pathStartingWith, function);
+}
+
+void router::get(std::string pathStartingWith, router_function function) noexcept
+{
+    m_impl->get(pathStartingWith, function);
 }

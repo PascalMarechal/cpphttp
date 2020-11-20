@@ -18,7 +18,15 @@ std::unique_ptr<request> getCorrectPostRequest()
     return req;
 }
 
+std::unique_ptr<request> getCorrectGetRequest()
+{
+    auto req = std::make_unique<request>();
+    req->setHeader(Requests::GetRequestHeader);
+    return req;
+}
+
 auto postRequest = getCorrectPostRequest();
+auto getRequest = getCorrectGetRequest();
 
 TEST(Router, Should_throw_with_invalid_request)
 {
@@ -200,4 +208,22 @@ TEST(Router, Should_have_variadic_use_function)
     auto result = router.process(*postRequest);
     testFirstAndSecondFunction(result);
     EXPECT_THAT(result, HasSubstr("Middle Function"));
+}
+
+auto getFunction = [](request &req, response &res, error_callback error) { res.send("Get function called"); };
+
+TEST(Router, Should_have_get_function)
+{
+    router router;
+    router.get("/index", getFunction);
+    auto result = router.process(*getRequest);
+    EXPECT_THAT(result, HasSubstr("Get function called"));
+}
+
+TEST(Router, Get_functions_should_fail_if_path_is_different_or_incomplete)
+{
+    router router;
+    router.get("/ind", getFunction);
+    auto result = router.process(*getRequest);
+    EXPECT_THAT(result, Not(HasSubstr("Get function called")));
 }
