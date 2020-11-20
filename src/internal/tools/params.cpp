@@ -17,13 +17,11 @@ void cpphttp::tools::extractParameters(std::string_view expectedPath, request::r
 
         ++pos;
     }
-
-    extractTailingParameters(splittedUrl[splittedUrl.size() - 1], req);
 }
 
-void cpphttp::tools::extractTailingParameters(std::string_view urlTail, request::request &req)
+void cpphttp::tools::extractTailingParameters(request::request &req)
 {
-    auto urlParameters = split(urlTail, "?");
+    auto urlParameters = split(req.header().getPath(), "?");
     for (auto i = 1; i < urlParameters.size(); ++i)
     {
         auto params = split(urlParameters[i], "&");
