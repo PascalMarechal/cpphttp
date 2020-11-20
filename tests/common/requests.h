@@ -9,5 +9,7 @@ public:
     static std::string GetRequestHeader;
     static std::string PostRequestHeaderWithIncorrectLength;
     static std::string PostRequestBody;
+    static std::string GetRequestHeaderWithParam;
+    static std::string GetRequestHeaderWithParam2;
     static uint32_t ExpectedPostBodySize;
 };

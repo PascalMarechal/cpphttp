@@ -24,11 +24,12 @@ namespace cpphttp
             void setBody(const std::string &data) noexcept;
             const cpphttp::request::header &header() const;
 
-            void set(const std::string &name, std::string value) noexcept;
+            bool has(const std::string& name) const noexcept;
+            void set(std::string name, std::string value) noexcept;
             const std::string &get(const std::string &name) const noexcept;
 
             template <typename T, typename = typename std::enable_if_t<std::is_arithmetic<T>::value, T>>
-            void set(const std::string &name, T value) noexcept
+            void set(std::string name, T value) noexcept
             {
                 set(name, std::to_string(value));
             }

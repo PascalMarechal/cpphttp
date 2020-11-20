@@ -7,7 +7,7 @@ using namespace cpphttp::request;
 class request::impl
 {
 public:
-    bool isReady() const noexcept
+    inline bool isReady() const noexcept
     {
         if (m_header && m_header->isReady())
         {
@@ -19,22 +19,22 @@ public:
         return false;
     }
 
-    void setHeader(const std::string &data) noexcept
+    inline void setHeader(const std::string &data) noexcept
     {
         m_header = std::make_unique<cpphttp::request::header>(data);
     }
-    void setBody(const std::string &data) noexcept
+    inline void setBody(const std::string &data) noexcept
     {
         m_body = std::make_unique<body>(data);
     }
-    const cpphttp::request::header &header() const
+    inline const cpphttp::request::header &header() const
     {
         if (m_header == nullptr)
             throw std::invalid_argument("Header is NULL");
         return *(m_header.get());
     }
 
-    friend bool operator==(const impl &lhs, const impl &rhs) noexcept
+    inline friend bool operator==(const impl &lhs, const impl &rhs) noexcept
     {
         if ((lhs.m_header == nullptr && rhs.m_header != nullptr) ||
             (lhs.m_header != nullptr && rhs.m_header == nullptr) ||
@@ -48,18 +48,23 @@ public:
                 *lhs.m_body == *rhs.m_body);
     }
 
-    void set(const std::string &name, std::string value) noexcept
+    inline void set(std::string name, std::string value) noexcept
     {
         m_values[name] = value;
     }
 
-    const std::string &get(const std::string &name) const noexcept
+    inline const std::string &get(const std::string &name) const noexcept
     {
         static const std::string empty = "";
         auto val = m_values.find(name);
         if (val != m_values.cend())
             return val->second;
         return empty;
+    }
+
+    inline bool has(const std::string &name) const noexcept
+    {
+        return m_values.find(name) != m_values.cend();
     }
 
 private:
@@ -92,7 +97,7 @@ void request::setBody(const std::string &data) noexcept
     m_impl->setBody(data);
 }
 
-void request::set(const std::string &name, std::string value) noexcept
+void request::set(std::string name, std::string value) noexcept
 {
     m_impl->set(name, value);
 }
@@ -100,6 +105,11 @@ void request::set(const std::string &name, std::string value) noexcept
 const std::string &request::get(const std::string &name) const noexcept
 {
     return m_impl->get(name);
+}
+
+bool request::has(const std::string &name) const noexcept
+{
+    return m_impl->has(name);
 }
 
 namespace cpphttp
