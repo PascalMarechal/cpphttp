@@ -83,4 +83,10 @@ TEST(Request, SetTempVariables)
     EXPECT_EQ(req.get("nothere"), "");
     EXPECT_EQ(req.get("int"), "12");
     EXPECT_EQ(req.get("float"), "12.540000");
+    
+    EXPECT_TRUE(req.has("name"));
+    EXPECT_TRUE(req.has("name2"));
+    EXPECT_FALSE(req.has("nothere"));
+    EXPECT_TRUE(req.has("int"));
+    EXPECT_TRUE(req.has("float"));
 }
