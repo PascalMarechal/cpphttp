@@ -1,10 +1,8 @@
 #include "request/header.h"
 #include <gtest/gtest.h>
-#include "tools/string.h"
 #include "common/requests.h"
 
 using namespace cpphttp::request;
-using namespace cpphttp::tools;
 
 TEST(RequestHeader, Empty_header)
 {

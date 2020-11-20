@@ -1,5 +1,5 @@
 #include "header.h"
-#include "../tools/string.h"
+#include "internal/tools/string.h"
 #include <sstream>
 #include <unordered_map>
 #include <functional>
