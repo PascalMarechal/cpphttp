@@ -10,8 +10,6 @@ using namespace response;
 using namespace server;
 using namespace request;
 
-#define DEFAULT_SERVER_ERROR "Internal Server Error Detected."
-
 class router::impl
 {
 public:

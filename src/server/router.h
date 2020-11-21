@@ -14,6 +14,8 @@ namespace cpphttp
         class router
         {
         public:
+            inline const static std::string DEFAULT_SERVER_ERROR = "Internal Server Error Detected.";
+
             router();
             ~router();
             std::string process(cpphttp::request::request &) const;
