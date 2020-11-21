@@ -79,4 +79,12 @@ TEST(RequestHeader, Should_split_path_with_get_params)
     header head("GET /index?id=21&page=3 HTTP/1.0\n\n");
     EXPECT_EQ(head.getPath(), "/index");
     EXPECT_EQ(head.getGetParams(), "id=21&page=3");
+
+    header head2("POST /index?id=21&page=3 HTTP/1.0\n\n");
+    EXPECT_EQ(head2.getPath(), "/index?id=21&page=3");
+    EXPECT_EQ(head2.getGetParams(), "");
+
+    header head3("PUT /index?id=21&page=3 HTTP/1.0\n\n");
+    EXPECT_EQ(head3.getPath(), "/index?id=21&page=3");
+    EXPECT_EQ(head3.getGetParams(), "");
 }
