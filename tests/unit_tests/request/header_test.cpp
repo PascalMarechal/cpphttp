@@ -73,3 +73,10 @@ TEST(RequestHeader, Equality_operators)
     header head5("GET /index HTTP/1.1\n\n");
     EXPECT_TRUE(head != head5);
 }
+
+TEST(RequestHeader, Should_split_path_with_get_params)
+{
+    header head("GET /index?id=21&page=3 HTTP/1.0\n\n");
+    EXPECT_EQ(head.getPath(), "/index");
+    EXPECT_EQ(head.getGetParams(), "id=21&page=3");
+}

@@ -20,6 +20,7 @@ namespace cpphttp
             method getMethod() const noexcept;
             version getVersion() const noexcept;
             const std::string &getPath() const noexcept;
+            const std::string &getGetParams() const noexcept;
             uint32_t getExpectedBodySize() const noexcept;
 
             friend bool operator==(const header &lhs, const header &rhs) noexcept;

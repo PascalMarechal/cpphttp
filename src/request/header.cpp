@@ -15,36 +15,42 @@ public:
         parse(data);
     }
 
-    bool isReady() const noexcept
+    inline bool isReady() const noexcept
     {
         return m_ready;
     }
 
-    method getMethod() const noexcept
+    inline method getMethod() const noexcept
     {
         return m_method;
     }
 
-    version getVersion() const noexcept
+    inline version getVersion() const noexcept
     {
         return m_version;
     }
-    const std::string &getPath() const noexcept
+    inline const std::string &getPath() const noexcept
     {
         return m_path;
     }
 
-    uint32_t getExpectedBodySize() const noexcept
+    inline const std::string &getGetParams() const noexcept
+    {
+        return m_getParams;
+    }
+
+    inline uint32_t getExpectedBodySize() const noexcept
     {
         return m_expectedBodysize;
     }
 
-    void setPath(std::string_view path) noexcept
+    inline void setPath(std::string_view path) noexcept
     {
-        m_path = path;
+        if(!extractGetPath(path))
+            m_path = path;
     }
 
-    friend bool operator==(const impl &lhs, const impl &rhs) noexcept
+    inline friend bool operator==(const impl &lhs, const impl &rhs) noexcept
     {
         return lhs.m_ready == rhs.m_ready &&
                lhs.m_method == rhs.m_method &&
@@ -89,8 +95,8 @@ private:
             return;
 
         parseVersionValue(values[2]);
-        setPath(values[1]);
         parseMethodValue(values[0]);
+        setPath(values[1]);
     }
 
     inline void handleHeaderLine(std::string_view line) noexcept
@@ -127,11 +133,25 @@ private:
         m_ready = m_method != method::UNKNOWN && m_version != version::UNKNOWN && m_path.size() > 0;
     }
 
+    inline bool extractGetPath(std::string_view path) noexcept
+    {
+        if (m_method != method::GET)
+            return false;
+
+        auto splittedPath = split(path, "?");
+        m_path = splittedPath[0];
+        for (auto i = 1; i < splittedPath.size(); ++i)
+            m_getParams += splittedPath[i];
+
+        return true;
+    }
+
     bool m_ready;
     method m_method;
     version m_version;
     uint32_t m_expectedBodysize;
     std::string m_path;
+    std::string m_getParams;
 
     const inline static std::unordered_map<std::string_view, method> methodMapping =
         {{"GET", method::GET}, {"POST", method::POST}, {"DELETE", method::DELETE}, {"PUT", method::PUT}, {"HEAD", method::HEAD}, {"PATCH", method::PATCH}};
@@ -169,6 +189,11 @@ version header::getVersion() const noexcept
 const std::string &header::getPath() const noexcept
 {
     return m_impl->getPath();
+}
+
+const std::string &header::getGetParams() const noexcept
+{
+    return m_impl->getGetParams();
 }
 
 uint32_t header::getExpectedBodySize() const noexcept
