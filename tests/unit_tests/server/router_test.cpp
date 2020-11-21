@@ -173,6 +173,16 @@ TEST(Router, Should_switch_to_error_function_when_triggered_without_text)
     EXPECT_THAT(router.process(*Requests::PostRequest), HasSubstr("500 Internal Server Error"));
 }
 
+TEST(Router, Error_functions_should_have_access_to_error_value)
+{
+    router router;
+    router.use("/", [](request &req, response &res, error_callback error) { error("An error happened"); });
+    router.error([](const std::string &error, request &req, response &res) {
+        res.send("<h1>" + error + "</h1>");
+    });
+    EXPECT_THAT(router.process(*Requests::PostRequest), HasSubstr("An error happened"));
+}
+
 TEST(Router, Should_use_regex_in_path_variable)
 {
     router router;

@@ -10,6 +10,8 @@ using namespace response;
 using namespace server;
 using namespace request;
 
+#define DEFAULT_SERVER_ERROR "Internal Server Error Detected."
+
 class router::impl
 {
 public:
@@ -19,12 +21,12 @@ public:
             throw std::invalid_argument("Invalid requests are not allowed");
 
         response::response res;
-
-        callFunctions(req, res);
+        std::string errorValue;
+        callFunctions(req, res, errorValue);
         if (res.hasEnded())
             return res.toString();
 
-        callErrorFunctions("error", req, res);
+        callErrorFunctions(errorValue, req, res);
 
         if (!res.hasEnded())
             defaultError(res);
@@ -71,18 +73,17 @@ private:
         return header.getMethod() == info.functionMethod && std::regex_match(header.getPath(), info.regex);
     }
 
-    inline void callFunctions(request::request &req, response::response &res) const noexcept
+    inline void callFunctions(request::request &req, response::response &res, std::string &errorValue) const noexcept
     {
-        std::string errorVal;
-        auto errorCallback = [&errorVal](std::string value) {
+        auto errorCallback = [&errorValue](std::string value) {
             if (value.size())
-                errorVal = value;
+                errorValue = value;
             else
-                errorVal = "Server Error!";
+                errorValue = DEFAULT_SERVER_ERROR;
         };
         for (auto &funcInfo : m_functions)
         {
-            if (res.hasEnded() || errorVal.size())
+            if (res.hasEnded() || errorValue.size())
                 return;
 
             if (validPath(req.header(), funcInfo))
@@ -106,7 +107,7 @@ private:
     static inline void defaultError(response::response &res) noexcept
     {
         res.status(status::_500);
-        res.send("Internal Server Error Detected.");
+        res.send(DEFAULT_SERVER_ERROR);
     }
 
     static inline std::regex extractRegexFromPath(const std::string &path) noexcept
