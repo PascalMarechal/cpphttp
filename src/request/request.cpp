@@ -22,12 +22,14 @@ public:
     inline void setHeader(const std::string &data) noexcept
     {
         m_header = std::make_unique<cpphttp::request::header>(data);
-        extractTailingParameters();
+        extractParameters(m_header->getGetParams());
     }
 
     inline void setBody(const std::string &data) noexcept
     {
         m_body = std::make_unique<body>(data);
+        if (m_header && m_header->getMethod() == method::POST)
+            extractParameters(data);
     }
     inline const cpphttp::request::header &header() const
     {
@@ -96,13 +98,13 @@ public:
     }
 
 private:
-    void extractTailingParameters()
+    void extractParameters(std::string_view from)
     {
-        auto params = tools::split(m_header->getGetParams(), "&");
+        auto params = tools::split(from, "&");
         for (const auto &param : params)
         {
             auto paramKeyValue = tools::split(param, "=");
-            if (paramKeyValue.size() != 2)
+            if (paramKeyValue.size() < 2)
                 continue;
             m_param_values[std::string(paramKeyValue[0])] = paramKeyValue[1];
         }

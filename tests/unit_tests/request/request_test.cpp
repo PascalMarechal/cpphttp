@@ -111,3 +111,9 @@ TEST(Request, Request_should_load_url_param_according_to_expected_path)
     EXPECT_EQ(req2.getParam("val"), "13");
     EXPECT_EQ(req2.getParam("text"), "hello");
 }
+
+TEST(Request, should_post_data_from_form_urlencoded_body)
+{
+    EXPECT_EQ(Requests::PostRequest->getParam("home"), "Cosby");
+    EXPECT_EQ(Requests::PostRequest->getParam("favorite+flavor"), "flies");
+}
