@@ -8,3 +8,29 @@ std::string Requests::GetRequestHeaderWithParam2 = readFile("./data/headers/get_
 std::string Requests::PostRequestHeaderWithIncorrectLength = readFile("./data/headers/post_request_incorrect_length.txt");
 std::string Requests::PostRequestBody = readFile("./data/body/post_request.txt");
 uint32_t Requests::ExpectedPostBodySize = 32;
+
+std::unique_ptr<cpphttp::request::request> getCorrectPostRequest()
+{
+    auto req = std::make_unique<cpphttp::request::request>();
+    req->setHeader(Requests::PostRequestHeader);
+    req->setBody(Requests::PostRequestBody);
+    return req;
+}
+
+std::unique_ptr<cpphttp::request::request> getCorrectGetRequest()
+{
+    auto req = std::make_unique<cpphttp::request::request>();
+    req->setHeader(Requests::GetRequestHeader);
+    return req;
+}
+
+std::unique_ptr<cpphttp::request::request> getGetRequestWithParam()
+{
+    auto req = std::make_unique<cpphttp::request::request>();
+    req->setHeader(Requests::GetRequestHeaderWithParam);
+    return req;
+}
+
+std::unique_ptr<cpphttp::request::request> Requests::PostRequest = getCorrectPostRequest();
+std::unique_ptr<cpphttp::request::request> Requests::GetRequest = getCorrectGetRequest();
+std::unique_ptr<cpphttp::request::request> Requests::GetRequestWithParam = getGetRequestWithParam();
