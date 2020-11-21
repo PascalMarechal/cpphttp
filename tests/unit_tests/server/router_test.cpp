@@ -236,3 +236,34 @@ TEST(Router, Should_have_variadic_get_function)
     auto result = router.process(*Requests::GetRequestWithParam);
     testFirstAndSecondFunction(result);
 }
+
+TEST(Router, Should_have_post_function)
+{
+    router router;
+    router.post("/path/somewhere", firstFunction);
+    router.post("/path/somewhere", secondFunction);
+    auto result = router.process(*Requests::PostRequest);
+    testFirstAndSecondFunction(result);
+}
+
+TEST(Router, Functions_should_not_be_mixed)
+{
+    router router;
+    router.get("/path/somewhere", firstFunction, secondFunction);
+    router.post("/item/:id", firstFunction);
+    router.post("/item/:id", secondFunction);
+    auto result = router.process(*Requests::PostRequest);
+    EXPECT_THAT(result, Not(HasSubstr("First Function Called")));
+    EXPECT_THAT(result, Not(HasSubstr("Second Function Called")));
+    result = router.process(*Requests::GetRequestWithParam);
+    EXPECT_THAT(result, Not(HasSubstr("First Function Called")));
+    EXPECT_THAT(result, Not(HasSubstr("Second Function Called")));
+}
+
+TEST(Router, should_have_variadic_post_function)
+{
+    router router;
+    router.post("/path/somewhere", firstFunction, secondFunction);
+    auto result = router.process(*Requests::PostRequest);
+    testFirstAndSecondFunction(result);
+}

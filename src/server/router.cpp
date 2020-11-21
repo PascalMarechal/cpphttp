@@ -47,6 +47,11 @@ public:
         m_functions.push_back({path, extractRegexFromPath(path), function, method::GET});
     }
 
+    inline void post(const std::string &path, router_function function) noexcept
+    {
+        m_functions.push_back({path, extractRegexFromPath(path), function, method::POST});
+    }
+
 private:
     struct functionInfo
     {
@@ -59,11 +64,11 @@ private:
     std::deque<error_function> m_errorFunctions;
     std::deque<functionInfo> m_functions;
 
-    static inline bool validPath(const std::string &path, const functionInfo &info)
+    static inline bool validPath(const request::header &header, const functionInfo &info)
     {
         if (info.functionMethod == method::UNKNOWN)
-            return std::regex_search(path, info.regex, std::regex_constants::match_continuous);
-        return std::regex_match(path, info.regex);
+            return std::regex_search(header.getPath(), info.regex, std::regex_constants::match_continuous);
+        return header.getMethod() == info.functionMethod && std::regex_match(header.getPath(), info.regex);
     }
 
     inline void callFunctions(request::request &req, response::response &res) const noexcept
@@ -80,7 +85,7 @@ private:
             if (res.hasEnded() || errorVal.size())
                 return;
 
-            if (validPath(req.header().getPath(), funcInfo))
+            if (validPath(req.header(), funcInfo))
             {
                 req.loadParamFromUrl(funcInfo.path);
                 funcInfo.function(req, res, errorCallback);
@@ -142,4 +147,9 @@ void router::use(const std::string &pathStartingWith, router_function function) 
 void router::get(const std::string &pathStartingWith, router_function function) noexcept
 {
     m_impl->get(pathStartingWith, function);
+}
+
+void router::post(const std::string &pathStartingWith, router_function function) noexcept
+{
+    m_impl->post(pathStartingWith, function);
 }

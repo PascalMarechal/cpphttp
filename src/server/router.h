@@ -50,6 +50,16 @@ namespace cpphttp
                 get(path, others...);
             }
 
+            void post(const std::string &path, router_function function) noexcept;
+            template <typename T, typename... T2, typename std::enable_if_t<0 != sizeof...(T2), int> = 0>
+            void post(const std::string &path, T f, T2... others) noexcept
+            {
+                static_assert(std::is_convertible_v<T, router_function>, "parameter is not a router function.");
+                static_assert(std::is_convertible_v<std::tuple_element_t<0, std::tuple<T2...>>, router_function>, "parameter is not a router function.");
+                post(path, f);
+                post(path, others...);
+            }
+
         private:
             class impl;
             std::unique_ptr<impl> m_impl;
