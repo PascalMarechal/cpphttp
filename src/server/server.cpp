@@ -26,9 +26,10 @@ private:
     void accept()
     {
         m_socket.emplace(m_context);
-
+        static request::request req;
+        req.setHeader("GET /index HTTP/1.1\n\n");
         m_acceptor.async_accept(*m_socket, [&](std::error_code error) {
-            asio::write(*m_socket, asio::buffer("HTTP/1.1 200 OK\r\nContent-Length: 9\r\n\r\nSomething"));
+            asio::write(*m_socket, asio::buffer(m_router.process(req)));
             accept();
         });
     }
@@ -36,6 +37,7 @@ private:
     asio::io_context m_context;
     asio::ip::tcp::acceptor m_acceptor;
     std::optional<asio::ip::tcp::socket> m_socket;
+    router m_router;
 };
 
 server::server(uint32_t port) : m_server_impl(std::make_unique<impl>(port))
