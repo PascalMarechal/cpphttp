@@ -37,12 +37,12 @@ public:
         m_errorFunctions.push_back(f);
     }
 
-    inline void use(std::string pathStartingWith, router_function function) noexcept
+    inline void use(const std::string &pathStartingWith, router_function function) noexcept
     {
         m_functions.push_back({pathStartingWith, std::regex(pathStartingWith), function, method::UNKNOWN});
     }
 
-    inline void get(std::string path, router_function function) noexcept
+    inline void get(const std::string &path, router_function function) noexcept
     {
         m_functions.push_back({path, extractRegexFromPath(path), function, method::GET});
     }
@@ -134,12 +134,12 @@ void router::error(error_function f) noexcept
     m_impl->error(f);
 }
 
-void router::use(std::string pathStartingWith, router_function function) noexcept
+void router::use(const std::string &pathStartingWith, router_function function) noexcept
 {
     m_impl->use(pathStartingWith, function);
 }
 
-void router::get(std::string pathStartingWith, router_function function) noexcept
+void router::get(const std::string &pathStartingWith, router_function function) noexcept
 {
     m_impl->get(pathStartingWith, function);
 }

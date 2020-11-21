@@ -29,10 +29,10 @@ namespace cpphttp
                 error(others...);
             }
 
-            void use(std::string pathStartingWith, router_function function) noexcept;
+            void use(const std::string &pathStartingWith, router_function function) noexcept;
 
             template <typename T, typename... T2, typename std::enable_if_t<0 != sizeof...(T2), int> = 0>
-            void use(std::string pathStartingWith, T f, T2... others) noexcept
+            void use(const std::string &pathStartingWith, T f, T2... others) noexcept
             {
                 static_assert(std::is_convertible_v<T, router_function>, "parameter is not a router function.");
                 static_assert(std::is_convertible_v<std::tuple_element_t<0, std::tuple<T2...>>, router_function>, "parameter is not a router function.");
@@ -40,7 +40,15 @@ namespace cpphttp
                 use(pathStartingWith, others...);
             }
 
-            void get(std::string path, router_function function) noexcept;
+            void get(const std::string &path, router_function function) noexcept;
+            template <typename T, typename... T2, typename std::enable_if_t<0 != sizeof...(T2), int> = 0>
+            void get(const std::string &path, T f, T2... others) noexcept
+            {
+                static_assert(std::is_convertible_v<T, router_function>, "parameter is not a router function.");
+                static_assert(std::is_convertible_v<std::tuple_element_t<0, std::tuple<T2...>>, router_function>, "parameter is not a router function.");
+                get(path, f);
+                get(path, others...);
+            }
 
         private:
             class impl;

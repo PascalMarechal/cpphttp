@@ -228,3 +228,11 @@ TEST(Router, Get_functions_should_have_access_to_param_in_url)
     result = router.process(*Requests::GetRequestWithTailingParams);
     EXPECT_THAT(result, HasSubstr("Index value is 13\nText value is hello"));
 }
+
+TEST(Router, Should_have_variadic_get_function)
+{
+    router router;
+    router.get("/item/:id", firstFunction, secondFunction);
+    auto result = router.process(*Requests::GetRequestWithParam);
+    testFirstAndSecondFunction(result);
+}
