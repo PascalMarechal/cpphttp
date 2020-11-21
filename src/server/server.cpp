@@ -22,6 +22,11 @@ public:
         m_context.stop();
     }
 
+    void setRouter(router &&router)
+    {
+        m_router = std::move(router);
+    }
+
 private:
     void accept()
     {
@@ -56,4 +61,9 @@ void server::start()
 void server::stop()
 {
     m_server_impl->stop();
+}
+
+void server::setRouter(router &&router)
+{
+    m_server_impl->setRouter(std::move(router));
 }

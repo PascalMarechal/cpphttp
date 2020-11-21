@@ -15,6 +15,8 @@ namespace cpphttp
 
             void start();
             void stop();
+            void setRouter(router &&router);
+
         private:
             class impl;
             std::unique_ptr<impl> m_server_impl;
