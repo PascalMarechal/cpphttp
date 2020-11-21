@@ -70,7 +70,7 @@ TEST(Request, Equality_operators)
     EXPECT_TRUE(req != req2);
 }
 
-TEST(Request, SetTempVariables)
+TEST(Request, Set_temp_variables)
 {
     request req;
     req.set("name", "value");
@@ -83,10 +83,16 @@ TEST(Request, SetTempVariables)
     EXPECT_EQ(req.get("nothere"), "");
     EXPECT_EQ(req.get("int"), "12");
     EXPECT_EQ(req.get("float"), "12.540000");
-    
+
     EXPECT_TRUE(req.has("name"));
     EXPECT_TRUE(req.has("name2"));
     EXPECT_FALSE(req.has("nothere"));
     EXPECT_TRUE(req.has("int"));
     EXPECT_TRUE(req.has("float"));
+}
+
+TEST(Request, Get_request_should_have_tailing_params_loaded)
+{
+    EXPECT_EQ(Requests::GetRequestWithTailingParams->getParam("id"), "24");
+    EXPECT_EQ(Requests::GetRequestWithTailingParams->getParam("location"), "France");
 }

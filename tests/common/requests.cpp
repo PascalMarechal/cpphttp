@@ -31,6 +31,14 @@ std::unique_ptr<cpphttp::request::request> getGetRequestWithParam()
     return req;
 }
 
+std::unique_ptr<cpphttp::request::request> getGetRequestWithTailingParams()
+{
+    auto req = std::make_unique<cpphttp::request::request>();
+    req->setHeader(Requests::GetRequestHeaderWithParam2);
+    return req;
+}
+
 std::unique_ptr<cpphttp::request::request> Requests::PostRequest = getCorrectPostRequest();
 std::unique_ptr<cpphttp::request::request> Requests::GetRequest = getCorrectGetRequest();
 std::unique_ptr<cpphttp::request::request> Requests::GetRequestWithParam = getGetRequestWithParam();
+std::unique_ptr<cpphttp::request::request> Requests::GetRequestWithTailingParams = getGetRequestWithTailingParams();
