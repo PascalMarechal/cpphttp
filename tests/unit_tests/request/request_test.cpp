@@ -96,3 +96,18 @@ TEST(Request, Get_request_should_have_tailing_params_loaded)
     EXPECT_EQ(Requests::GetRequestWithTailingParams->getParam("id"), "24");
     EXPECT_EQ(Requests::GetRequestWithTailingParams->getParam("location"), "France");
 }
+
+TEST(Request, Request_should_load_url_param_according_to_expected_path)
+{
+    request req;
+    req.setHeader(Requests::GetRequestHeaderWithParam);
+    req.loadParamFromUrl("/item/:index");
+
+    EXPECT_EQ(req.getParam("index"), "13");
+
+    request req2;
+    req2.setHeader(Requests::GetRequestHeaderWithParam2);
+    req2.loadParamFromUrl("/complex/:val/:text/url");
+    EXPECT_EQ(req2.getParam("val"), "13");
+    EXPECT_EQ(req2.getParam("text"), "hello");
+}

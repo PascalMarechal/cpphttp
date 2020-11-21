@@ -78,6 +78,23 @@ public:
         return empty;
     }
 
+    inline void loadParamFromUrl(std::string_view expectedPath) noexcept
+    {
+        auto splittedExpectedPath = tools::split(expectedPath, "/");
+        auto splittedUrl = tools::split(m_header->getPath(), "/");
+        auto pos = 0;
+        for (const auto &val : splittedExpectedPath)
+        {
+            if (splittedUrl.size() == pos)
+                return;
+
+            if (val.size() > 1 && val[0] == ':')
+                m_param_values[std::string(val.substr(1))] = splittedUrl[pos];
+
+            ++pos;
+        }
+    }
+
 private:
     void extractTailingParameters()
     {
@@ -139,6 +156,11 @@ const std::string &request::getParam(const std::string &name) const noexcept
 bool request::has(const std::string &name) const noexcept
 {
     return m_impl->has(name);
+}
+
+void request::loadParamFromUrl(std::string_view expectedPath) noexcept
+{
+    m_impl->loadParamFromUrl(expectedPath);
 }
 
 namespace cpphttp

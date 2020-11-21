@@ -19,16 +19,17 @@ namespace cpphttp
             request(request &&toCopy) = delete;
             request &operator=(request &&toCopy) = delete;
 
-            bool isReady() const noexcept;
             void setHeader(const std::string &data) noexcept;
             void setBody(const std::string &data) noexcept;
-            const cpphttp::request::header &header() const;
+            void loadParamFromUrl(std::string_view expectedPath) noexcept;
 
-            bool has(const std::string& name) const noexcept;
+            bool isReady() const noexcept;
+            const cpphttp::request::header &header() const;
+            bool has(const std::string &name) const noexcept;
             void set(std::string name, std::string value) noexcept;
             const std::string &get(const std::string &name) const noexcept;
             const std::string &getParam(const std::string &name) const noexcept;
-            
+
             template <typename T, typename = typename std::enable_if_t<std::is_arithmetic<T>::value, T>>
             void set(std::string name, T value) noexcept
             {
