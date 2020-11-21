@@ -277,3 +277,15 @@ TEST(Router, should_have_variadic_post_function)
     auto result = router.process(*Requests::PostRequest);
     testFirstAndSecondFunction(result);
 }
+
+TEST(Router, should_have_rvalue_copy_and_assignment_operators)
+{
+    router router, router3;
+    router.post("/path/somewhere", firstFunction, secondFunction);
+    auto router2 = std::move(router);
+    auto result = router2.process(*Requests::PostRequest);
+    testFirstAndSecondFunction(result);
+    router3 = std::move(router2);
+    result = router3.process(*Requests::PostRequest);
+    testFirstAndSecondFunction(result);
+}

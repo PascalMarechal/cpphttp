@@ -18,6 +18,12 @@ namespace cpphttp
 
             router();
             ~router();
+            // Only rvalue operators
+            router(const router &) = delete;
+            router &operator=(const router &) = delete;
+            router(router &&toCopy);
+            router &operator=(router &&toCopy);
+
             std::string process(cpphttp::request::request &) const;
 
             void error(error_function f) noexcept;

@@ -152,3 +152,18 @@ void router::post(const std::string &pathStartingWith, router_function function)
 {
     m_impl->post(pathStartingWith, function);
 }
+
+router::router(router &&toCopy)
+{
+    m_impl = std::move(toCopy.m_impl);
+    toCopy.m_impl = std::make_unique<impl>();
+}
+
+router &router::operator=(router &&toCopy)
+{
+    if (this == &toCopy)
+        return *this;
+    m_impl = std::move(toCopy.m_impl);
+    toCopy.m_impl = std::make_unique<impl>();
+    return *this;
+}
