@@ -81,7 +81,10 @@ private:
                 return;
 
             if (validPath(req.header().getPath(), funcInfo))
+            {
+                req.loadParamFromUrl(funcInfo.path);
                 funcInfo.function(req, res, errorCallback);
+            }
         }
     }
 

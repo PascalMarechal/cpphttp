@@ -217,3 +217,14 @@ TEST(Router, Get_functions_should_match_with_param_in_url)
     auto result = router.process(*Requests::GetRequestWithParam);
     EXPECT_THAT(result, HasSubstr("Get function called"));
 }
+
+TEST(Router, Get_functions_should_have_access_to_param_in_url)
+{
+    router router;
+    router.get("/item/:id", [](request &req, response &res, error_callback error) { res.send("ID value is " + req.getParam("id")); });
+    router.get("/complex/:index/:text/url", [](request &req, response &res, error_callback error) { res.send("Index value is " + req.getParam("index") + "\nText value is " + req.getParam("text")); });
+    auto result = router.process(*Requests::GetRequestWithParam);
+    EXPECT_THAT(result, HasSubstr("ID value is 13"));
+    result = router.process(*Requests::GetRequestWithTailingParams);
+    EXPECT_THAT(result, HasSubstr("Index value is 13\nText value is hello"));
+}
