@@ -14,15 +14,12 @@ TEST(Params, Should_extract_url_variables)
     EXPECT_EQ(req.get("id"), "13");
 }
 
-TEST(Params, Should_extract_all_type_of_url_variables)
+TEST(Params, Should_extract_url_variables_2)
 {
     request::request req;
     req.setHeader(Requests::GetRequestHeaderWithParam2);
     extractParameters("/complex/:what/:text/url", req);
-    extractTailingParameters(req);
     
     EXPECT_EQ(req.get("what"), "13");
     EXPECT_EQ(req.get("text"), "hello");
-    EXPECT_EQ(req.get("id"), "24");
-    EXPECT_EQ(req.get("location"), "France");
 }

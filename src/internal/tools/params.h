@@ -7,6 +7,5 @@ namespace cpphttp
     namespace tools
     {
         void extractParameters(std::string_view expectedPath, request::request &req);
-        void extractTailingParameters(request::request &req);
     }
 } // namespace cpphttp
