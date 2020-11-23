@@ -134,7 +134,7 @@ TEST(Connection, Incorrect_header_data)
   c->start();
 }
 
-TEST(Connection, Body_size_is_too_big)
+TEST(Connection, Should_reject_packet_when_body_size_is_too_big)
 {
   auto socketMock = new SocketMock();
   ConnectionFunctionsMock functionsMock;
@@ -149,6 +149,27 @@ TEST(Connection, Body_size_is_too_big)
   EXPECT_CALL(functionsMock, maxBodySize).Times(1);
   EXPECT_CALL(routerMock, process).Times(0);
   EXPECT_CALL(*socketMock, close).Times(1);
+
+  auto c = std::make_shared<connection<SocketMockWrapper, ConnectionFunctionsMock, RouterMock>>(SocketMockWrapper(socketMock), functionsMock, routerMock);
+  c->start();
+}
+
+TEST(Connection, Should_accept_full_packet_at_header_stage)
+{
+  auto socketMock = new SocketMock();
+  ConnectionFunctionsMock functionsMock;
+  RouterMock routerMock;
+
+  functionsMock.createFakeReadFullPostRequestAtHeaderStage();
+
+  EXPECT_CALL(functionsMock, async_read_header(matchSocketMock(socketMock), _, _, _)).Times(2);
+  EXPECT_CALL(functionsMock, async_read_body).Times(0);
+  EXPECT_CALL(functionsMock, createBuffer).Times(2);
+  EXPECT_CALL(functionsMock, headerEndMatcher).Times(2);
+  EXPECT_CALL(functionsMock, maxBodySize).Times(1);
+  EXPECT_CALL(routerMock, process).Times(1);
+  EXPECT_CALL(functionsMock, write).Times(1);
+  EXPECT_CALL(*socketMock, close).Times(0);
 
   auto c = std::make_shared<connection<SocketMockWrapper, ConnectionFunctionsMock, RouterMock>>(SocketMockWrapper(socketMock), functionsMock, routerMock);
   c->start();

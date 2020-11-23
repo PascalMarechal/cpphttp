@@ -21,16 +21,17 @@ namespace cpphttp
         private:
             inline void readHeader()
             {
-                m_functions.async_read_header(m_socket, m_functions.createBuffer(m_headerBuffer), m_functions.headerEndMatcher(), std::bind(&connection::onReadHeader, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+                m_functions.async_read_header(m_socket, m_functions.createBuffer(m_buffer), m_functions.headerEndMatcher(), std::bind(&connection::onReadHeader, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
             }
 
             inline void readBody()
             {
-                m_functions.async_read_body(m_socket, m_functions.createBuffer(m_bodyBuffer), m_functions.bodyEndMatcher(m_currentRequest.header().getExpectedBodySize()), std::bind(&connection::onReadBody, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+                m_functions.async_read_body(m_socket, m_functions.createBuffer(m_buffer), m_functions.bodyEndMatcher(m_toRead), std::bind(&connection::onReadBody, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
             }
 
             void processAndReadNextRequest()
             {
+                m_buffer.clear();
                 auto response = m_router.process(m_currentRequest);
                 m_functions.write(m_socket, response);
                 readHeader();
@@ -46,8 +47,9 @@ namespace cpphttp
                 if (error)
                     return exit(error);
 
-                m_currentRequest.setHeader(m_headerBuffer);
-                m_headerBuffer.clear();
+                std::string_view headerView = m_buffer;
+                m_headerSize = bytes_transferred;
+                m_currentRequest.setHeader(headerView.substr(0, bytes_transferred));
 
                 if (!m_currentRequest.header().isReady())
                     return exit(error);
@@ -57,7 +59,19 @@ namespace cpphttp
                     return exit(error);
 
                 if (expectedBodySize > 0)
-                    readBody();
+                {
+                    auto extra = m_buffer.size() - bytes_transferred;
+                    if (extra < expectedBodySize)
+                    {
+                        m_toRead = expectedBodySize - extra;
+                        readBody();
+                    }
+                    else
+                    {
+                        m_currentRequest.setBody(headerView.substr(bytes_transferred, expectedBodySize));
+                        processAndReadNextRequest();
+                    }
+                }
                 else
                     processAndReadNextRequest();
             }
@@ -66,9 +80,7 @@ namespace cpphttp
             {
                 if (error)
                     return exit(error);
-
-                m_currentRequest.setBody(m_bodyBuffer);
-                m_bodyBuffer.clear();
+                m_currentRequest.setBody(std::string_view(m_buffer).substr(m_headerSize, m_currentRequest.header().getExpectedBodySize()));
                 processAndReadNextRequest();
             }
 
@@ -76,8 +88,9 @@ namespace cpphttp
             const ConnectionFunctions &m_functions;
             const Router &m_router;
 
-            std::string m_headerBuffer;
-            std::string m_bodyBuffer;
+            std::string m_buffer;
+            std::size_t m_toRead;
+            std::size_t m_headerSize;
             cpphttp::request::request m_currentRequest;
         };
     } // namespace internal

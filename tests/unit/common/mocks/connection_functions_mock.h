@@ -41,7 +41,8 @@ public:
     void createHeaderEndMatcher();
     void createMaxBodySize();
     void createFakeReadPostRequestWithBigBodyLength();
-
+    void createFakeReadFullPostRequestAtHeaderStage();
+    
 private:
     uint32_t m_readExactlyCount, m_readUntilCount;
 };
