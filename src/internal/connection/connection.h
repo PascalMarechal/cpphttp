@@ -53,7 +53,14 @@ namespace cpphttp
                     return;
                 }
 
-                if (m_currentRequest.header().getExpectedBodySize() > 0)
+                auto expectedBodySize = m_currentRequest.header().getExpectedBodySize();
+                if (expectedBodySize > m_functions.maxBodySize())
+                {
+                    m_socket.close(error);
+                    return;
+                }
+                
+                if (expectedBodySize > 0)
                     readBody();
                 else
                     processAndReadNextRequest();

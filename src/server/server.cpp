@@ -42,6 +42,11 @@ public:
         return asio::transfer_exactly(size);
     }
 
+    inline static uint32_t maxBodySize()
+    {
+        return 1024 * 1024 * 2; // 2M
+    }
+
 private:
     inline static cpphttp::internal::match_end_of_header m_matcher;
 };

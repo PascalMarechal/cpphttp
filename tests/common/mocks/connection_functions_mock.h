@@ -27,6 +27,7 @@ public:
     MOCK_CONST_METHOD1(createBuffer, std::string &(std::string &));
     MOCK_CONST_METHOD0(headerEndMatcher, HeaderEndMatcher());
     MOCK_CONST_METHOD1(bodyEndMatcher, BodyEndMatcher(std::size_t));
+    MOCK_CONST_METHOD0(maxBodySize, uint32_t());
 
     void createFakePostReadMethods(uint32_t loops);
     void createFakeGetReadMethods(uint32_t loops);
@@ -38,6 +39,8 @@ public:
     void createBufferFunction();
     void createBodyEndMatcher();
     void createHeaderEndMatcher();
+    void createMaxBodySize();
+    void createFakeReadPostRequestWithBigBodyLength();
 
 private:
     uint32_t m_readExactlyCount, m_readUntilCount;

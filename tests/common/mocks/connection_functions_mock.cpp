@@ -12,6 +12,7 @@ std::size_t BodyEndMatcher::getSize() const
 
 ConnectionFunctionsMock::ConnectionFunctionsMock() : m_readExactlyCount(0), m_readUntilCount(0)
 {
+    createMaxBodySize();
 }
 
 void ConnectionFunctionsMock::createFakePostReadMethods(uint32_t loops)
@@ -26,6 +27,12 @@ void ConnectionFunctionsMock::createFakeGetReadMethods(uint32_t loops)
     createBufferFunction();
     createFakeReadHeader(loops, Requests::GetRequestHeader);
     createFakeReadBody(loops, "");
+}
+
+void ConnectionFunctionsMock::createFakeReadPostRequestWithBigBodyLength()
+{
+    createBufferFunction();
+    createFakeReadHeader(1, Requests::PostRequestHeaderWithBigBodyLength);
 }
 
 void ConnectionFunctionsMock::createErrorInHeaderRead()
@@ -94,4 +101,9 @@ void ConnectionFunctionsMock::createHeaderEndMatcher()
     ON_CALL(*this, headerEndMatcher).WillByDefault([]() -> HeaderEndMatcher {
         return HeaderEndMatcher();
     });
+}
+
+void ConnectionFunctionsMock::createMaxBodySize()
+{
+    ON_CALL(*this, maxBodySize).WillByDefault(testing::Return(100));
 }

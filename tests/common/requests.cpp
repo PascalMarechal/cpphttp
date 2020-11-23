@@ -7,6 +7,7 @@ std::string Requests::GetRequestHeaderWithParam = readFile("./data/headers/get_r
 std::string Requests::GetRequestHeaderWithParam2 = readFile("./data/headers/get_request_with_param2.txt");
 std::string Requests::PostRequestHeaderWithIncorrectLength = readFile("./data/headers/post_request_incorrect_length.txt");
 std::string Requests::PostRequestBody = readFile("./data/body/post_request.txt");
+std::string Requests::PostRequestHeaderWithBigBodyLength = readFile("./data/headers/post_request_with_big_body.txt");
 uint32_t Requests::ExpectedPostBodySize = 32;
 
 std::unique_ptr<cpphttp::request::request> getCorrectPostRequest()
