@@ -167,7 +167,28 @@ TEST(Connection, Should_accept_full_packet_at_header_stage)
   EXPECT_CALL(functionsMock, createBuffer).Times(2);
   EXPECT_CALL(functionsMock, headerEndMatcher).Times(2);
   EXPECT_CALL(functionsMock, maxBodySize).Times(1);
-  EXPECT_CALL(routerMock, process).Times(1);
+  EXPECT_CALL(routerMock, process(SameRequest(Requests::PostRequestHeader, Requests::PostRequestBody))).Times(1);
+  EXPECT_CALL(functionsMock, write).Times(1);
+  EXPECT_CALL(*socketMock, close).Times(0);
+
+  auto c = std::make_shared<connection<SocketMockWrapper, ConnectionFunctionsMock, RouterMock>>(SocketMockWrapper(socketMock), functionsMock, routerMock);
+  c->start();
+}
+
+TEST(Connection, Should_accept_splitted_packet_at_header_stage)
+{
+  auto socketMock = new SocketMock();
+  ConnectionFunctionsMock functionsMock;
+  RouterMock routerMock;
+
+  functionsMock.createFakeReadSplittedPostRequestAtHeaderStage();
+
+  EXPECT_CALL(functionsMock, async_read_header(matchSocketMock(socketMock), _, _, _)).Times(2);
+  EXPECT_CALL(functionsMock, async_read_body).Times(1);
+  EXPECT_CALL(functionsMock, createBuffer).Times(3);
+  EXPECT_CALL(functionsMock, headerEndMatcher).Times(2);
+  EXPECT_CALL(functionsMock, maxBodySize).Times(1);
+  EXPECT_CALL(routerMock, process(SameRequest(Requests::PostRequestHeader, Requests::PostRequestBody))).Times(1);
   EXPECT_CALL(functionsMock, write).Times(1);
   EXPECT_CALL(*socketMock, close).Times(0);
 
