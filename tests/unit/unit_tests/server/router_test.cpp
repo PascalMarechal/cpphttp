@@ -279,6 +279,12 @@ TEST(Router, Should_have_onPost_function)
     testFirstAndSecondFunction(result);
 }
 
+void expectFirstAndSecondFunctionNotCalled(const std::string &input)
+{
+    EXPECT_THAT(input, Not(HasSubstr("First Function Called")));
+    EXPECT_THAT(input, Not(HasSubstr("Second Function Called")));
+}
+
 TEST(Router, Functions_should_not_be_mixed)
 {
     router router;
@@ -286,11 +292,9 @@ TEST(Router, Functions_should_not_be_mixed)
     router.onPost("/item/:id", firstFunction);
     router.onPost("/item/:id", secondFunction);
     auto result = router.process(*Requests::PostRequest);
-    EXPECT_THAT(result, Not(HasSubstr("First Function Called")));
-    EXPECT_THAT(result, Not(HasSubstr("Second Function Called")));
+    expectFirstAndSecondFunctionNotCalled(result);
     result = router.process(*Requests::GetRequestWithParam);
-    EXPECT_THAT(result, Not(HasSubstr("First Function Called")));
-    EXPECT_THAT(result, Not(HasSubstr("Second Function Called")));
+    expectFirstAndSecondFunctionNotCalled(result);
 }
 
 TEST(Router, should_have_variadic_onPost_function)
