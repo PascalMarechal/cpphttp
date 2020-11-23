@@ -21,7 +21,7 @@ done
 
 mkdir -p build
 mkdir -p bin
-cp -r tests/data build
+cp -r tests/unit/data build
 cd build
 cmake $flags ..
 cmake --build . 
