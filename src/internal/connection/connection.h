@@ -36,30 +36,26 @@ namespace cpphttp
                 readHeader();
             }
 
+            void exit(std::error_code &error)
+            {
+                m_socket.close(error);
+            }
+
             void onReadHeader(std::error_code error, std::size_t bytes_transferred)
             {
                 if (error)
-                {
-                    m_socket.close(error);
-                    return;
-                }
+                    return exit(error);
 
                 m_currentRequest.setHeader(m_headerBuffer);
                 m_headerBuffer.clear();
 
                 if (!m_currentRequest.header().isReady())
-                {
-                    m_socket.close(error);
-                    return;
-                }
+                    return exit(error);
 
                 auto expectedBodySize = m_currentRequest.header().getExpectedBodySize();
                 if (expectedBodySize > m_functions.maxBodySize())
-                {
-                    m_socket.close(error);
-                    return;
-                }
-                
+                    return exit(error);
+
                 if (expectedBodySize > 0)
                     readBody();
                 else
@@ -69,10 +65,7 @@ namespace cpphttp
             void onReadBody(std::error_code error, std::size_t bytes_transferred)
             {
                 if (error)
-                {
-                    m_socket.close(error);
-                    return;
-                }
+                    return exit(error);
 
                 m_currentRequest.setBody(m_bodyBuffer);
                 m_bodyBuffer.clear();
