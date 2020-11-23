@@ -5,7 +5,7 @@ using namespace cpphttp::request;
 class body::impl
 {
 public:
-    impl(const std::string &data) : m_data(data)
+    impl(const std::string_view &data) : m_data(data)
     {
     }
 
@@ -29,11 +29,11 @@ private:
     std::string m_data;
 };
 
-body::body(const std::string &data) : m_impl(std::make_unique<impl>(data))
+body::body(const std::string_view &data) : m_impl(std::make_unique<impl>(data))
 {
 }
 
-body::~body(){}
+body::~body() {}
 
 const std::string &body::getData() const noexcept
 {

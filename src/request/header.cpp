@@ -10,7 +10,7 @@ using namespace cpphttp::tools;
 class header::impl
 {
 public:
-    impl(const std::string &data) : m_ready(false), m_method(method::UNKNOWN), m_version(version::UNKNOWN), m_expectedBodysize(0)
+    impl(const std::string_view &data) : m_ready(false), m_method(method::UNKNOWN), m_version(version::UNKNOWN), m_expectedBodysize(0)
     {
         parse(data);
     }
@@ -44,7 +44,7 @@ public:
         return m_expectedBodysize;
     }
 
-    inline void setPath(std::string_view path) noexcept
+    inline void setPath(const std::string_view &path) noexcept
     {
         if (!extractGetPath(path))
             m_path = path;
@@ -65,7 +65,7 @@ public:
     }
 
 private:
-    inline void parseMethodValue(std::string_view value) noexcept
+    inline void parseMethodValue(const std::string_view &value) noexcept
     {
         auto method = methodMapping.find(value);
         if (method == methodMapping.end())
@@ -73,7 +73,7 @@ private:
         m_method = method->second;
     }
 
-    inline void parseVersionValue(std::string_view value) noexcept
+    inline void parseVersionValue(const std::string_view &value) noexcept
     {
         auto versionInfo = split(value, "/");
         if (versionInfo.size() != 2 || versionInfo[0] != "HTTP")
@@ -85,7 +85,7 @@ private:
         m_version = version->second;
     }
 
-    inline void parseRequestLine(std::string_view line) noexcept
+    inline void parseRequestLine(const std::string_view &line) noexcept
     {
         if (getMethod() != method::UNKNOWN)
             return;
@@ -99,7 +99,7 @@ private:
         setPath(values[1]);
     }
 
-    inline void handleHeaderLine(std::string_view line) noexcept
+    inline void handleHeaderLine(const std::string_view &line) noexcept
     {
         if (!line.size())
             return;
@@ -124,7 +124,7 @@ private:
         {
         }
     }
-    inline void parse(const std::string &data) noexcept
+    inline void parse(const std::string_view &data) noexcept
     {
         auto lines = split(data, "\r\n");
         for (auto line : lines)
@@ -133,7 +133,7 @@ private:
         m_ready = m_method != method::UNKNOWN && m_version != version::UNKNOWN && m_path.size() > 0;
     }
 
-    inline bool extractGetPath(std::string_view path) noexcept
+    inline bool extractGetPath(const std::string_view &path) noexcept
     {
         if (m_method != method::GET)
             return false;
@@ -166,7 +166,7 @@ const std::unordered_map<std::string_view, std::function<void(header::impl *, st
           head->setExpectedBodySize(std::stoul(s));
       }}};
 
-header::header(const std::string &data) : m_impl(std::make_unique<impl>(data))
+header::header(const std::string_view &data) : m_impl(std::make_unique<impl>(data))
 {
 }
 

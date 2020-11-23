@@ -19,13 +19,13 @@ public:
         return false;
     }
 
-    inline void setHeader(const std::string &data) noexcept
+    inline void setHeader(const std::string_view &data) noexcept
     {
         m_header = std::make_unique<cpphttp::request::header>(data);
         extractParameters(m_header->getGetParams());
     }
 
-    inline void setBody(const std::string &data) noexcept
+    inline void setBody(const std::string_view &data) noexcept
     {
         m_body = std::make_unique<body>(data);
         if (m_header && m_header->getMethod() == method::POST)
@@ -52,7 +52,7 @@ public:
                 *lhs.m_body == *rhs.m_body);
     }
 
-    inline void set(std::string name, std::string value) noexcept
+    inline void set(const std::string &name, const std::string &value) noexcept
     {
         m_values[name] = value;
     }
@@ -80,7 +80,7 @@ public:
         return empty;
     }
 
-    inline void loadParamFromUrl(std::string_view expectedPath) noexcept
+    inline void loadParamsFromUrl(std::string_view expectedPath) noexcept
     {
         auto splittedExpectedPath = tools::split(expectedPath, "/");
         auto splittedUrl = tools::split(m_header->getPath(), "/");
@@ -130,17 +130,17 @@ const header &request::header() const
     return m_impl->header();
 }
 
-void request::setHeader(const std::string &data) noexcept
+void request::setHeader(const std::string_view &data) noexcept
 {
     m_impl->setHeader(data);
 }
 
-void request::setBody(const std::string &data) noexcept
+void request::setBody(const std::string_view &data) noexcept
 {
     m_impl->setBody(data);
 }
 
-void request::set(std::string name, std::string value) noexcept
+void request::set(const std::string &name, const std::string &value) noexcept
 {
     m_impl->set(name, value);
 }
@@ -160,9 +160,9 @@ bool request::has(const std::string &name) const noexcept
     return m_impl->has(name);
 }
 
-void request::loadParamFromUrl(std::string_view expectedPath) noexcept
+void request::loadParamsFromUrl(const std::string_view &expectedPath) noexcept
 {
-    m_impl->loadParamFromUrl(expectedPath);
+    m_impl->loadParamsFromUrl(expectedPath);
 }
 
 namespace cpphttp

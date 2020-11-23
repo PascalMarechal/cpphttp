@@ -9,7 +9,7 @@ namespace cpphttp
         class body
         {
         public:
-            body(const std::string &data);
+            body(const std::string_view &data);
             ~body();
             const std::string &getData() const noexcept;
             std::size_t getSize() const noexcept;

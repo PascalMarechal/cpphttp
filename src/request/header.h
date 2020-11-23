@@ -13,7 +13,7 @@ namespace cpphttp
         class header
         {
         public:
-            header(const std::string &data);
+            header(const std::string_view &data);
             ~header();
 
             bool isReady() const noexcept;

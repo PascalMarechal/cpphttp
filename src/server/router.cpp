@@ -85,7 +85,7 @@ private:
 
             if (validPath(req.header(), funcInfo))
             {
-                req.loadParamFromUrl(funcInfo.path);
+                req.loadParamsFromUrl(funcInfo.path);
                 funcInfo.function(req, res, errorCallback);
             }
         }

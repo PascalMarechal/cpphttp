@@ -101,13 +101,13 @@ TEST(Request, Request_should_load_url_param_according_to_expected_path)
 {
     request req;
     req.setHeader(Requests::GetRequestHeaderWithParam);
-    req.loadParamFromUrl("/item/:index");
+    req.loadParamsFromUrl("/item/:index");
 
     EXPECT_EQ(req.getParam("index"), "13");
 
     request req2;
     req2.setHeader(Requests::GetRequestHeaderWithParam2);
-    req2.loadParamFromUrl("/complex/:val/:text/url");
+    req2.loadParamsFromUrl("/complex/:val/:text/url");
     EXPECT_EQ(req2.getParam("val"), "13");
     EXPECT_EQ(req2.getParam("text"), "hello");
 }
