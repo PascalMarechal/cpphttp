@@ -220,6 +220,29 @@ TEST(Router, Get_functions_should_fail_if_path_is_different_or_incomplete)
     EXPECT_THAT(result, Not(HasSubstr("Get function called")));
 }
 
+std::string processGetRootPath(const router &router)
+{
+    request req;
+    req.setHeader("GET / HTTP/1.1 \n\n");
+    return router.process(req);
+}
+
+TEST(Router, root_path_should_be_allowed)
+{
+    router router;
+    router.onGet("/", getFunction);
+    auto result = processGetRootPath(router);
+    EXPECT_THAT(result, HasSubstr("Get function called"));
+}
+
+TEST(Router, empty_path_should_be_root_path)
+{
+    router router;
+    router.onGet("", getFunction);
+    auto result = processGetRootPath(router);
+    EXPECT_THAT(result, HasSubstr("Get function called"));
+}
+
 TEST(Router, Get_functions_should_match_with_param_in_url)
 {
     router router;

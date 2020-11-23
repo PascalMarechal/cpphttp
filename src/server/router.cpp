@@ -119,6 +119,8 @@ private:
             else
                 regexPath += value;
         }
+        if (regexPath.empty())
+            regexPath = "/";
         return std::regex(regexPath);
     }
 };
