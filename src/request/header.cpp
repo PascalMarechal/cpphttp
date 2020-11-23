@@ -46,7 +46,7 @@ public:
 
     inline void setPath(std::string_view path) noexcept
     {
-        if(!extractGetPath(path))
+        if (!extractGetPath(path))
             m_path = path;
     }
 
@@ -156,14 +156,15 @@ private:
     const inline static std::unordered_map<std::string_view, method> methodMapping =
         {{"GET", method::GET}, {"POST", method::POST}, {"DELETE", method::DELETE}, {"PUT", method::PUT}, {"HEAD", method::HEAD}, {"PATCH", method::PATCH}};
 
-    const inline static std::unordered_map<std::string_view, std::function<void(header::impl *, std::string &&)>> fillFunctions =
-        {{"Content-Length", [](header::impl *head, std::string &&s) {
-              head->setExpectedBodySize(std::stoul(s));
-          }}};
-
+    const static std::unordered_map<std::string_view, std::function<void(header::impl *, std::string &&)>> fillFunctions;
     const inline static std::unordered_map<std::string_view, version> versionMapping =
         {{"1.0", version::_1}, {"1.1", version::_1_1}};
 };
+
+const std::unordered_map<std::string_view, std::function<void(header::impl *, std::string &&)>> header::impl::fillFunctions =
+    {{"Content-Length", [](header::impl *head, std::string &&s) {
+          head->setExpectedBodySize(std::stoul(s));
+      }}};
 
 header::header(const std::string &data) : m_impl(std::make_unique<impl>(data))
 {
