@@ -36,7 +36,7 @@ TEST(Router, Should_be_able_to_use_other_error_functions)
         res.status(status::_501);
         res.send("<h1> Error !!! </h1>");
     };
-    router.error(errorFunction);
+    router.onError(errorFunction);
     EXPECT_THAT(router.process(*Requests::PostRequest), HasSubstr("501 Not Implemented"));
     EXPECT_THAT(router.process(*Requests::PostRequest), HasSubstr("<h1> Error !!! </h1>"));
 }
@@ -50,8 +50,8 @@ TEST(Router, Should_be_able_to_use_other_error_functions_in_cascade)
     auto errorFunction2 = [](const std::string &error, request &req, response &res) {
         res.send("<h1>Whoops</h1>");
     };
-    router.error(errorFunction);
-    router.error(errorFunction2);
+    router.onError(errorFunction);
+    router.onError(errorFunction2);
     auto result = router.process(*Requests::PostRequest);
     EXPECT_THAT(result, HasSubstr("501 Not Implemented"));
     EXPECT_THAT(result, HasSubstr("<h1>Whoops</h1>"));
@@ -67,8 +67,8 @@ TEST(Router, Should_stop_error_functions_at_first_send)
     auto errorFunction2 = [](const std::string &error, request &req, response &res) {
         res.status(status::_500);
     };
-    router.error(errorFunction);
-    router.error(errorFunction2);
+    router.onError(errorFunction);
+    router.onError(errorFunction2);
     auto result = router.process(*Requests::PostRequest);
     EXPECT_THAT(result, HasSubstr("501 Not Implemented"));
 }
@@ -85,7 +85,7 @@ TEST(Router, Should_have_variadic_error_functions_setter)
     auto errorFunction3 = [](const std::string &error, request &req, response &res) {
         res.send("<h2>Heyyyy</h2>");
     };
-    router.error(errorFunction, errorFunction2, errorFunction3);
+    router.onError(errorFunction, errorFunction2, errorFunction3);
     auto result = router.process(*Requests::PostRequest);
     EXPECT_THAT(result, HasSubstr("501 Not Implemented"));
     EXPECT_THAT(result, HasSubstr("<h1>Whoops</h1>"));
@@ -99,7 +99,7 @@ auto rootFunction = [](request &req, response &res, error_callback error) {
 TEST(Router, Should_be_able_to_use_functions_for_paths_starting_with)
 {
     router router;
-    router.use("/", rootFunction);
+    router.onAll("/", rootFunction);
     auto result = router.process(*Requests::PostRequest);
     EXPECT_THAT(result, HasSubstr("Root Function Called"));
 }
@@ -107,7 +107,7 @@ TEST(Router, Should_be_able_to_use_functions_for_paths_starting_with)
 TEST(Router, Should_avoid_using_functions_with_wrong_path)
 {
     router router;
-    router.use("/wrongpath", rootFunction);
+    router.onAll("/wrongpath", rootFunction);
     auto result = router.process(*Requests::PostRequest);
     EXPECT_THAT(router.process(*Requests::PostRequest), HasSubstr("500 Internal Server Error"));
 }
@@ -128,8 +128,8 @@ void testFirstAndSecondFunction(const std::string &result)
 TEST(Router, Should_be_able_to_use_functions_in_cascade)
 {
     router router;
-    router.use("/", firstFunction);
-    router.use("/", secondFunction);
+    router.onAll("/", firstFunction);
+    router.onAll("/", secondFunction);
     auto result = router.process(*Requests::PostRequest);
     testFirstAndSecondFunction(result);
 }
@@ -137,9 +137,9 @@ TEST(Router, Should_be_able_to_use_functions_in_cascade)
 TEST(Router, Should_stop_using_functions_when_response_ended)
 {
     router router;
-    router.use("/", firstFunction);
-    router.use("/", secondFunction);
-    router.use("/", [](request &req, response &res, error_callback error) { res.status(status::_204); });
+    router.onAll("/", firstFunction);
+    router.onAll("/", secondFunction);
+    router.onAll("/", [](request &req, response &res, error_callback error) { res.status(status::_204); });
     auto result = router.process(*Requests::PostRequest);
     testFirstAndSecondFunction(result);
     EXPECT_THAT(result, Not(HasSubstr("204")));
@@ -148,36 +148,36 @@ TEST(Router, Should_stop_using_functions_when_response_ended)
 TEST(Router, Should_avoid_using_functions_with_wrong_path_along_with_correct_one)
 {
     router router;
-    router.use("/wrongpath", firstFunction);
-    router.use("/", secondFunction);
+    router.onAll("/wrongpath", firstFunction);
+    router.onAll("/", secondFunction);
     auto result = router.process(*Requests::PostRequest);
     EXPECT_THAT(result, Not(HasSubstr("First Function Called")));
     EXPECT_THAT(result, HasSubstr("Second Function Called"));
 }
 
-TEST(Router, Should_switch_to_error_function_when_triggered)
+TEST(Router, Should_switch_to_error_functions_when_triggered)
 {
     router router;
-    router.use("/", firstFunction);
-    router.use("/", [](request &req, response &res, error_callback error) { error("something bad happened!"); });
-    router.use("/", secondFunction);
+    router.onAll("/", firstFunction);
+    router.onAll("/", [](request &req, response &res, error_callback error) { error("something bad happened!"); });
+    router.onAll("/", secondFunction);
     EXPECT_THAT(router.process(*Requests::PostRequest), HasSubstr("500 Internal Server Error"));
 }
 
-TEST(Router, Should_switch_to_error_function_when_triggered_without_text)
+TEST(Router, Should_switch_to_error_functions_when_triggered_without_text)
 {
     router router;
-    router.use("/", firstFunction);
-    router.use("/", [](request &req, response &res, error_callback error) { error(""); });
-    router.use("/", secondFunction);
+    router.onAll("/", firstFunction);
+    router.onAll("/", [](request &req, response &res, error_callback error) { error(""); });
+    router.onAll("/", secondFunction);
     EXPECT_THAT(router.process(*Requests::PostRequest), HasSubstr("500 Internal Server Error"));
 }
 
 TEST(Router, Error_functions_should_have_access_to_error_value)
 {
     router router;
-    router.use("/", [](request &req, response &res, error_callback error) { error("An error happened"); });
-    router.error([](const std::string &error, request &req, response &res) {
+    router.onAll("/", [](request &req, response &res, error_callback error) { error("An error happened"); });
+    router.onError([](const std::string &error, request &req, response &res) {
         res.send("<h1>" + error + "</h1>");
     });
     EXPECT_THAT(router.process(*Requests::PostRequest), HasSubstr("An error happened"));
@@ -186,16 +186,16 @@ TEST(Router, Error_functions_should_have_access_to_error_value)
 TEST(Router, Should_use_regex_in_path_variable)
 {
     router router;
-    router.use("/pa(bc)?th", firstFunction);
-    router.use(".*", secondFunction);
+    router.onAll("/pa(bc)?th", firstFunction);
+    router.onAll(".*", secondFunction);
     auto result = router.process(*Requests::PostRequest);
     testFirstAndSecondFunction(result);
 }
 
-TEST(Router, Should_have_variadic_use_function)
+TEST(Router, Should_have_variadic_onAll_function)
 {
     router router;
-    router.use(
+    router.onAll(
         "/", firstFunction, [](request &req, response &res, error_callback error) { res.write("Middle Function"); }, secondFunction);
     auto result = router.process(*Requests::PostRequest);
     testFirstAndSecondFunction(result);
@@ -204,10 +204,10 @@ TEST(Router, Should_have_variadic_use_function)
 
 auto getFunction = [](request &req, response &res, error_callback error) { res.send("Get function called"); };
 
-TEST(Router, Should_have_get_function)
+TEST(Router, Should_have__onGet_function)
 {
     router router;
-    router.get("/index", getFunction);
+    router.onGet("/index", getFunction);
     auto result = router.process(*Requests::GetRequest);
     EXPECT_THAT(result, HasSubstr("Get function called"));
 }
@@ -215,7 +215,7 @@ TEST(Router, Should_have_get_function)
 TEST(Router, Get_functions_should_fail_if_path_is_different_or_incomplete)
 {
     router router;
-    router.get("/ind", getFunction);
+    router.onGet("/ind", getFunction);
     auto result = router.process(*Requests::GetRequest);
     EXPECT_THAT(result, Not(HasSubstr("Get function called")));
 }
@@ -223,7 +223,7 @@ TEST(Router, Get_functions_should_fail_if_path_is_different_or_incomplete)
 TEST(Router, Get_functions_should_match_with_param_in_url)
 {
     router router;
-    router.get("/item/:id", getFunction);
+    router.onGet("/item/:id", getFunction);
     auto result = router.process(*Requests::GetRequestWithParam);
     EXPECT_THAT(result, HasSubstr("Get function called"));
 }
@@ -231,27 +231,27 @@ TEST(Router, Get_functions_should_match_with_param_in_url)
 TEST(Router, Get_functions_should_have_access_to_param_in_url)
 {
     router router;
-    router.get("/item/:id", [](request &req, response &res, error_callback error) { res.send("ID value is " + req.getParam("id")); });
-    router.get("/complex/:index/:text/url", [](request &req, response &res, error_callback error) { res.send("Index value is " + req.getParam("index") + "\nText value is " + req.getParam("text")); });
+    router.onGet("/item/:id", [](request &req, response &res, error_callback error) { res.send("ID value is " + req.getParam("id")); });
+    router.onGet("/complex/:index/:text/url", [](request &req, response &res, error_callback error) { res.send("Index value is " + req.getParam("index") + "\nText value is " + req.getParam("text")); });
     auto result = router.process(*Requests::GetRequestWithParam);
     EXPECT_THAT(result, HasSubstr("ID value is 13"));
     result = router.process(*Requests::GetRequestWithTailingParams);
     EXPECT_THAT(result, HasSubstr("Index value is 13\nText value is hello"));
 }
 
-TEST(Router, Should_have_variadic_get_function)
+TEST(Router, Should_have_variadic_onGet_function)
 {
     router router;
-    router.get("/item/:id", firstFunction, secondFunction);
+    router.onGet("/item/:id", firstFunction, secondFunction);
     auto result = router.process(*Requests::GetRequestWithParam);
     testFirstAndSecondFunction(result);
 }
 
-TEST(Router, Should_have_post_function)
+TEST(Router, Should_have_onPost_function)
 {
     router router;
-    router.post("/path/somewhere", firstFunction);
-    router.post("/path/somewhere", secondFunction);
+    router.onPost("/path/somewhere", firstFunction);
+    router.onPost("/path/somewhere", secondFunction);
     auto result = router.process(*Requests::PostRequest);
     testFirstAndSecondFunction(result);
 }
@@ -259,9 +259,9 @@ TEST(Router, Should_have_post_function)
 TEST(Router, Functions_should_not_be_mixed)
 {
     router router;
-    router.get("/path/somewhere", firstFunction, secondFunction);
-    router.post("/item/:id", firstFunction);
-    router.post("/item/:id", secondFunction);
+    router.onGet("/path/somewhere", firstFunction, secondFunction);
+    router.onPost("/item/:id", firstFunction);
+    router.onPost("/item/:id", secondFunction);
     auto result = router.process(*Requests::PostRequest);
     EXPECT_THAT(result, Not(HasSubstr("First Function Called")));
     EXPECT_THAT(result, Not(HasSubstr("Second Function Called")));
@@ -270,10 +270,10 @@ TEST(Router, Functions_should_not_be_mixed)
     EXPECT_THAT(result, Not(HasSubstr("Second Function Called")));
 }
 
-TEST(Router, should_have_variadic_post_function)
+TEST(Router, should_have_variadic_onPost_function)
 {
     router router;
-    router.post("/path/somewhere", firstFunction, secondFunction);
+    router.onPost("/path/somewhere", firstFunction, secondFunction);
     auto result = router.process(*Requests::PostRequest);
     testFirstAndSecondFunction(result);
 }
@@ -281,7 +281,7 @@ TEST(Router, should_have_variadic_post_function)
 TEST(Router, should_have_rvalue_copy_and_assignment_operators)
 {
     router router, router3;
-    router.post("/path/somewhere", firstFunction, secondFunction);
+    router.onPost("/path/somewhere", firstFunction, secondFunction);
     auto router2 = std::move(router);
     auto result = router2.process(*Requests::PostRequest);
     testFirstAndSecondFunction(result);

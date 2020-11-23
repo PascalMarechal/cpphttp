@@ -26,12 +26,12 @@ TEST(Server, Has_default_empty_router)
     testThread.join();
 }
 
-TEST(Server, Can_use_user_defined_routers)
+TEST(Server, Can_use_defined_router_functions)
 {
     server testServer(9999);
     router r;
     std::string message = "<h1>Hello World!</h1>";
-    r.get("/url", [&](cpphttp::request::request &req, cpphttp::response::response &res, error_callback error) {
+    r.onGet("/url", [&](cpphttp::request::request &req, cpphttp::response::response &res, error_callback error) {
         res.send(message);
     });
     testServer.setRouter(std::move(r));

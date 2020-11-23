@@ -31,22 +31,22 @@ public:
         return res.toString();
     }
 
-    inline void error(error_function f) noexcept
+    inline void onError(error_function f) noexcept
     {
         m_errorFunctions.push_back(f);
     }
 
-    inline void use(const std::string &pathStartingWith, router_function function) noexcept
+    inline void onAll(const std::string &pathStartingWith, router_function function) noexcept
     {
         m_functions.push_back({pathStartingWith, std::regex(pathStartingWith), function, method::UNKNOWN});
     }
 
-    inline void get(const std::string &path, router_function function) noexcept
+    inline void onGet(const std::string &path, router_function function) noexcept
     {
         m_functions.push_back({path, extractRegexFromPath(path), function, method::GET});
     }
 
-    inline void post(const std::string &path, router_function function) noexcept
+    inline void onPost(const std::string &path, router_function function) noexcept
     {
         m_functions.push_back({path, extractRegexFromPath(path), function, method::POST});
     }
@@ -132,24 +132,24 @@ std::string router::process(cpphttp::request::request &req) const
     return m_impl->process(req);
 }
 
-void router::error(error_function f) noexcept
+void router::onError(error_function f) noexcept
 {
-    m_impl->error(f);
+    m_impl->onError(f);
 }
 
-void router::use(const std::string &pathStartingWith, router_function function) noexcept
+void router::onAll(const std::string &pathStartingWith, router_function function) noexcept
 {
-    m_impl->use(pathStartingWith, function);
+    m_impl->onAll(pathStartingWith, function);
 }
 
-void router::get(const std::string &pathStartingWith, router_function function) noexcept
+void router::onGet(const std::string &pathStartingWith, router_function function) noexcept
 {
-    m_impl->get(pathStartingWith, function);
+    m_impl->onGet(pathStartingWith, function);
 }
 
-void router::post(const std::string &pathStartingWith, router_function function) noexcept
+void router::onPost(const std::string &pathStartingWith, router_function function) noexcept
 {
-    m_impl->post(pathStartingWith, function);
+    m_impl->onPost(pathStartingWith, function);
 }
 
 router::router(router &&toCopy)
