@@ -2,7 +2,6 @@
 #include "request/method.h"
 #include "internal/tools/string.h"
 
-#include <deque>
 #include <regex>
 
 using namespace cpphttp;
@@ -61,8 +60,8 @@ private:
         method functionMethod;
     };
 
-    std::deque<error_function> m_errorFunctions;
-    std::deque<functionInfo> m_functions;
+    std::vector<error_function> m_errorFunctions;
+    std::vector<functionInfo> m_functions;
 
     static inline bool validPath(const request::header &header, const functionInfo &info)
     {
