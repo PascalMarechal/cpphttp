@@ -1,10 +1,12 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.10)
 project(cpphttp CXX)
 project(cpphttp VERSION 0.0.1)
 
 set (CMAKE_CXX_STANDARD 17)
 option(DEVELOPMENT_BUILD "Build tests" OFF)
 
+# Library part
+find_package(Threads REQUIRED)
 file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h)
 
@@ -13,11 +15,28 @@ add_library(cpphttp SHARED
         ${HEADERS})
 include_directories(cpphttp ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set_target_properties(cpphttp PROPERTIES VERSION ${cpphttp_VERSION})
+target_link_libraries(cpphttp ${CMAKE_THREAD_LIBS_INIT})
 
+# Installation part
+file(GLOB PUBLIC_HEADER_FILES
+       ${CMAKE_CURRENT_SOURCE_DIR}/src/request/*.h
+       ${CMAKE_CURRENT_SOURCE_DIR}/src/response/*.h
+       ${CMAKE_CURRENT_SOURCE_DIR}/src/server/*.h
+       ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h)
+
+install(TARGETS cpphttp 
+    LIBRARY DESTINATION /usr/local/lib)
+
+foreach ( file ${PUBLIC_HEADER_FILES} )
+    get_filename_component( dir ${file} DIRECTORY )
+    string(REPLACE ${CMAKE_CURRENT_SOURCE_DIR}/src "" dir ${dir})
+    install( FILES ${file} DESTINATION /usr/local/include/cpphttp/${dir} )
+endforeach()
+
+# Dev part
 if (DEVELOPMENT_BUILD)
     enable_testing()
     find_package(GTest REQUIRED)
-    find_package(Threads REQUIRED)
     find_package(CURL REQUIRED)
     include_directories(${GTEST_INCLUDE_DIRS})
     include_directories(${CURL_INCLUDE_DIRS})
