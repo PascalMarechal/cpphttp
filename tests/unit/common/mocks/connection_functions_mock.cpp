@@ -53,6 +53,29 @@ void ConnectionFunctionsMock::createFakeReadSplittedPostRequestAtHeaderStage()
     });
 }
 
+void ConnectionFunctionsMock::createFakeReadPostThenGet()
+{
+    createBufferFunction();
+    createBodyEndMatcher();
+
+    ON_CALL(*this, async_read_header).WillByDefault([this](SocketMockWrapper &socket, std::string &buffer, HeaderEndMatcher matcher, std::function<void(std::error_code, std::size_t)> callback) {
+        if (++m_readUntilCount > 2)
+            return;
+        if (m_readUntilCount == 1)
+            buffer += Requests::PostRequestHeader;
+        else
+            buffer += Requests::GetRequestHeader;
+        callback(std::error_code(), buffer.size());
+    });
+
+    ON_CALL(*this, async_read_body).WillByDefault([this](SocketMockWrapper &socket, std::string &buffer, BodyEndMatcher matcher, std::function<void(std::error_code, std::size_t)> callback) {
+        if (++m_readExactlyCount > 1)
+            return;
+        buffer += Requests::PostRequestBody;
+        callback(std::error_code(), Requests::PostRequestBody.size());
+    });
+}
+
 void ConnectionFunctionsMock::createFakeGetReadMethods(uint32_t loops)
 {
     createBufferFunction();

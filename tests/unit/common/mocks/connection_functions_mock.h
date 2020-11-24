@@ -43,6 +43,7 @@ public:
     void createFakeReadPostRequestWithBigBodyLength();
     void createFakeReadFullPostRequestAtHeaderStage();
     void createFakeReadSplittedPostRequestAtHeaderStage();
+    void createFakeReadPostThenGet();
 
 private:
     uint32_t m_readExactlyCount, m_readUntilCount;
