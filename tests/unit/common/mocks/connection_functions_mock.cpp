@@ -40,7 +40,6 @@ void ConnectionFunctionsMock::createFakeReadSplittedPostRequestAtHeaderStage()
         if (++m_readUntilCount > 1)
             return;
         buffer += Requests::PostRequestHeader + "\n" + Requests::PostRequestBody.substr(0, 10);
-        std::cout << buffer << std::endl;
         callback(std::error_code(), Requests::PostRequestHeader.size() + 1);
     });
 

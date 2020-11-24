@@ -188,6 +188,7 @@ TEST(Connection, Should_accept_splitted_packet_at_header_stage)
   EXPECT_CALL(functionsMock, createBuffer).Times(3);
   EXPECT_CALL(functionsMock, headerEndMatcher).Times(2);
   EXPECT_CALL(functionsMock, maxBodySize).Times(1);
+  EXPECT_CALL(functionsMock, bodyEndMatcher).Times(1);
   EXPECT_CALL(routerMock, process(SameRequest(Requests::PostRequestHeader, Requests::PostRequestBody))).Times(1);
   EXPECT_CALL(functionsMock, write).Times(1);
   EXPECT_CALL(*socketMock, close).Times(0);
