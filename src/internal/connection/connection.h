@@ -16,13 +16,13 @@ namespace cpphttp
 
             void start()
             {
+                reset();
                 readHeader();
             }
 
         private:
             inline void readHeader() noexcept
             {
-                m_currentRequest = std::make_unique<request::request>();
                 m_functions.async_read_header(m_socket, m_functions.createBuffer(m_buffer), m_functions.headerEndMatcher(), std::bind(&connection::onReadHeader, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
             }
 
@@ -54,9 +54,9 @@ namespace cpphttp
 
             void processAndReadNextRequest() noexcept
             {
-                m_buffer.clear();
                 auto response = m_router.process(*m_currentRequest);
                 m_functions.write(m_socket, response);
+                reset();
                 readHeader();
             }
 
@@ -93,6 +93,12 @@ namespace cpphttp
                     return expectedBodySize - extra;
 
                 return 0;
+            }
+
+            inline void reset() noexcept
+            {
+                m_buffer.clear();
+                m_currentRequest = std::make_unique<request::request>();
             }
 
             Socket m_socket;
