@@ -39,7 +39,29 @@ TEST(Server, Can_use_defined_router_functions)
 
     auto page = getPage("http://localhost:9999/url");
     EXPECT_EQ(page, message);
-    
+
+    testServer.stop();
+    testThread.join();
+}
+
+TEST(Server, Can_call_two_succecutives_operations)
+{
+    server testServer(9999);
+    router r;
+    std::string message = "<h1>Hello World!</h1>";
+    std::string postMessage = "<h1>Post Sent!</h1>";
+    r.onGet("/url", [&](cpphttp::request::request &req, cpphttp::response::response &res, error_callback error) {
+        res.send(postMessage);
+    });
+    r.onPost("/post", [&](cpphttp::request::request &req, cpphttp::response::response &res, error_callback error) {
+        res.send(message);
+    });
+    testServer.setRouter(std::move(r));
+    std::thread testThread([&]() { testServer.start(); });
+
+    auto page = postAndThenGetAnotherPage("http://localhost:9999/post", "name=daniel&project=curl", "http://localhost:9999/url");
+    EXPECT_EQ(page, message + postMessage);
+
     testServer.stop();
     testThread.join();
 }

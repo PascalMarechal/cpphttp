@@ -54,6 +54,7 @@ namespace cpphttp
             {
                 m_buffer.clear();
                 auto response = m_router.process(m_currentRequest);
+                m_currentRequest.setBody("");
                 m_functions.write(m_socket, response);
                 readHeader();
             }
