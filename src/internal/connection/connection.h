@@ -38,7 +38,7 @@ namespace cpphttp
                 if (bytesToRead)
                     return readBody(bytesToRead);
 
-                bodySetup(bytesTransferred, m_currentRequest.header().getExpectedBodySize());
+                bodySetup(bytesTransferred);
                 processAndReadNextRequest();
             }
 
@@ -46,7 +46,7 @@ namespace cpphttp
             {
                 if (error)
                     return exit(error);
-                bodySetup(m_headerSize, m_currentRequest.header().getExpectedBodySize());
+                bodySetup(m_headerSize);
                 processAndReadNextRequest();
             }
 
@@ -67,12 +67,13 @@ namespace cpphttp
             {
                 std::string_view bufferView = m_buffer;
                 m_headerSize = bytesTransferred;
-                m_currentRequest.setHeader(bufferView.substr(0, bytesTransferred));
+                m_currentRequest.setHeader(bufferView.substr(0, m_headerSize));
                 return m_currentRequest.header().isReady() && m_currentRequest.header().getExpectedBodySize() <= m_functions.maxBodySize();
             }
 
-            inline void bodySetup(std::size_t from, std::size_t size) noexcept
+            inline void bodySetup(std::size_t from) noexcept
             {
+                auto size = m_currentRequest.header().getExpectedBodySize();
                 if (!size)
                     return;
                 std::string_view bufferView = m_buffer;
