@@ -16,12 +16,12 @@ namespace cpphttp
                 while (true)
                     // \n\n => OK
                     if (checkCurrent('\n', i, end) && checkNext('\n', i, end))
-                        return std::make_pair(i, true);
+                        return std::make_pair(++i, true);
                     // \r\n => Check for \n or \r\n
                     else if ((checkCurrent('\r', i, end) && checkNext('\n', i, end))
                              // \n or \r\n
                              && (checkNext('\n', i, end) || (checkCurrent('\r', i, end) && checkNext('\n', i, end))))
-                        return std::make_pair(i, true);
+                        return std::make_pair(++i, true);
                     else if (i == end)
                         break;
                     else if (!checkCurrent('\r', i, end))

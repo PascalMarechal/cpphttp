@@ -32,17 +32,17 @@ TEST(Matcher, FindEndOfHeaderWithCRLF)
     match_end_of_header matcher;
     auto result = matcher(CRLF_end_in_string.cbegin(), CRLF_end_in_string.cend());
     EXPECT_TRUE(result.second);
-    EXPECT_TRUE(CRLF_end_in_string.cend() - 1 == result.first);
+    EXPECT_TRUE(CRLF_end_in_string.cend() == result.first);
 
     CRLF_end_in_string = "something\r\n\r\r\n\r\n";
     result = matcher(CRLF_end_in_string.cbegin(), CRLF_end_in_string.cend());
     EXPECT_TRUE(result.second);
-    EXPECT_TRUE(CRLF_end_in_string.cend() - 1 == result.first);
+    EXPECT_TRUE(CRLF_end_in_string.cend() == result.first);
 
     CRLF_end_in_string = "\r\n\r\nsomething";
     result = matcher(CRLF_end_in_string.cbegin(), CRLF_end_in_string.cend());
     EXPECT_TRUE(result.second);
-    EXPECT_TRUE(CRLF_end_in_string.cbegin() + 3 == result.first);
+    EXPECT_TRUE(CRLF_end_in_string.cbegin() + 4 == result.first);
 }
 
 TEST(Matcher, FindEndOfHeaderWithLFOnly)
@@ -51,20 +51,20 @@ TEST(Matcher, FindEndOfHeaderWithLFOnly)
     match_end_of_header matcher;
     auto result = matcher(LF_end_in_string.cbegin(), LF_end_in_string.cend());
     EXPECT_TRUE(result.second);
-    EXPECT_TRUE(LF_end_in_string.cend() - 1 == result.first);
+    EXPECT_TRUE(LF_end_in_string.cend() == result.first);
 
     LF_end_in_string = "something\n\n";
     result = matcher(LF_end_in_string.cbegin(), LF_end_in_string.cend());
     EXPECT_TRUE(result.second);
-    EXPECT_TRUE(LF_end_in_string.cend() - 1 == result.first);
+    EXPECT_TRUE(LF_end_in_string.cend() == result.first);
 
     LF_end_in_string = "something\nsomething\nsomething\n\n";
     result = matcher(LF_end_in_string.cbegin(), LF_end_in_string.cend());
     EXPECT_TRUE(result.second);
-    EXPECT_TRUE(LF_end_in_string.cend() - 1 == result.first);
+    EXPECT_TRUE(LF_end_in_string.cend() == result.first);
 
     LF_end_in_string = "\n\nsomething";
     result = matcher(LF_end_in_string.cbegin(), LF_end_in_string.cend());
     EXPECT_TRUE(result.second);
-    EXPECT_TRUE(LF_end_in_string.cbegin() + 1 == result.first);
+    EXPECT_TRUE(LF_end_in_string.cbegin() + 2 == result.first);
 }
