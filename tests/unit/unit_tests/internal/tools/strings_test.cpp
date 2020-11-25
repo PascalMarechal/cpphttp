@@ -46,12 +46,12 @@ TEST(Strings, URI_decode)
     EXPECT_EQ(decodedValue, "100% should not be modified");
     decodedValue = uriDecode("%keep percents%");
     EXPECT_EQ(decodedValue, "%keep percents%");
-    decodedValue = uriDecode("%F9");
+    decodedValue = uriDecode("%C3%B9");
     EXPECT_EQ(decodedValue, "ù");
-    decodedValue = uriDecode("%FF");
+    decodedValue = uriDecode("%C3%BF");
     EXPECT_EQ(decodedValue, "ÿ");
-    decodedValue = uriDecode("%80");
+    decodedValue = uriDecode("%E2%82%AC");
     EXPECT_EQ(decodedValue, "€");
-    decodedValue = uriDecode("%E9%E9%E9%E9%E9%E9%E9%E9%E7%E7%E7%E7");
-    EXPECT_EQ(decodedValue, "ééééééééçççç");
+    decodedValue = uriDecode("%C3%A9%C3%A9%C3%A7%C3%A7");
+    EXPECT_EQ(decodedValue, "ééçç");
 }

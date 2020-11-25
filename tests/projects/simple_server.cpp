@@ -18,7 +18,8 @@ int main(void)
     });
 
     myrouter.onGet("/form", [](cpphttp::request::request &, cpphttp::response::response &res, error_callback) {
-        res.send("<h1>Test form</h1>"
+        res.send("<meta charset=\"utf-8\"/>"
+                 "<h1>Test form</h1>"
                  "<form action='/form' method='post'><div><label for='name'>Name :</label>"
                  "<input type='text' id='name' name='user_name'>"
                  "</div>"
@@ -34,7 +35,8 @@ int main(void)
     });
 
     myrouter.onPost("/form", [](cpphttp::request::request &req, cpphttp::response::response &res, error_callback) {
-        res.send("<h1>Form has been sent to the server</h1>"
+        res.send("<meta charset=\"utf-8\"/>"
+                 "<h1>Form has been sent to the server</h1>"
                  "<div>Name was : " +
                  req.getParam("user_name") +
                  "</div>"

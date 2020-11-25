@@ -1,5 +1,4 @@
 #include "string.h"
-#include "extended_ascii_table.h"
 #include <algorithm>
 #include <unordered_map>
 
@@ -54,14 +53,11 @@ std::string cpphttp::internal::uriDecode(const std::string_view &toDecode)
             continue;
 
         auto dec = toDecimal(toDecode.substr(i + 1, 2));
-        if (dec <= 0)
+        if (dec < 0)
             continue;
 
         result.append(start, toDecode.cbegin() + i);
-        if (dec <= 127)
-            result += (char)dec;
-        else
-            result += EXTENDED_ASCII_TABLE[dec - 128];
+        result += (char)dec;
         i += 2;
         start = toDecode.cbegin() + i + 1;
     }
