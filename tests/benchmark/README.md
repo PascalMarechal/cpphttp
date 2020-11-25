@@ -7,13 +7,13 @@ Make sure to install packages mentionned in the main [README](../../README.md)\
 Then install ab from apache on your computer.\
 For example on Ubuntu/Debian you can do :
 ```bash
-apt-get install apache2-utils
+sudo apt-get install apache2-utils
 ```
 
 ## Building the server
 
 ```bash
-mkdir build && cd build && cmake .. && make
+mkdir -p build && cd build && cmake .. && make
 ```
 
 ## Start the server
