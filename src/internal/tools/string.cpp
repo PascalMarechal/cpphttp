@@ -57,13 +57,13 @@ std::string cpphttp::internal::uriDecode(const std::string_view &toDecode)
         if (dec <= 0)
             continue;
 
-        result.append(start, start + i);
+        result.append(start, toDecode.cbegin() + i);
         if (dec <= 127)
             result += (char)dec;
         else
             result += EXTENDED_ASCII_TABLE[dec - 128];
         i += 2;
-        start = start + i + 1;
+        start = toDecode.cbegin() + i + 1;
     }
 
     result.append(start, toDecode.cend());

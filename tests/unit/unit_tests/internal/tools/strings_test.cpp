@@ -52,4 +52,6 @@ TEST(Strings, URI_decode)
     EXPECT_EQ(decodedValue, "ÿ");
     decodedValue = uriDecode("%80");
     EXPECT_EQ(decodedValue, "€");
+    decodedValue = uriDecode("%E9%E9%E9%E9%E9%E9%E9%E9%E7%E7%E7%E7");
+    EXPECT_EQ(decodedValue, "ééééééééçççç");
 }
