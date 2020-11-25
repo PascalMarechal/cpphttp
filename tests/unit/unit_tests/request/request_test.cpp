@@ -118,19 +118,19 @@ TEST(Request, should_get_post_data_from_form_urlencoded_body)
     EXPECT_EQ(Requests::PostRequest->getParam("favorite+flavor"), "flies");
 }
 
-TEST(Request, should_get_extended_ASCII_post_data_from_form_urlencoded_body)
+TEST(Request, should_get_UTF8_post_data_from_form_urlencoded_body)
 {
     request req;
     req.setHeader(Requests::POST_REQUEST_HEADER);
-    req.setBody(Requests::POST_REQUEST_BODY_WITH_EXTENDED_ASCII);
+    req.setBody(Requests::POST_REQUEST_BODY_WITH_UTF8);
     EXPECT_EQ(req.getParam("home"), "òby");
     EXPECT_EQ(req.getParam("favorite+flavor"), "flÿ");
 }
 
-TEST(Request, Get_request_should_have_ASCII_tailing_params_loaded)
+TEST(Request, Get_request_should_have_UTF8_tailing_params_loaded)
 {
     request req;
-    req.setHeader(Requests::GET_REQUEST_HEADER_WITH_ASCII_PARAM);
+    req.setHeader(Requests::GET_REQUEST_HEADER_WITH_UTF8_PARAM);
     EXPECT_EQ(req.getParam("id"), "24");
     EXPECT_EQ(req.getParam("location"), "Nîmes");
     EXPECT_EQ(req.getParam("email"), "test@test.fr");
