@@ -24,7 +24,7 @@ int main(void)
                  "</div>"
                  "<div>"
                  "<label for='mail'>Email :</label>"
-                 "<input type='email' id='mail' name='user_mail'>"
+                 "<input type='email' id='mail' name='user_email'>"
                  "</div>"
                  "<div class='button'>"
                  "<button type='submit'>Send message</button>"
@@ -34,7 +34,14 @@ int main(void)
     });
 
     myrouter.onPost("/form", [](cpphttp::request::request &req, cpphttp::response::response &res, error_callback) {
-        res.send("<h1>Form has been sent to the server</h1><a href='/'>Go back to home page</a>");
+        res.send("<h1>Form has been sent to the server</h1>"
+                 "<div>Name was : " +
+                 req.getParam("user_name") +
+                 "</div>"
+                 "<div>Email was : " +
+                 req.getParam("user_email") +
+                 "</div>"
+                 "<a href='/'>Go back to home page</a>");
     });
 
     // Set the router to the server
