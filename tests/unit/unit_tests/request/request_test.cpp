@@ -7,21 +7,21 @@ using namespace cpphttp::request;
 TEST(Request, Complete_request_with_no_body)
 {
     request req;
-    req.setHeader(Requests::GetRequestHeader);
+    req.setHeader(Requests::GET_REQUEST_HEADER);
     EXPECT_TRUE(req.isReady());
 }
 
 TEST(Request, Complete_request_with_missing_body)
 {
     request req;
-    req.setHeader(Requests::PostRequestHeader);
+    req.setHeader(Requests::POST_REQUEST_HEADER);
     EXPECT_FALSE(req.isReady());
 }
 
 TEST(Request, Complete_request_with_incomplete_body)
 {
     request req;
-    req.setHeader(Requests::PostRequestHeader);
+    req.setHeader(Requests::POST_REQUEST_HEADER);
     req.setBody("too short");
     EXPECT_FALSE(req.isReady());
 }
@@ -29,8 +29,8 @@ TEST(Request, Complete_request_with_incomplete_body)
 TEST(Request, Complete_request_with_complete_body)
 {
     request req;
-    req.setHeader(Requests::PostRequestHeader);
-    req.setBody(Requests::PostRequestBody);
+    req.setHeader(Requests::POST_REQUEST_HEADER);
+    req.setBody(Requests::POST_REQUEST_BODY);
     EXPECT_TRUE(req.isReady());
 }
 
@@ -46,24 +46,24 @@ TEST(Request, Get_header)
 TEST(Request, Equality_operators)
 {
     request req;
-    req.setHeader(Requests::PostRequestHeader);
-    req.setBody(Requests::PostRequestBody);
+    req.setHeader(Requests::POST_REQUEST_HEADER);
+    req.setBody(Requests::POST_REQUEST_BODY);
     request req2;
-    req2.setHeader(Requests::PostRequestHeader);
-    req2.setBody(Requests::PostRequestBody);
+    req2.setHeader(Requests::POST_REQUEST_HEADER);
+    req2.setBody(Requests::POST_REQUEST_BODY);
     EXPECT_TRUE(req == req2);
 
     request req3, req4;
     EXPECT_TRUE(req3 == req4);
     EXPECT_TRUE(req != req3);
 
-    req3.setHeader(Requests::PostRequestHeader);
+    req3.setHeader(Requests::POST_REQUEST_HEADER);
     EXPECT_TRUE(req3 != req);
 
     req3.setBody("nooope");
     EXPECT_TRUE(req3 != req);
 
-    req4.setBody(Requests::PostRequestBody);
+    req4.setBody(Requests::POST_REQUEST_BODY);
     EXPECT_TRUE(req4 != req);
 
     req2.setHeader("noope");
@@ -100,13 +100,13 @@ TEST(Request, Get_request_should_have_tailing_params_loaded)
 TEST(Request, Request_should_load_url_param_according_to_expected_path)
 {
     request req;
-    req.setHeader(Requests::GetRequestHeaderWithParam);
+    req.setHeader(Requests::GET_REQUEST_HEADER_WITH_PARAM);
     req.loadParamsFromUrl("/item/:index");
 
     EXPECT_EQ(req.getParam("index"), "13");
 
     request req2;
-    req2.setHeader(Requests::GetRequestHeaderWithParam2);
+    req2.setHeader(Requests::GET_REQUEST_HEADER_WITH_PARAM2);
     req2.loadParamsFromUrl("/complex/:val/:text/url");
     EXPECT_EQ(req2.getParam("val"), "13");
     EXPECT_EQ(req2.getParam("text"), "hello");

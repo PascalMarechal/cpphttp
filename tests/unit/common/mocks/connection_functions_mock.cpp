@@ -18,8 +18,8 @@ ConnectionFunctionsMock::ConnectionFunctionsMock() : m_readExactlyCount(0), m_re
 void ConnectionFunctionsMock::createFakePostReadMethods(uint32_t loops)
 {
     createBufferFunction();
-    createFakeReadHeader(loops, Requests::PostRequestHeader);
-    createFakeReadBody(loops, Requests::PostRequestBody);
+    createFakeReadHeader(loops, Requests::POST_REQUEST_HEADER);
+    createFakeReadBody(loops, Requests::POST_REQUEST_BODY);
 }
 
 void ConnectionFunctionsMock::createFakeReadFullPostRequestAtHeaderStage()
@@ -28,8 +28,8 @@ void ConnectionFunctionsMock::createFakeReadFullPostRequestAtHeaderStage()
     ON_CALL(*this, async_read_header).WillByDefault([this](SocketMockWrapper &socket, std::string &buffer, HeaderEndMatcher matcher, std::function<void(std::error_code, std::size_t)> callback) {
         if (++m_readUntilCount > 1)
             return;
-        buffer += Requests::PostRequestHeader + "\n" + Requests::PostRequestBody;
-        callback(std::error_code(), Requests::PostRequestHeader.size() + 1);
+        buffer += Requests::POST_REQUEST_HEADER + "\n" + Requests::POST_REQUEST_BODY;
+        callback(std::error_code(), Requests::POST_REQUEST_HEADER.size() + 1);
     });
 }
 
@@ -39,15 +39,15 @@ void ConnectionFunctionsMock::createFakeReadSplittedPostRequestAtHeaderStage()
     ON_CALL(*this, async_read_header).WillByDefault([this](SocketMockWrapper &socket, std::string &buffer, HeaderEndMatcher matcher, std::function<void(std::error_code, std::size_t)> callback) {
         if (++m_readUntilCount > 1)
             return;
-        buffer += Requests::PostRequestHeader + "\n" + Requests::PostRequestBody.substr(0, 10);
-        callback(std::error_code(), Requests::PostRequestHeader.size() + 1);
+        buffer += Requests::POST_REQUEST_HEADER + "\n" + Requests::POST_REQUEST_BODY.substr(0, 10);
+        callback(std::error_code(), Requests::POST_REQUEST_HEADER.size() + 1);
     });
 
     createBodyEndMatcher();
     ON_CALL(*this, async_read_body).WillByDefault([this](SocketMockWrapper &socket, std::string &buffer, BodyEndMatcher matcher, std::function<void(std::error_code, std::size_t)> callback) {
         if (++m_readExactlyCount > 1)
             return;
-        auto toAdd = Requests::PostRequestBody.substr(10);
+        auto toAdd = Requests::POST_REQUEST_BODY.substr(10);
         buffer += toAdd;
         callback(std::error_code(), toAdd.size());
     });
@@ -62,31 +62,31 @@ void ConnectionFunctionsMock::createFakeReadPostThenGet()
         if (++m_readUntilCount > 2)
             return;
         if (m_readUntilCount == 1)
-            buffer += Requests::PostRequestHeader;
+            buffer += Requests::POST_REQUEST_HEADER;
         else
-            buffer += Requests::GetRequestHeader;
+            buffer += Requests::GET_REQUEST_HEADER;
         callback(std::error_code(), buffer.size());
     });
 
     ON_CALL(*this, async_read_body).WillByDefault([this](SocketMockWrapper &socket, std::string &buffer, BodyEndMatcher matcher, std::function<void(std::error_code, std::size_t)> callback) {
         if (++m_readExactlyCount > 1)
             return;
-        buffer += Requests::PostRequestBody;
-        callback(std::error_code(), Requests::PostRequestBody.size());
+        buffer += Requests::POST_REQUEST_BODY;
+        callback(std::error_code(), Requests::POST_REQUEST_BODY.size());
     });
 }
 
 void ConnectionFunctionsMock::createFakeGetReadMethods(uint32_t loops)
 {
     createBufferFunction();
-    createFakeReadHeader(loops, Requests::GetRequestHeader);
+    createFakeReadHeader(loops, Requests::GET_REQUEST_HEADER);
     createFakeReadBody(loops, "");
 }
 
 void ConnectionFunctionsMock::createFakeReadPostRequestWithBigBodyLength()
 {
     createBufferFunction();
-    createFakeReadHeader(1, Requests::PostRequestHeaderWithBigBodyLength);
+    createFakeReadHeader(1, Requests::POST_REQUEST_HEADER_WITH_BIG_BODY_LENGTH);
 }
 
 void ConnectionFunctionsMock::createErrorInHeaderRead()
@@ -107,7 +107,7 @@ void ConnectionFunctionsMock::createErrorInBodyRead()
 {
     createBufferFunction();
     createBodyEndMatcher();
-    createFakeReadHeader(1, Requests::PostRequestHeader);
+    createFakeReadHeader(1, Requests::POST_REQUEST_HEADER);
     ON_CALL(*this, async_read_body).WillByDefault([this](SocketMockWrapper &socket, std::string &buffer, BodyEndMatcher matcher, std::function<void(std::error_code, std::size_t)> callback) {
         callback(std::make_error_code(std::errc::io_error), 0);
     });

@@ -6,14 +6,14 @@
 class Requests
 {
 public:
-    static std::string PostRequestHeader;
-    static std::string GetRequestHeader;
-    static std::string PostRequestHeaderWithIncorrectLength;
-    static std::string PostRequestHeaderWithBigBodyLength;
-    static std::string PostRequestBody;
-    static std::string GetRequestHeaderWithParam;
-    static std::string GetRequestHeaderWithParam2;
-    static uint32_t ExpectedPostBodySize;
+    static std::string POST_REQUEST_HEADER;
+    static std::string GET_REQUEST_HEADER;
+    static std::string POST_REQUEST_HEADER_WITH_BODY_LENGTH;
+    static std::string POST_REQUEST_HEADER_WITH_BIG_BODY_LENGTH;
+    static std::string POST_REQUEST_BODY;
+    static std::string GET_REQUEST_HEADER_WITH_PARAM;
+    static std::string GET_REQUEST_HEADER_WITH_PARAM2;
+    static uint32_t EXPECTED_POST_BODY_SIZE;
 
     static std::unique_ptr<cpphttp::request::request> PostRequest;
     static std::unique_ptr<cpphttp::request::request> GetRequestWithParam;
