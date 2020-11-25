@@ -67,8 +67,8 @@ public:
 private:
     inline void parseMethodValue(const std::string_view &value) noexcept
     {
-        auto method = methodMapping.find(value);
-        if (method == methodMapping.end())
+        auto method = METHOD_MAPPING.find(value);
+        if (method == METHOD_MAPPING.end())
             return;
         m_method = method->second;
     }
@@ -79,8 +79,8 @@ private:
         if (versionInfo.size() != 2 || versionInfo[0] != "HTTP")
             return;
 
-        auto version = versionMapping.find(versionInfo[1]);
-        if (version == versionMapping.end())
+        auto version = VERSION_MAPPING.find(versionInfo[1]);
+        if (version == VERSION_MAPPING.end())
             return;
         m_version = version->second;
     }
@@ -108,8 +108,8 @@ private:
         if (colonPosition == std::string::npos)
             return parseRequestLine(line);
 
-        auto toCall = fillFunctions.find(line.substr(0, colonPosition));
-        if (toCall == fillFunctions.end())
+        auto toCall = FILL_FUNCTIONS.find(line.substr(0, colonPosition));
+        if (toCall == FILL_FUNCTIONS.end())
             return;
 
         auto argument = line.substr(colonPosition + 1);
@@ -153,15 +153,15 @@ private:
     std::string m_path;
     std::string m_getParams;
 
-    const inline static std::unordered_map<std::string_view, method> methodMapping =
+    const inline static std::unordered_map<std::string_view, method> METHOD_MAPPING =
         {{"GET", method::GET}, {"POST", method::POST}, {"DELETE", method::DELETE}, {"PUT", method::PUT}, {"HEAD", method::HEAD}, {"PATCH", method::PATCH}};
 
-    const static std::unordered_map<std::string_view, std::function<void(header::impl *, std::string &&)>> fillFunctions;
-    const inline static std::unordered_map<std::string_view, version> versionMapping =
+    const static std::unordered_map<std::string_view, std::function<void(header::impl *, std::string &&)>> FILL_FUNCTIONS;
+    const inline static std::unordered_map<std::string_view, version> VERSION_MAPPING =
         {{"1.0", version::_1}, {"1.1", version::_1_1}};
 };
 
-const std::unordered_map<std::string_view, std::function<void(header::impl *, std::string &&)>> header::impl::fillFunctions =
+const std::unordered_map<std::string_view, std::function<void(header::impl *, std::string &&)>> header::impl::FILL_FUNCTIONS =
     {{"Content-Length", [](header::impl *head, std::string &&s) {
           head->setExpectedBodySize(std::stoul(s));
       }}};
