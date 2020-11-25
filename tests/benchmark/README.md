@@ -28,7 +28,7 @@ While the server is running in another terminal do :
 ```bash
 ./benchmark.sh
 ```
-You can modify if you want to do more requests, change request type, and so on...
+You can modify this file if you want to do more requests, change request type, and so on...
 
 ## Expected result
 
