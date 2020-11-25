@@ -5,6 +5,7 @@ std::string Requests::POST_REQUEST_HEADER = readFile("./data/headers/post_reques
 std::string Requests::GET_REQUEST_HEADER = readFile("./data/headers/get_request.txt");
 std::string Requests::GET_REQUEST_HEADER_WITH_PARAM = readFile("./data/headers/get_request_with_param.txt");
 std::string Requests::GET_REQUEST_HEADER_WITH_PARAM2 = readFile("./data/headers/get_request_with_param2.txt");
+std::string Requests::GET_REQUEST_HEADER_WITH_ASCII_PARAM = readFile("./data/headers/get_request_with_ASCII_param.txt");
 std::string Requests::POST_REQUEST_HEADER_WITH_BODY_LENGTH = readFile("./data/headers/post_request_incorrect_length.txt");
 std::string Requests::POST_REQUEST_BODY = readFile("./data/body/post_request.txt");
 std::string Requests::POST_REQUEST_BODY_WITH_EXTENDED_ASCII = readFile("./data/body/post_request_with_extended_ASCII.txt");

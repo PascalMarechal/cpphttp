@@ -126,3 +126,12 @@ TEST(Request, should_get_extended_ASCII_post_data_from_form_urlencoded_body)
     EXPECT_EQ(req.getParam("home"), "òby");
     EXPECT_EQ(req.getParam("favorite+flavor"), "flÿ");
 }
+
+TEST(Request, Get_request_should_have_ASCII_tailing_params_loaded)
+{
+    request req;
+    req.setHeader(Requests::GET_REQUEST_HEADER_WITH_ASCII_PARAM);
+    EXPECT_EQ(req.getParam("id"), "24");
+    EXPECT_EQ(req.getParam("location"), "Nîmes");
+    EXPECT_EQ(req.getParam("email"), "test@test.fr");
+}
