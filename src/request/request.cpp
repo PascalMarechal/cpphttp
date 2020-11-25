@@ -106,7 +106,7 @@ private:
             auto paramKeyValue = internal::split(param, "=");
             if (paramKeyValue.size() < 2)
                 continue;
-            m_param_values[std::string(paramKeyValue[0])] = paramKeyValue[1];
+            m_param_values[std::string(paramKeyValue[0])] = internal::uriDecode(paramKeyValue[1]);
         }
     }
 

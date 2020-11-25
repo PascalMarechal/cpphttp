@@ -11,6 +11,7 @@ public:
     static std::string POST_REQUEST_HEADER_WITH_BODY_LENGTH;
     static std::string POST_REQUEST_HEADER_WITH_BIG_BODY_LENGTH;
     static std::string POST_REQUEST_BODY;
+    static std::string POST_REQUEST_BODY_WITH_EXTENDED_ASCII;
     static std::string GET_REQUEST_HEADER_WITH_PARAM;
     static std::string GET_REQUEST_HEADER_WITH_PARAM2;
     static uint32_t EXPECTED_POST_BODY_SIZE;

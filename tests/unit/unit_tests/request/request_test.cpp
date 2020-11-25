@@ -112,8 +112,17 @@ TEST(Request, Request_should_load_url_param_according_to_expected_path)
     EXPECT_EQ(req2.getParam("text"), "hello");
 }
 
-TEST(Request, should_post_data_from_form_urlencoded_body)
+TEST(Request, should_get_post_data_from_form_urlencoded_body)
 {
     EXPECT_EQ(Requests::PostRequest->getParam("home"), "Cosby");
     EXPECT_EQ(Requests::PostRequest->getParam("favorite+flavor"), "flies");
+}
+
+TEST(Request, should_get_extended_ASCII_post_data_from_form_urlencoded_body)
+{
+    request req;
+    req.setHeader(Requests::POST_REQUEST_HEADER);
+    req.setBody(Requests::POST_REQUEST_BODY_WITH_EXTENDED_ASCII);
+    EXPECT_EQ(req.getParam("home"), "òby");
+    EXPECT_EQ(req.getParam("favorite+flavor"), "flÿ");
 }
