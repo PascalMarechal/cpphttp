@@ -36,8 +36,8 @@ TEST(ResponseHeader, Get_and_set_content_length)
 TEST(ResponseHeader, To_string)
 {
     header head;
-    EXPECT_EQ(head.toString(), "HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n");
+    EXPECT_EQ(head.toString(), "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nConnection: Keep-Alive\r\n\r\n");
     head.status(status::_202);
     head.setContentLength(450);
-    EXPECT_EQ(head.toString(), "HTTP/1.1 202 Accepted\r\nContent-Length: 450\r\n\r\n");
+    EXPECT_EQ(head.toString(), "HTTP/1.1 202 Accepted\r\nContent-Length: 450\r\nConnection: Keep-Alive\r\n\r\n");
 }
