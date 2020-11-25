@@ -5,7 +5,7 @@
 #include <functional>
 
 using namespace cpphttp::request;
-using namespace cpphttp::tools;
+using namespace cpphttp::internal;
 
 class header::impl
 {

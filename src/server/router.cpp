@@ -109,7 +109,7 @@ private:
 
     static inline std::regex extractRegexFromPath(const std::string &path) noexcept
     {
-        auto splittedPath = tools::split(path, "/");
+        auto splittedPath = internal::split(path, "/");
         std::string regexPath = "";
         for (auto &value : splittedPath)
         {

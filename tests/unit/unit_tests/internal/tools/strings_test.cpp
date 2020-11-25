@@ -2,9 +2,9 @@
 #include <random>
 #include "internal/tools/string.h"
 
-using namespace cpphttp::tools;
+using namespace cpphttp::internal;
 
-void checkSplitValueWith(std::initializer_list<const char *> data, const std::string &separator = " ")
+void checkSplitWith(std::initializer_list<const char *> data, const std::string &separator = " ")
 {
     std::random_device dev;
     std::mt19937 rng(dev());
@@ -31,7 +31,25 @@ void checkSplitValueWith(std::initializer_list<const char *> data, const std::st
 TEST(Strings, Splitting_function)
 {
     // One separator
-    checkSplitValueWith({"Hello", "World", "There"});
+    checkSplitWith({"Hello", "World", "There"});
     // Multiple separators
-    checkSplitValueWith({"Hello", "World", "There", "Hello", "World", "There", "Hello", "World", "There", "Hello", "World", "There"}, ",|");
+    checkSplitWith({"Hello", "World", "There", "Hello", "World", "There", "Hello", "World", "There", "Hello", "World", "There"}, ",|");
+}
+
+TEST(Strings, URI_decode)
+{
+    auto decodedValue = uriDecode("hello%40test.fr");
+    EXPECT_EQ(decodedValue, "hello@test.fr");
+    decodedValue = uriDecode("");
+    EXPECT_EQ(decodedValue, "");
+    decodedValue = uriDecode("100% should not be modified");
+    EXPECT_EQ(decodedValue, "100% should not be modified");
+    decodedValue = uriDecode("%keep percents%");
+    EXPECT_EQ(decodedValue, "%keep percents%");
+    decodedValue = uriDecode("%F9");
+    EXPECT_EQ(decodedValue, "ù");
+    decodedValue = uriDecode("%FF");
+    EXPECT_EQ(decodedValue, "ÿ");
+    decodedValue = uriDecode("%80");
+    EXPECT_EQ(decodedValue, "€");
 }

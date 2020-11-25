@@ -82,8 +82,8 @@ public:
 
     inline void loadParamsFromUrl(std::string_view expectedPath) noexcept
     {
-        auto splittedExpectedPath = tools::split(expectedPath, "/");
-        auto splittedUrl = tools::split(m_header->getPath(), "/");
+        auto splittedExpectedPath = internal::split(expectedPath, "/");
+        auto splittedUrl = internal::split(m_header->getPath(), "/");
         auto pos = 0;
         for (const auto &val : splittedExpectedPath)
         {
@@ -100,10 +100,10 @@ public:
 private:
     void extractParameters(std::string_view from)
     {
-        auto params = tools::split(from, "&");
+        auto params = internal::split(from, "&");
         for (const auto &param : params)
         {
-            auto paramKeyValue = tools::split(param, "=");
+            auto paramKeyValue = internal::split(param, "=");
             if (paramKeyValue.size() < 2)
                 continue;
             m_param_values[std::string(paramKeyValue[0])] = paramKeyValue[1];
