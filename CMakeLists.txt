@@ -17,6 +17,13 @@ include_directories(cpphttp ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set_target_properties(cpphttp PROPERTIES VERSION ${cpphttp_VERSION})
 target_link_libraries(cpphttp ${CMAKE_THREAD_LIBS_INIT})
 
+add_library(cpphttpstatic STATIC
+        ${SOURCES}
+        ${HEADERS})
+include_directories(cpphttpstatic ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set_target_properties(cpphttpstatic PROPERTIES VERSION ${cpphttp_VERSION})
+target_link_libraries(cpphttpstatic ${CMAKE_THREAD_LIBS_INIT})
+
 # Installation part
 file(GLOB PUBLIC_HEADER_FILES
        ${CMAKE_CURRENT_SOURCE_DIR}/src/request/*.h
@@ -27,6 +34,9 @@ file(GLOB PUBLIC_HEADER_FILES
 install(TARGETS cpphttp 
     LIBRARY DESTINATION /usr/local/lib)
 
+install(TARGETS cpphttpstatic 
+    DESTINATION /usr/local/lib)
+    
 foreach ( file ${PUBLIC_HEADER_FILES} )
     get_filename_component( dir ${file} DIRECTORY )
     string(REPLACE ${CMAKE_CURRENT_SOURCE_DIR}/src "" dir ${dir})
