@@ -1,3 +1,8 @@
+/**
+ *  Copyright (c) 2020 Pascal Marechal
+ *
+ *  Distributed under the MIT License. (See accompanying file LICENSE)
+ */
 #include <gtest/gtest.h>
 #include <random>
 #include "internal/tools/string.h"

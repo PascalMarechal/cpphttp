@@ -1,3 +1,8 @@
+/**
+ *  Copyright (c) 2020 Pascal Marechal
+ *
+ *  Distributed under the MIT License. (See accompanying file LICENSE)
+ */
 #include "server.h"
 #include "internal/asio.h"
 #include <optional>
