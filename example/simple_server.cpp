@@ -58,6 +58,37 @@ int main(void)
                  "</body>");
     });
 
+    // Example of saving a parameter and use it later
+    myrouter.onGet(
+        "/param",
+        [](cpphttp::request::request &req, cpphttp::response::response &res, error_callback) { req.set("myParam", 42); });
+    myrouter.onGet(
+        "/param", [](cpphttp::request::request &req, cpphttp::response::response &res, error_callback) {
+            res.send("My param was : " + req.get("myParam"));
+        });
+
+    // Example of using variadic function
+    myrouter.onGet(
+        "/variadic",
+        [](cpphttp::request::request &req, cpphttp::response::response &res, error_callback) { res.write("Something"); },
+        [](cpphttp::request::request &req, cpphttp::response::response &res, error_callback) {
+        // res.send is the same as res.write + res.end
+        res.write(" has been written.");
+        res.end(); });
+
+    // Example of setting your own error function (you can test it by going to any wrong path)
+    myrouter.onError([](const std::string &errorText, cpphttp::request::request &, cpphttp::response::response &res) {
+        if (errorText.size())
+            res.send("Simple server error : " + errorText);
+        else
+            res.send("Simple server error");
+    });
+
+    // Example of calling the error function from path function
+    myrouter.onGet(
+        "/error",
+        [](cpphttp::request::request &req, cpphttp::response::response &res, error_callback error) { error("from /error path"); });
+
     // Set the router to the server
     myserver.setRouter(std::move(myrouter));
 
