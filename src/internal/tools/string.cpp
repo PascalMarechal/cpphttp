@@ -32,7 +32,7 @@ cpphttp::internal::split(const std::string_view &strv, const std::string_view &d
 const std::unordered_map<char, int> hexTable{
     {'0', 0}, {'1', 1}, {'2', 2}, {'3', 3}, {'4', 4}, {'5', 5}, {'6', 6}, {'7', 7}, {'8', 8}, {'9', 9}, {'a', 10}, {'A', 10}, {'b', 11}, {'B', 11}, {'c', 12}, {'C', 12}, {'d', 13}, {'D', 13}, {'e', 14}, {'E', 14}, {'f', 15}, {'F', 15}, {'x', 0}, {'X', 0}};
 
-int toDecimal(const std::string_view &toDecode)
+int hexToDecimal(const std::string_view &toDecode)
 {
     auto firstChar = hexTable.find(toDecode[0]);
     if (firstChar == hexTable.cend())
@@ -57,7 +57,7 @@ std::string cpphttp::internal::uriDecode(const std::string_view &toDecode)
         if (toDecode[i] != '%')
             continue;
 
-        auto dec = toDecimal(toDecode.substr(i + 1, 2));
+        auto dec = hexToDecimal(toDecode.substr(i + 1, 2));
         if (dec <= 0)
             continue;
 
