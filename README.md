@@ -58,7 +58,7 @@ In order to install the library (both static & dynamic) you can do :
 ```
 
 ## How to use?
-For more information on how to use this library please go to this (example/README.md)
+For more information on how to use this library please go to this [README](example/README.md)
 
 ## Benchmarking
 
@@ -67,4 +67,4 @@ For more information about benchmarking please go to this [README](tests/benchma
 ## Disclaimer
 
 This project is under development and is not currently usable in a production environment.\
-Please feel free to ask features or/and send me any bug report.
+Please feel free to ask new features and/or send me any bug report.
