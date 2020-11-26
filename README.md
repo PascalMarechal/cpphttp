@@ -63,3 +63,8 @@ For more information on how to use this library please go to this (example/READM
 ## Benchmarking
 
 For more information about benchmarking please go to this [README](tests/benchmark/README.md)
+
+## Disclaimer
+
+This project is under development and is not currently usable in a production environment.\
+Please feel free to ask features or/and send me any bug report.
