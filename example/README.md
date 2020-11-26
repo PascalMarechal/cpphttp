@@ -23,7 +23,7 @@ Then with your browser go to http://localhost:8080/
 ## Example
 
 Here is a simple example to teach you how to use this library.\
-For more information please check the source file directly.
+For more information please check the [source file](./simple_server.cpp) directly.
 ```cpp
 #include <cpphttp.h>
 
