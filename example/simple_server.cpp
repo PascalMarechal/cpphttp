@@ -1,4 +1,5 @@
 #include <cpphttp.h>
+#include <iostream>
 
 using namespace cpphttp::server;
 using namespace cpphttp::request;
@@ -10,13 +11,14 @@ int main(void)
     server myserver(8080);
 
     // Create a simple router with several routes
-    // One main page
-    // Form get & post path
     router myrouter;
+
+    // main page
     myrouter.onGet("/", [](cpphttp::request::request &, cpphttp::response::response &res, error_callback) {
         res.send("<h1>Welcome to simple server</h1><a href='/form'>Go to form page</a>");
     });
 
+    // Form get & post path
     myrouter.onGet("/form", [](cpphttp::request::request &, cpphttp::response::response &res, error_callback) {
         res.send("<!DOCTYPE html>"
                  "<html lang=\"en\">"
@@ -39,7 +41,6 @@ int main(void)
                  "<a href='/'>Go back to home page</a>"
                  "</body>");
     });
-
     myrouter.onPost("/form", [](cpphttp::request::request &req, cpphttp::response::response &res, error_callback) {
         res.send("<!DOCTYPE html>"
                  "<html lang=\"en\">"
@@ -57,6 +58,11 @@ int main(void)
                  "<a href='/'>Go back to home page</a>"
                  "</body>");
     });
+    // Example of onAll function
+    // All path except the three ones above will call this function (order matters!)
+    myrouter.onAll("/", [](cpphttp::request::request &req, cpphttp::response::response &res, error_callback) {
+        std::cout << "Visited path : " << req.header().getPath() << std::endl;
+    });
 
     // Example of saving a parameter and use it later
     myrouter.onGet(
@@ -73,6 +79,7 @@ int main(void)
         [](cpphttp::request::request &req, cpphttp::response::response &res, error_callback) { res.write("Something"); },
         [](cpphttp::request::request &req, cpphttp::response::response &res, error_callback) {
         // res.send is the same as res.write + res.end
+        // on res.end no other functions are called and the result is sent to the user
         res.write(" has been written.");
         res.end(); });
 
