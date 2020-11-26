@@ -1,5 +1,5 @@
 # Benchmarking
-This project is used in order to benchmark the server library.
+This folder is used in order to benchmark cpphttp.
 
 ## Before you begin
 
