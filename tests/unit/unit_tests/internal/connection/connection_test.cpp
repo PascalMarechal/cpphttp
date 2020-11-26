@@ -10,8 +10,8 @@
 #include "common/requests.h"
 #include "request/request.h"
 #include "common/matchers/request_matcher.h"
-#include "common/mocks/router_mock.h"
-#include "common/mocks/connection_functions_mock.h"
+#include "mocks/router_mock.h"
+#include "mocks/connection_functions_mock.h"
 
 using namespace cpphttp::internal;
 using namespace ::testing;
