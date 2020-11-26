@@ -96,6 +96,10 @@ int main(void)
         "/error",
         [](cpphttp::request::request &req, cpphttp::response::response &res, error_callback error) { error("from /error path"); });
 
+    // Example of param in URL (test with /item/42 for example)
+    myrouter.onGet("/item/:id",
+                   [](cpphttp::request::request &req, cpphttp::response::response &res, error_callback) { res.send("Item id is " + req.getParam("id")); });
+
     // Set the router to the server
     myserver.setRouter(std::move(myrouter));
 
