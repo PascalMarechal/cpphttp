@@ -57,6 +57,9 @@ In order to install the library (both static & dynamic) you can do :
     mkdir -p build && cd build && cmake .. && sudo make install
 ```
 
+## How to use?
+For more information on how to use this library please go to this (example/README.md)
+
 ## Benchmarking
 
 For more information about benchmarking please go to this [README](tests/benchmark/README.md)
