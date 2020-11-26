@@ -1,6 +1,6 @@
 # Cpp Http
 Do HTTP with this static or dynamic linked library.\
-It is mainly inspired by node + express and wants to be easy to use.
+It is mainly inspired by node + express and shall be easy to use.
 
 ## Before You Begin
 You need to install cmake (with C++17 compiler) and asio to build the main library.\
