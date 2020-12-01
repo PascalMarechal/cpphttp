@@ -16,11 +16,11 @@ namespace cpphttp
         {
         public:
             server(uint32_t port);
-            ~server();
+            ~server() noexcept;
 
-            void start();
-            void stop();
-            void setRouter(router &&router);
+            void start() noexcept;
+            void stop() noexcept;
+            void setRouter(router &&router) noexcept;
 
         private:
             class impl;

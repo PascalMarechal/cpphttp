@@ -17,37 +17,37 @@ public:
     inline static void async_read_header(asio::ip::tcp::socket &socket,
                                          asio::dynamic_string_buffer<char, std::char_traits<char>, std::allocator<char>> buffer,
                                          cpphttp::internal::match_end_of_header &matcher,
-                                         std::function<void(std::error_code, std::size_t)> function)
+                                         std::function<void(std::error_code, std::size_t)> function) noexcept
     {
         asio::async_read_until(socket, buffer, matcher, function);
     }
     inline static void async_read_body(asio::ip::tcp::socket &socket,
                                        asio::dynamic_string_buffer<char, std::char_traits<char>, std::allocator<char>> buffer,
-                                       asio::detail::transfer_exactly_t matcher, std::function<void(std::error_code, std::size_t)> function)
+                                       asio::detail::transfer_exactly_t matcher, std::function<void(std::error_code, std::size_t)> function) noexcept
     {
         asio::async_read(socket, buffer, matcher, function);
     }
-    inline static void write(asio::ip::tcp::socket &socket, const std::string &buffer)
+    inline static void write(asio::ip::tcp::socket &socket, const std::string &buffer) noexcept
     {
         asio::write(socket, asio::buffer(buffer));
     }
 
-    inline static asio::dynamic_string_buffer<char, std::char_traits<char>, std::allocator<char>> createBuffer(std::string &from)
+    inline static asio::dynamic_string_buffer<char, std::char_traits<char>, std::allocator<char>> createBuffer(std::string &from) noexcept
     {
         return asio::dynamic_buffer(from);
     }
 
-    inline static cpphttp::internal::match_end_of_header &headerEndMatcher()
+    inline static cpphttp::internal::match_end_of_header &headerEndMatcher() noexcept
     {
         return m_matcher;
     }
 
-    inline static asio::detail::transfer_exactly_t bodyEndMatcher(std::size_t size)
+    inline static asio::detail::transfer_exactly_t bodyEndMatcher(std::size_t size) noexcept
     {
         return asio::transfer_exactly(size);
     }
 
-    inline static uint32_t maxBodySize()
+    inline static uint32_t maxBodySize() noexcept
     {
         return 1024 * 1024 * 2; // 2M
     }
@@ -64,23 +64,23 @@ public:
         accept();
     }
 
-    void start()
+    void start() noexcept
     {
         m_context.run();
     }
 
-    void stop()
+    void stop() noexcept
     {
         m_context.stop();
     }
 
-    void setRouter(router &&router)
+    void setRouter(router &&router) noexcept
     {
         m_router = std::move(router);
     }
 
 private:
-    void accept()
+    void accept() noexcept
     {
         m_socket.emplace(m_context);
         m_acceptor.async_accept(*m_socket, [&](std::error_code error) {
@@ -101,21 +101,21 @@ server::server(uint32_t port) : m_server_impl(std::make_unique<impl>(port))
 {
 }
 
-server::~server()
+server::~server() noexcept
 {
 }
 
-void server::start()
+void server::start() noexcept
 {
     m_server_impl->start();
 }
 
-void server::stop()
+void server::stop() noexcept
 {
     m_server_impl->stop();
 }
 
-void server::setRouter(router &&router)
+void server::setRouter(router &&router) noexcept
 {
     m_server_impl->setRouter(std::move(router));
 }
