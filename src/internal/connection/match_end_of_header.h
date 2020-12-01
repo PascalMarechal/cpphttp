@@ -13,10 +13,17 @@ namespace cpphttp
         class match_end_of_header
         {
         public:
+            match_end_of_header() : m_maxHeaderSize(std::numeric_limits<uint64_t>::max())
+            {
+            }
+
             template <typename Iterator>
             std::pair<Iterator, bool> operator()(
-                Iterator begin, Iterator end) const
+                Iterator begin, Iterator end) const noexcept
             {
+                if (std::distance(begin, end) >= m_maxHeaderSize)
+                    return std::make_pair(begin, true);
+
                 Iterator i = begin;
                 while (true)
                     // \n\n => OK
@@ -35,18 +42,25 @@ namespace cpphttp
                 return std::make_pair(i, false);
             }
 
+            void setMaxHeaderSize(uint64_t size) noexcept
+            {
+                m_maxHeaderSize = size;
+            }
+
         private:
             template <typename Iterator>
-            inline bool checkNext(char c, Iterator &current, Iterator end) const
+            inline bool checkNext(char c, Iterator &current, Iterator end) const noexcept
             {
                 return current++ != end && *current == c;
             }
 
             template <typename Iterator>
-            inline bool checkCurrent(char c, Iterator current, Iterator end) const
+            inline bool checkCurrent(char c, Iterator current, Iterator end) const noexcept
             {
                 return current != end && *current == c;
             }
+
+            uint64_t m_maxHeaderSize;
         };
     } // namespace internal
 } // namespace cpphttp

@@ -8,7 +8,7 @@
 
 using namespace cpphttp::internal;
 
-TEST(Matcher, FailToFindEnd)
+TEST(Matcher, Fail_to_find_end)
 {
     std::string no_end_in_string = "something\n";
     match_end_of_header matcher;
@@ -31,7 +31,7 @@ TEST(Matcher, FailToFindEnd)
     EXPECT_FALSE(result.second);
 }
 
-TEST(Matcher, FindEndOfHeaderWithCRLF)
+TEST(Matcher, Find_end_of_header_with_CRLF)
 {
     std::string CRLF_end_in_string = "something\r\n\r\n";
     match_end_of_header matcher;
@@ -50,7 +50,7 @@ TEST(Matcher, FindEndOfHeaderWithCRLF)
     EXPECT_TRUE(CRLF_end_in_string.cbegin() + 4 == result.first);
 }
 
-TEST(Matcher, FindEndOfHeaderWithLFOnly)
+TEST(Matcher, Find_end_of_header_with_LF_only)
 {
     std::string LF_end_in_string = "something\r\n\n";
     match_end_of_header matcher;
@@ -72,4 +72,19 @@ TEST(Matcher, FindEndOfHeaderWithLFOnly)
     result = matcher(LF_end_in_string.cbegin(), LF_end_in_string.cend());
     EXPECT_TRUE(result.second);
     EXPECT_TRUE(LF_end_in_string.cbegin() + 2 == result.first);
+}
+
+TEST(Matcher, Set_max_header_size)
+{
+    std::string correctHeader = "MyHeader\n\n";
+    match_end_of_header matcher;
+    matcher.setMaxHeaderSize(10000);
+    auto result = matcher(correctHeader.cbegin(), correctHeader.cend());
+    EXPECT_TRUE(result.second);
+    EXPECT_TRUE(correctHeader.cend() == result.first);
+
+    matcher.setMaxHeaderSize(5);
+    result = matcher(correctHeader.cbegin(), correctHeader.cend());
+    EXPECT_TRUE(result.second);
+    EXPECT_TRUE(correctHeader.cbegin() == result.first);
 }
