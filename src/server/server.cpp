@@ -14,10 +14,16 @@ using namespace cpphttp::server;
 class connectionFunctions
 {
 public:
+    connectionFunctions()
+    {
+        // 64 KB by default
+        m_matcher.setMaxHeaderSize(64 * 1024);
+    }
+
     inline void async_read_header(asio::ip::tcp::socket &socket,
-                                         asio::dynamic_string_buffer<char, std::char_traits<char>, std::allocator<char>> buffer,
-                                         const cpphttp::internal::match_end_of_header &matcher,
-                                         std::function<void(std::error_code, std::size_t)> function) const noexcept
+                                  asio::dynamic_string_buffer<char, std::char_traits<char>, std::allocator<char>> buffer,
+                                  const cpphttp::internal::match_end_of_header &matcher,
+                                  std::function<void(std::error_code, std::size_t)> function) const noexcept
     {
         asio::async_read_until(socket, buffer, matcher, function);
     }
