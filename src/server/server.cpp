@@ -14,10 +14,10 @@ using namespace cpphttp::server;
 class connectionFunctions
 {
 public:
-    inline static void async_read_header(asio::ip::tcp::socket &socket,
+    inline void async_read_header(asio::ip::tcp::socket &socket,
                                          asio::dynamic_string_buffer<char, std::char_traits<char>, std::allocator<char>> buffer,
-                                         cpphttp::internal::match_end_of_header &matcher,
-                                         std::function<void(std::error_code, std::size_t)> function) noexcept
+                                         const cpphttp::internal::match_end_of_header &matcher,
+                                         std::function<void(std::error_code, std::size_t)> function) const noexcept
     {
         asio::async_read_until(socket, buffer, matcher, function);
     }
@@ -37,7 +37,7 @@ public:
         return asio::dynamic_buffer(from);
     }
 
-    inline static cpphttp::internal::match_end_of_header &headerEndMatcher() noexcept
+    inline const cpphttp::internal::match_end_of_header &headerEndMatcher() const noexcept
     {
         return m_matcher;
     }
@@ -52,8 +52,13 @@ public:
         return 1024 * 1024 * 2; // 2M
     }
 
+    inline void setMaxHeaderSize(uint64_t size) noexcept
+    {
+        m_matcher.setMaxHeaderSize(size);
+    }
+
 private:
-    inline static cpphttp::internal::match_end_of_header m_matcher;
+    cpphttp::internal::match_end_of_header m_matcher;
 };
 
 class server::impl
@@ -64,19 +69,24 @@ public:
         accept();
     }
 
-    void start() noexcept
+    inline void start() noexcept
     {
         m_context.run();
     }
 
-    void stop() noexcept
+    inline void stop() noexcept
     {
         m_context.stop();
     }
 
-    void setRouter(router &&router) noexcept
+    inline void setRouter(router &&router) noexcept
     {
         m_router = std::move(router);
+    }
+
+    inline void setMaxHeaderSize(u_int64_t size) noexcept
+    {
+        m_connectionFunctions.setMaxHeaderSize(size);
     }
 
 private:
@@ -118,4 +128,9 @@ void server::stop() noexcept
 void server::setRouter(router &&router) noexcept
 {
     m_server_impl->setRouter(std::move(router));
+}
+
+void server::setMaxHeaderSize(u_int64_t size) noexcept
+{
+    m_server_impl->setMaxHeaderSize(size);
 }

@@ -48,3 +48,22 @@ TEST(Server, Can_use_defined_router_functions)
     testServer.stop();
     testThread.join();
 }
+
+TEST(Server, Can_set_max_header_size)
+{
+    server testServer(9999);
+    router r;
+    std::string message = "<h1>Hello World!</h1>";
+    r.onGet("/url", [&](cpphttp::request::request &req, cpphttp::response::response &res, error_callback error) {
+        res.send(message);
+    });
+    testServer.setRouter(std::move(r));
+    testServer.setMaxHeaderSize(6);
+    std::thread testThread([&]() { testServer.start(); });
+
+    auto page = getPage("http://localhost:9999/url");
+    EXPECT_EQ(page, "");
+
+    testServer.stop();
+    testThread.join();
+}

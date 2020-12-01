@@ -21,6 +21,7 @@ namespace cpphttp
             void start() noexcept;
             void stop() noexcept;
             void setRouter(router &&router) noexcept;
+            void setMaxHeaderSize(u_int64_t size) noexcept;
 
         private:
             class impl;
