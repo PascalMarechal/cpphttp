@@ -54,3 +54,23 @@ std::string getPage(const char *url)
     }
     return readBuffer;
 }
+
+std::string postPage(const char *postUrl, const char *postData)
+{
+    CURL *curl;
+    CURLcode res;
+    std::string readBuffer;
+
+    curl = curl_easy_init();
+    if (curl)
+    {
+        curl_easy_setopt(curl, CURLOPT_URL, postUrl);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postData);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        curl_easy_setopt(curl, CURLOPT_POST, 1L);
+        res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+    }
+    return readBuffer;
+}

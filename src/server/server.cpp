@@ -16,8 +16,10 @@ class connectionFunctions
 public:
     connectionFunctions()
     {
-        // 64 KB by default
+        // Header ax size is 64 KB by default
         m_matcher.setMaxHeaderSize(64 * 1024);
+        // Body max size is 2 MB
+        m_maxBodySize = 1024 * 1024 * 2;
     }
 
     inline void async_read_header(asio::ip::tcp::socket &socket,
@@ -53,18 +55,24 @@ public:
         return asio::transfer_exactly(size);
     }
 
-    inline static uint32_t maxBodySize() noexcept
+    inline uint64_t maxBodySize() const noexcept
     {
-        return 1024 * 1024 * 2; // 2M
+        return m_maxBodySize;
     }
 
-    inline void setMaxHeaderSize(uint64_t size) noexcept
+    inline void setMaxIncomingHeaderSize(uint64_t size) noexcept
     {
         m_matcher.setMaxHeaderSize(size);
     }
 
+    inline void setMaxIncomingBodySize(uint64_t size) noexcept
+    {
+        m_maxBodySize = size;
+    }
+
 private:
     cpphttp::internal::match_end_of_header m_matcher;
+    uint64_t m_maxBodySize;
 };
 
 class server::impl
@@ -90,9 +98,14 @@ public:
         m_router = std::move(router);
     }
 
-    inline void setMaxHeaderSize(u_int64_t size) noexcept
+    inline void setMaxIncomingHeaderSize(u_int64_t size) noexcept
     {
-        m_connectionFunctions.setMaxHeaderSize(size);
+        m_connectionFunctions.setMaxIncomingHeaderSize(size);
+    }
+
+    inline void setMaxIncomingBodySize(u_int64_t size) noexcept
+    {
+        m_connectionFunctions.setMaxIncomingBodySize(size);
     }
 
 private:
@@ -136,7 +149,12 @@ void server::setRouter(router &&router) noexcept
     m_server_impl->setRouter(std::move(router));
 }
 
-void server::setMaxHeaderSize(u_int64_t size) noexcept
+void server::setMaxIncomingHeaderSize(u_int64_t size) noexcept
 {
-    m_server_impl->setMaxHeaderSize(size);
+    m_server_impl->setMaxIncomingHeaderSize(size);
+}
+
+void server::setMaxIncomingBodySize(u_int64_t size) noexcept
+{
+    m_server_impl->setMaxIncomingBodySize(size);
 }

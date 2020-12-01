@@ -9,3 +9,4 @@
 
 bool checkUrl(const char *url);
 std::string getPage(const char *url);
+std::string postPage(const char *postUrl, const char *postData);
