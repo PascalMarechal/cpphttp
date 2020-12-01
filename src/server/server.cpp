@@ -16,7 +16,7 @@ class connectionFunctions
 public:
     connectionFunctions()
     {
-        // Header ax size is 64 KB by default
+        // Header max size is 64 KB by default
         m_matcher.setMaxHeaderSize(64 * 1024);
         // Body max size is 2 MB
         m_maxBodySize = 1024 * 1024 * 2;
