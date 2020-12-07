@@ -5,6 +5,7 @@
  */
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <filesystem>
 
 #include "server/router.h"
 #include "common/requests.h"
@@ -302,7 +303,7 @@ TEST(Router, Functions_should_not_be_mixed)
     expectFirstAndSecondFunctionNotCalled(result);
 }
 
-TEST(Router, should_have_variadic_onPost_function)
+TEST(Router, Should_have_variadic_onPost_function)
 {
     router router;
     router.onPost("/path/somewhere", firstFunction, secondFunction);
@@ -310,7 +311,7 @@ TEST(Router, should_have_variadic_onPost_function)
     testFirstAndSecondFunction(result);
 }
 
-TEST(Router, should_have_rvalue_copy_and_assignment_operators)
+TEST(Router, Should_have_rvalue_copy_and_assignment_operators)
 {
     router router, router3;
     router.onPost("/path/somewhere", firstFunction, secondFunction);
@@ -320,4 +321,17 @@ TEST(Router, should_have_rvalue_copy_and_assignment_operators)
     router3 = std::move(router2);
     result = router3.process(*Requests::PostRequest);
     testFirstAndSecondFunction(result);
+}
+
+TEST(Router, Set_public_folder_will_always_return_absolute_path)
+{
+    router router;
+    router.setPublicFolder("public", "./relative");
+    auto publicFolder = router.getPublicFolder();
+    std::filesystem::path cwd = std::filesystem::current_path();
+    EXPECT_EQ(publicFolder, cwd.string() + "/relative");
+
+    router.setPublicFolder("public", "/absolute/path");
+    publicFolder = router.getPublicFolder();
+    EXPECT_EQ(publicFolder, "/absolute/path");
 }

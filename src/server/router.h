@@ -31,8 +31,10 @@ namespace cpphttp
 
             std::string process(cpphttp::request::request &) const;
 
-            void onError(error_function f) noexcept;
+            void setPublicFolder(const std::string &path, const std::string &folder) noexcept;
+            const std::string &getPublicFolder() const noexcept;
 
+            void onError(error_function f) noexcept;
             template <typename T, typename... T2, typename std::enable_if_t<0 != sizeof...(T2), int> = 0>
             void onError(T f, T2... others) noexcept
             {
@@ -43,7 +45,6 @@ namespace cpphttp
             }
 
             void onAll(const std::string &pathStartingWith, router_function function) noexcept;
-
             template <typename T, typename... T2, typename std::enable_if_t<0 != sizeof...(T2), int> = 0>
             void onAll(const std::string &pathStartingWith, T f, T2... others) noexcept
             {
