@@ -42,6 +42,7 @@ public:
 
         auto statusText = STATUS_MAPPING.find(m_status);
         result << "HTTP/1.1 " << statusText->second
+               << "\r\nContent-Type:" << m_contentType
                << "\r\nContent-Length: " << m_contentLength
                << "\r\nConnection: Keep-Alive\r\n\r\n";
         return result.str();
