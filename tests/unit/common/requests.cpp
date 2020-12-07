@@ -50,3 +50,10 @@ std::unique_ptr<cpphttp::request::request> Requests::PostRequest = getCorrectPos
 std::unique_ptr<cpphttp::request::request> Requests::GetRequest = getCorrectGetRequest();
 std::unique_ptr<cpphttp::request::request> Requests::GetRequestWithParam = getGetRequestWithParam();
 std::unique_ptr<cpphttp::request::request> Requests::GetRequestWithTailingParams = getGetRequestWithTailingParams();
+
+std::unique_ptr<cpphttp::request::request> Requests::GetRequestFromPath(const std::string &path)
+{
+    auto req = std::make_unique<cpphttp::request::request>();
+    req->setHeader("GET " + path + " HTTP/1.1\n\n");
+    return req;
+}

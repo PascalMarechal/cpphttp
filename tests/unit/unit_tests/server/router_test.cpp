@@ -335,3 +335,12 @@ TEST(Router, Set_public_folder_will_always_return_absolute_path)
     publicFolder = router.getPublicFolder();
     EXPECT_EQ(publicFolder, "/absolute/path");
 }
+
+TEST(Router, Get_jpg_from_public_folder)
+{
+    router router;
+    router.setPublicFolder("public", "data/static_files");
+    auto request = Requests::GetRequestFromPath("public/jpg_test.jpg");
+    auto result = router.process(*request);
+    EXPECT_THAT(result, HasSubstr("Content-Type:image/jpeg"));
+}

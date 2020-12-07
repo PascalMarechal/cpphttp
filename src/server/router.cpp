@@ -25,7 +25,11 @@ public:
 
         response::response res;
         std::string errorValue;
-        callFunctions(req, res, errorValue);
+        if (isPublicFolderRequest(req))
+            handlePublicFiles(req, res, errorValue);
+        else
+            callFunctions(req, res, errorValue);
+
         if (res.hasEnded())
             return res.toString();
 
@@ -57,10 +61,11 @@ public:
         m_functions.push_back({path, extractRegexFromPath(path), function, method::POST});
     }
 
-    inline void setPublicFolder(const std::string &path, const std::string &value) noexcept
+    inline void setPublicFolder(const std::string &path, const std::string &folderPath) noexcept
     {
-        auto folder = std::filesystem::absolute(value).lexically_normal();
+        auto folder = std::filesystem::absolute(folderPath).lexically_normal();
         m_publicFolder = folder.string();
+        m_publicFolderRegex = std::regex(path);
     }
 
     const std::string &getPublicFolder() const noexcept
@@ -80,6 +85,7 @@ private:
     std::vector<error_function> m_errorFunctions;
     std::vector<functionInfo> m_functions;
     std::string m_publicFolder;
+    std::regex m_publicFolderRegex;
 
     static inline bool validPath(const request::header &header, const functionInfo &info)
     {
@@ -140,6 +146,17 @@ private:
         if (regexPath.empty())
             regexPath = "/";
         return std::regex(regexPath);
+    }
+
+    inline bool isPublicFolderRequest(const request::request &req) const noexcept
+    {
+        return std::regex_search(req.header().getPath(), m_publicFolderRegex, std::regex_constants::match_continuous);
+    }
+
+    inline void handlePublicFiles(request::request &req, response::response &res, std::string &errorValue) const noexcept
+    {
+        res.header().setContentType("image/jpeg");
+        res.end();
     }
 };
 

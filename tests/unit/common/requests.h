@@ -26,4 +26,6 @@ public:
     static std::unique_ptr<cpphttp::request::request> GetRequestWithParam;
     static std::unique_ptr<cpphttp::request::request> GetRequest;
     static std::unique_ptr<cpphttp::request::request> GetRequestWithTailingParams;
+
+    static std::unique_ptr<cpphttp::request::request> GetRequestFromPath(const std::string& path);
 };
