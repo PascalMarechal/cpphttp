@@ -6,6 +6,8 @@
 #include "string.h"
 #include <algorithm>
 #include <unordered_map>
+#include <fstream>
+#include <streambuf>
 
 std::vector<std::string_view>
 cpphttp::internal::split(const std::string_view &strv, const std::string_view &delims)
@@ -70,4 +72,11 @@ std::string cpphttp::internal::uriDecode(const std::string_view &toDecode)
     result.append(start, toDecode.cend());
 
     return result;
+}
+
+std::string cpphttp::internal::readFile(const std::string &path)
+{
+    std::ifstream t(path);
+    return std::string((std::istreambuf_iterator<char>(t)),
+                       std::istreambuf_iterator<char>());
 }

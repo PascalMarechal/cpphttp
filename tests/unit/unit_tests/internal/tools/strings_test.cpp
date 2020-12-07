@@ -62,3 +62,9 @@ TEST(Strings, URI_decode)
     decodedValue = uriDecode("%00%C3%A9%C3%A9%C3%A7%C3%A7");
     EXPECT_EQ(decodedValue, "%00ééçç");
 }
+
+TEST(Strings, Read_full_file)
+{
+    EXPECT_EQ(readFile("./data/read_test.txt"), "Read this correclty\n");
+    EXPECT_EQ(readFile("./wrong/path"), "");
+}

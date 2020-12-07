@@ -4,7 +4,9 @@
  *  Distributed under the MIT License. (See accompanying file LICENSE)
  */
 #include "requests.h"
-#include "common/tools/data_reader.h"
+#include "internal/tools/string.h"
+
+using namespace cpphttp::internal;
 
 std::string Requests::POST_REQUEST_HEADER = readFile("./data/headers/post_request.txt");
 std::string Requests::GET_REQUEST_HEADER = readFile("./data/headers/get_request.txt");
