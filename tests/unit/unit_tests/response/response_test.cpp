@@ -45,3 +45,9 @@ TEST(Response, Send)
     res.send("Something");
     EXPECT_EQ(res.toString(), "HTTP/1.1 200 OK\r\nContent-Type:" + cpphttp::response::header::DEFAULT_CONTENT_TYPE + "\r\nContent-Length: 9" + endOfHeader + "Something");
 }
+
+TEST(Response, Can_access_to_header_directly)
+{
+    response res;
+    EXPECT_EQ(res.header().getContentType(), header::DEFAULT_CONTENT_TYPE);
+}

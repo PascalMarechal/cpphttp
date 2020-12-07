@@ -24,7 +24,7 @@ namespace cpphttp
             void send(const std::string &data) noexcept;
             void end() noexcept;
             bool hasEnded() const noexcept;
-
+            cpphttp::response::header& header() noexcept;
         private:
             class impl;
             std::unique_ptr<impl> m_impl;

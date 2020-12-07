@@ -48,8 +48,13 @@ public:
         return m_end;
     }
 
+    inline cpphttp::response::header &header() noexcept
+    {
+        return m_header;
+    }
+
 private:
-    header m_header;
+    cpphttp::response::header m_header;
     std::ostringstream m_body;
     uint32_t m_bodyLength;
     bool m_end;
@@ -89,4 +94,9 @@ bool response::hasEnded() const noexcept
 void response::send(const std::string &data) noexcept
 {
     m_impl->send(data);
+}
+
+header &response::header() noexcept
+{
+    return m_impl->header();
 }
