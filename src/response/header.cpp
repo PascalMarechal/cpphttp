@@ -13,7 +13,7 @@ using namespace response;
 class header::impl
 {
 public:
-    impl() : m_status(status::_200), m_contentLength(0)
+    impl() : m_status(status::_200), m_contentLength(0), m_contentType(DEFAULT_CONTENT_TYPE)
     {
     }
     request::version version() const noexcept
@@ -47,9 +47,20 @@ public:
         return result.str();
     }
 
+    const std::string &getContentType() const noexcept
+    {
+        return m_contentType;
+    }
+
+    void setContentType(const std::string &type) noexcept
+    {
+        m_contentType = type;
+    }
+
 private:
     response::status m_status;
     uint32_t m_contentLength;
+    std::string m_contentType;
 
     const inline static std::unordered_map<response::status, std::string> STATUS_MAPPING =
         {{status::_200, "200 OK"},
@@ -107,4 +118,14 @@ void header::setContentLength(uint32_t length) noexcept
 std::string header::toString() const noexcept
 {
     return m_impl->toString();
+}
+
+const std::string &header::getContentType() const noexcept
+{
+    return m_impl->getContentType();
+}
+
+void header::setContentType(const std::string &type) noexcept
+{
+    m_impl->setContentType(type);
 }

@@ -16,13 +16,19 @@ namespace cpphttp
         class header
         {
         public:
+
+            static inline const std::string DEFAULT_CONTENT_TYPE = "text/html; charset=UTF-8";
+
             header();
             ~header();
             request::version version() const noexcept;
             response::status status() const noexcept;
             uint32_t contentLength() const noexcept;
+            const std::string &getContentType() const noexcept;
+
             void status(response::status status) noexcept;
             void setContentLength(uint32_t length) noexcept;
+            void setContentType(const std::string &type) noexcept;
             std::string toString() const noexcept;
 
         private:

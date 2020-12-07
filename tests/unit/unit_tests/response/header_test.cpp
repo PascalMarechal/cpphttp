@@ -46,3 +46,12 @@ TEST(ResponseHeader, To_string)
     head.setContentLength(450);
     EXPECT_EQ(head.toString(), "HTTP/1.1 202 Accepted\r\nContent-Length: 450\r\nConnection: Keep-Alive\r\n\r\n");
 }
+
+TEST(ResponseHeader, Content_type_can_be_changed)
+{
+    header head;
+    EXPECT_EQ(head.getContentType(), header::DEFAULT_CONTENT_TYPE);
+    auto imageContentType = "image/jpeg";
+    head.setContentType(imageContentType);
+    EXPECT_EQ(head.getContentType(), imageContentType);
+}
