@@ -5,6 +5,7 @@
  */
 
 #include "public_folder.h"
+#include "internal/tools/string.h"
 
 using namespace cpphttp::internal;
 
@@ -28,6 +29,13 @@ const std::string &public_folder::getPublicFolder() const noexcept
 
 void public_folder::handlePublicFiles(request::request &req, response::response &res, std::string &errorValue) const noexcept
 {
+    std::string fullFile = readFile(extractPathFromRequest(req));
+    if(fullFile.empty())
+    {
+        errorValue = MISSING_FILE;
+        return;
+    }
+    res.send(fullFile);
     res.header().setContentType("image/jpeg");
     res.end();
 }
@@ -39,8 +47,16 @@ bool public_folder::isPublicFolderRequest(const std::string &path) const noexcep
 
 void public_folder::setRegex(const std::string &path) noexcept
 {
+    m_regexPath = path;
     if (path[path.size() - 1] != '/')
-        m_publicFolderRegex = std::regex(path + "/");
-    else
-        m_publicFolderRegex = std::regex(path);
+        m_regexPath += "/";
+    m_publicFolderRegex = std::regex(m_regexPath);
+}
+
+std::string public_folder::extractPathFromRequest(const request::request &req) const noexcept
+{
+    std::string extractedFilePath = m_publicFolder + "/";
+    std::string_view endOfPath = req.header().getPath();
+    extractedFilePath += endOfPath.substr(m_regexPath.size());
+    return extractedFilePath;
 }
