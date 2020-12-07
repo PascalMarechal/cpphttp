@@ -39,6 +39,8 @@ TEST(Public_Folder, Check_if_request_is_a_public_folder_request)
     EXPECT_TRUE(publicFolder.isPublicFolderRequest("public/jpg_test.jpg"));
     EXPECT_FALSE(publicFolder.isPublicFolderRequest("somewhere"));
     EXPECT_FALSE(publicFolder.isPublicFolderRequest("publico/something"));
+    publicFolder.setPublicFolder("public/", "data/static_files");
+    EXPECT_TRUE(publicFolder.isPublicFolderRequest("public/image.jpg"));
 }
 
 TEST(Public_Folder, Get_jpg_from_public_folder)
