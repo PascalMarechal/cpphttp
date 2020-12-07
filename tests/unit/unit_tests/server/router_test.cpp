@@ -323,19 +323,6 @@ TEST(Router, Should_have_rvalue_copy_and_assignment_operators)
     testFirstAndSecondFunction(result);
 }
 
-TEST(Router, Set_public_folder_will_always_return_absolute_path)
-{
-    router router;
-    router.setPublicFolder("public", "./relative");
-    auto publicFolder = router.getPublicFolder();
-    std::filesystem::path cwd = std::filesystem::current_path();
-    EXPECT_EQ(publicFolder, cwd.string() + "/relative");
-
-    router.setPublicFolder("public", "/absolute/path");
-    publicFolder = router.getPublicFolder();
-    EXPECT_EQ(publicFolder, "/absolute/path");
-}
-
 TEST(Router, Get_jpg_from_public_folder)
 {
     router router;

@@ -6,9 +6,8 @@
 #include "router.h"
 #include "request/method.h"
 #include "internal/tools/string.h"
-
+#include "internal/public_folder/public_folder.h"
 #include <regex>
-#include <filesystem>
 
 using namespace cpphttp;
 using namespace response;
@@ -25,8 +24,8 @@ public:
 
         response::response res;
         std::string errorValue;
-        if (isPublicFolderRequest(req))
-            handlePublicFiles(req, res, errorValue);
+        if (m_publicFolder.isPublicFolderRequest(req.header().getPath()))
+            m_publicFolder.handlePublicFiles(req, res, errorValue);
         else
             callFunctions(req, res, errorValue);
 
@@ -63,14 +62,12 @@ public:
 
     inline void setPublicFolder(const std::string &path, const std::string &folderPath) noexcept
     {
-        auto folder = std::filesystem::absolute(folderPath).lexically_normal();
-        m_publicFolder = folder.string();
-        m_publicFolderRegex = std::regex(path);
+        m_publicFolder.setPublicFolder(path, folderPath);
     }
 
     const std::string &getPublicFolder() const noexcept
     {
-        return m_publicFolder;
+        return m_publicFolder.getPublicFolder();
     }
 
 private:
@@ -84,8 +81,7 @@ private:
 
     std::vector<error_function> m_errorFunctions;
     std::vector<functionInfo> m_functions;
-    std::string m_publicFolder;
-    std::regex m_publicFolderRegex;
+    internal::public_folder m_publicFolder;
 
     static inline bool validPath(const request::header &header, const functionInfo &info)
     {
@@ -146,17 +142,6 @@ private:
         if (regexPath.empty())
             regexPath = "/";
         return std::regex(regexPath);
-    }
-
-    inline bool isPublicFolderRequest(const request::request &req) const noexcept
-    {
-        return std::regex_search(req.header().getPath(), m_publicFolderRegex, std::regex_constants::match_continuous);
-    }
-
-    inline void handlePublicFiles(request::request &req, response::response &res, std::string &errorValue) const noexcept
-    {
-        res.header().setContentType("image/jpeg");
-        res.end();
     }
 };
 
