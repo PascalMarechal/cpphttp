@@ -327,7 +327,7 @@ TEST(Router, Get_jpg_from_public_folder)
 {
     router router;
     router.setPublicFolder("public", "data/static_files");
-    auto request = Requests::GetRequestFromPath("public/jpg_test.jpg");
+    auto request = Requests::GetRequestFromPath("public/test.jpg");
     auto result = router.process(*request);
     EXPECT_THAT(result, HasSubstr("Content-Type:image/jpeg"));
 }

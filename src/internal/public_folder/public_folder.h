@@ -22,7 +22,7 @@ namespace cpphttp
 
             void setPublicFolder(const std::string &path, const std::string &folderPath);
             const std::string &getPublicFolder() const noexcept;
-            void handlePublicFiles(request::request &req, response::response &res, std::string &errorValue) const noexcept;
+            void handlePublicFiles(const request::request &req, response::response &res, std::string &errorValue) const noexcept;
             bool isPublicFolderRequest(const std::string &path) const noexcept;
 
         private:
@@ -32,6 +32,7 @@ namespace cpphttp
 
             void setRegex(const std::string &path) noexcept;
             std::string extractPathFromRequest(const request::request &req) const noexcept;
+            static void setContentType(const request::request &req, response::response &res);
         };
     } // namespace internal
 } // namespace cpphttp
