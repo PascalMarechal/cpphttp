@@ -29,12 +29,12 @@ To build both libraries (static & dynamic) just use :
     ./build.sh
 ```
 
-You can also compile tests with libraries with :
+You can compile tests with libraries with :
 ```bash 
     ./build.sh dev
 ```
 
-You can also compile tests only with :
+You can compile tests only with :
 ```bash 
     ./build.sh test
 ```
