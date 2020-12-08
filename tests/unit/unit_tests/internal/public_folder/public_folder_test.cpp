@@ -103,6 +103,12 @@ void formatTest(std::string file, std::string expectedFormat)
     EXPECT_THAT(result, HasSubstr(expectedFileData));
 }
 
+TEST(Public_Folder, Unknown_types_should_be_plain_text)
+{
+    formatTest("text/test.unknown", "text/plain");
+    formatTest("text/test.unknown2", "text/plain");
+}
+
 // Images
 
 TEST(Public_Folder, Get_jpg_from_public_folder)
@@ -165,4 +171,26 @@ TEST(Public_Folder, Get_json_from_public_folder)
 TEST(Public_Folder, Get_pdf_from_public_folder)
 {
     formatTest("applications/test.pdf", "application/pdf");
+}
+
+// Text
+
+TEST(Public_Folder, Get_css_from_public_folder)
+{
+    formatTest("text/test.css", "text/css");
+}
+
+TEST(Public_Folder, Get_csv_from_public_folder)
+{
+    formatTest("text/test.csv", "text/csv");
+}
+
+TEST(Public_Folder, Get_html_from_public_folder)
+{
+    formatTest("text/test.html", "text/html; charset=UTF-8");
+}
+
+TEST(Public_Folder, Get_xml_from_public_folder)
+{
+    formatTest("text/test.xml", "text/xml");
 }
