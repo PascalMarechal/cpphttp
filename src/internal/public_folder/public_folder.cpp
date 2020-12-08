@@ -32,8 +32,8 @@ const std::string &public_folder::getPublicFolder() const noexcept
 const std::unordered_map<std::string_view, const std::string> contentTypes = {
     {"jpeg", "image/jpeg"}, {"jpg", "image/jpeg"}, {"png", "image/png"}, 
     {"tiff", "image/tiff"}, {"tif", "image/tiff"}, {"gif", "image/gif"}, 
-    {"svg", "image/svg+xml"}, {"svgz", "image/svg+xml"}, {"ico", "image/x-icon"},
-    {"js", "application/javascript"}, {"json", "application/json"}, {"pdf", "application/pdf"},
+    {"svg", "image/svg+xml"}, {"svgz", "image/svg+xml"}, {"ico", "image/x-icon"}, 
+    {"js", "application/javascript"}, {"json", "application/json"}, {"pdf", "application/pdf"}, 
     {"css", "text/css"}, {"csv", "text/csv"}, {"html", "text/html; charset=UTF-8"}, {"xml", "text/xml"}};
 
 void public_folder::setContentType(const request::request &req, response::response &res)
@@ -69,6 +69,8 @@ void public_folder::setRegex(const std::string &path) noexcept
     m_regexPath = path;
     if (path[path.size() - 1] != '/')
         m_regexPath += "/";
+    if (path[0] != '/')
+        m_regexPath = "/" + m_regexPath;
     m_publicFolderRegex = std::regex(m_regexPath);
 }
 

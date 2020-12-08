@@ -53,15 +53,15 @@ TEST(Public_Folder, Check_if_request_is_a_public_folder_request)
     publicFolder.setPublicFolder("public", "data/static_files");
 
     // Assert
-    EXPECT_TRUE(publicFolder.isPublicFolderRequest("public/test.jpg"));
-    EXPECT_FALSE(publicFolder.isPublicFolderRequest("somewhere"));
-    EXPECT_FALSE(publicFolder.isPublicFolderRequest("publico/something"));
+    EXPECT_TRUE(publicFolder.isPublicFolderRequest("/public/test.jpg"));
+    EXPECT_FALSE(publicFolder.isPublicFolderRequest("/somewhere"));
+    EXPECT_FALSE(publicFolder.isPublicFolderRequest("/publico/something"));
 
     // Compute
     publicFolder.setPublicFolder("public/", "data/static_files");
 
     // Assert
-    EXPECT_TRUE(publicFolder.isPublicFolderRequest("public/image.jpg"));
+    EXPECT_TRUE(publicFolder.isPublicFolderRequest("/public/image.jpg"));
 }
 
 TEST(Public_Folder, Missing_file_should_not_touch_the_response_and_should_return_error)
@@ -69,7 +69,7 @@ TEST(Public_Folder, Missing_file_should_not_touch_the_response_and_should_return
     // Init
     public_folder publicFolder;
     publicFolder.setPublicFolder("public", "data/static_files");
-    auto request = Requests::GetRequestFromPath("public/not_there.jpg");
+    auto request = Requests::GetRequestFromPath("/public/not_there.jpg");
     cpphttp::response::response res;
     std::string error;
     auto resBefore = res.toString();
@@ -88,7 +88,7 @@ void formatTest(std::string file, std::string expectedFormat)
     // Init
     public_folder publicFolder;
     publicFolder.setPublicFolder("public", "data/static_files");
-    auto request = Requests::GetRequestFromPath("public/" + file);
+    auto request = Requests::GetRequestFromPath("/public/" + file);
     auto expectedFileData = readFile("data/static_files/" + file);
     cpphttp::response::response res;
     std::string error;
