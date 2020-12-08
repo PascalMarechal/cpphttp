@@ -103,6 +103,8 @@ void formatTest(std::string file, std::string expectedFormat)
     EXPECT_THAT(result, HasSubstr(expectedFileData));
 }
 
+// Images
+
 TEST(Public_Folder, Get_jpg_from_public_folder)
 {
     formatTest("images/test.jpg", "image/jpeg");
@@ -146,4 +148,21 @@ TEST(Public_Folder, Get_svgz_from_public_folder)
 TEST(Public_Folder, Get_ico_from_public_folder)
 {
     formatTest("images/test.ico", "image/x-icon");
+}
+
+// Applications
+
+TEST(Public_Folder, Get_js_from_public_folder)
+{
+    formatTest("applications/test.js", "application/javascript");
+}
+
+TEST(Public_Folder, Get_json_from_public_folder)
+{
+    formatTest("applications/test.json", "application/json");
+}
+
+TEST(Public_Folder, Get_pdf_from_public_folder)
+{
+    formatTest("applications/test.pdf", "application/pdf");
 }
