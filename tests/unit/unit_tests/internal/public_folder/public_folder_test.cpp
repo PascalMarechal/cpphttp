@@ -105,30 +105,45 @@ void formatTest(std::string file, std::string expectedFormat)
 
 TEST(Public_Folder, Get_jpg_from_public_folder)
 {
-    formatTest("test.jpg", "image/jpeg");
+    formatTest("images/test.jpg", "image/jpeg");
 }
 
 TEST(Public_Folder, Get_jpeg_from_public_folder)
 {
-    formatTest("test.jpeg", "image/jpeg");
+    formatTest("images/test.jpeg", "image/jpeg");
 }
 
 TEST(Public_Folder, Get_png_from_public_folder)
 {
-    formatTest("test.png", "image/png");
+    formatTest("images/test.png", "image/png");
 }
 
 TEST(Public_Folder, Get_tiff_from_public_folder)
 {
-    formatTest("test.tiff", "image/tiff");
+    formatTest("images/test.tiff", "image/tiff");
 }
 
 TEST(Public_Folder, Get_tif_from_public_folder)
 {
-    formatTest("test.tif", "image/tiff");
+    formatTest("images/test.tif", "image/tiff");
 }
 
 TEST(Public_Folder, Get_gif_from_public_folder)
 {
-    formatTest("test.gif", "image/gif");
+    formatTest("images/test.gif", "image/gif");
+}
+
+TEST(Public_Folder, Get_svg_from_public_folder)
+{
+    formatTest("images/test.svg", "image/svg+xml");
+}
+
+TEST(Public_Folder, Get_svgz_from_public_folder)
+{
+    formatTest("images/test.svgz", "image/svg+xml");
+}
+
+TEST(Public_Folder, Get_ico_from_public_folder)
+{
+    formatTest("images/test.ico", "image/x-icon");
 }

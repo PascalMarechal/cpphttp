@@ -30,7 +30,9 @@ const std::string &public_folder::getPublicFolder() const noexcept
 }
 
 const std::unordered_map<std::string_view, const std::string> contentTypes = {
-    {"jpeg", "image/jpeg"}, {"jpg", "image/jpeg"}, {"png", "image/png"}, {"tiff", "image/tiff"}, {"tif", "image/tiff"}, {"gif", "image/gif"}};
+    {"jpeg", "image/jpeg"}, {"jpg", "image/jpeg"}, {"png", "image/png"}, 
+    {"tiff", "image/tiff"}, {"tif", "image/tiff"}, {"gif", "image/gif"}, 
+    {"svg", "image/svg+xml"}, {"svgz", "image/svg+xml"}, {"ico", "image/x-icon"}};
 
 void public_folder::setContentType(const request::request &req, response::response &res)
 {
