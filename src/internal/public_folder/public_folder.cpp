@@ -80,8 +80,8 @@ void public_folder::setRegex(const std::string &path) noexcept
 inline void public_folder::sanitizeExtractedFilePathFromRequest(std::string &path) const noexcept
 {
     path = std::filesystem::absolute(path).lexically_normal();
-    auto found = path.find(m_publicFolder);
-    if (found != 0)
+    auto matchFolderPath = path.find(m_publicFolder) == 0;
+    if (!matchFolderPath)
         path = "";
 }
 
