@@ -50,6 +50,7 @@ public:
     void createFakeReadSplittedPostRequestAtHeaderStage();
     void createFakeReadPostThenGet();
     void createFakeAsyncWrite();
+    void createFakeWriteError();
 
 private:
     uint32_t m_readExactlyCount, m_readUntilCount;

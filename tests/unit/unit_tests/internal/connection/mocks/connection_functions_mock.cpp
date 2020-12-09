@@ -174,7 +174,16 @@ void ConnectionFunctionsMock::createMaxBodySize()
 
 void ConnectionFunctionsMock::createFakeAsyncWrite()
 {
-    ON_CALL(*this, async_write).WillByDefault([](SocketMockWrapper &, const std::string & buffer, std::function<void(std::error_code, std::size_t)> callback) {
+    ON_CALL(*this, async_write).WillByDefault([](SocketMockWrapper &, const std::string &buffer, std::function<void(std::error_code, std::size_t)> callback) {
         callback(std::error_code(), buffer.size());
+    });
+}
+
+void ConnectionFunctionsMock::createFakeWriteError()
+{
+    createBufferFunction();
+    createFakeReadHeader(1, Requests::GET_REQUEST_HEADER);
+    ON_CALL(*this, async_write).WillByDefault([](SocketMockWrapper &, const std::string &, std::function<void(std::error_code, std::size_t)> callback) {
+        callback(std::make_error_code(std::errc::io_error), 0);
     });
 }

@@ -65,6 +65,8 @@ namespace cpphttp
 
             void onWrite(std::error_code error, std::size_t bytesTransferred) noexcept
             {
+                if (error)
+                    return exit(error);
                 reset();
                 readHeader();
             }
