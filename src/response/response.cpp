@@ -11,7 +11,7 @@ using namespace cpphttp::response;
 class response::impl
 {
 public:
-    impl() : m_bodyLength(0), m_end(false) {}
+    impl() : m_end(false) {}
 
     inline void status(cpphttp::response::status s) noexcept
     {
@@ -20,16 +20,15 @@ public:
 
     inline std::string toString() const noexcept
     {
-        return m_header.toString() + m_body.str();
+        return m_header.toString() + std::string(m_body.begin(), m_body.end());
     }
 
     inline void write(const std::string &data) noexcept
     {
         if (hasEnded())
             return;
-        m_bodyLength += data.size();
-        m_header.setContentLength(m_bodyLength);
-        m_body << data;
+        m_body.insert(m_body.end(), data.cbegin(), data.cend());
+        m_header.setContentLength(m_body.size());
     }
 
     inline void send(const std::string &data) noexcept
@@ -55,8 +54,7 @@ public:
 
 private:
     cpphttp::response::header m_header;
-    std::ostringstream m_body;
-    uint32_t m_bodyLength;
+    std::vector<uint8_t> m_body;
     bool m_end;
 };
 
