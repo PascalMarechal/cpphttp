@@ -34,7 +34,7 @@ namespace cpphttp
             inline std::string extractFilePathFromRequest(const request::request &req) const noexcept;
             inline std::string extractFilePath(const std::string &urlPath) const noexcept;
             inline void sanitizeExtractedFilePathFromRequest(std::string &path) const noexcept;
-            static void setContentType(const request::request &req, response::response &res) noexcept;
+            inline static void setContentType(const request::request &req, response::response &res) noexcept;
         };
     } // namespace internal
 } // namespace cpphttp
