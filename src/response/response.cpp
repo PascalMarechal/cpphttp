@@ -37,6 +37,15 @@ public:
         end();
     }
 
+    inline void send(std::vector<uint8_t> &&data) noexcept
+    {
+        if (hasEnded())
+            return;
+
+        m_body = std::move(data);
+        end();
+    }
+
     inline void end() noexcept
     {
         m_end = true;
@@ -109,4 +118,9 @@ header &response::header() noexcept
 std::vector<uint8_t> response::toVector() const noexcept
 {
     return m_impl->toVector();
+}
+
+void response::send(std::vector<uint8_t> &&data) noexcept
+{
+    return m_impl->send(std::move(data));
 }

@@ -74,3 +74,21 @@ TEST(Response, To_vector)
     // Assert
     EXPECT_EQ(res.toString(), "HTTP/1.1 200 OK\r\nContent-Type:" + cpphttp::response::header::DEFAULT_CONTENT_TYPE + "\r\nContent-Length: 21" + endOfHeader + "<h1>Hello World!</h1>");
 }
+
+TEST(Response, Send_binary_data)
+{
+    // Init
+    response res;
+    std::vector<uint8_t> toSend({48, 0, 49, 0});
+
+    // Compute
+    res.send(std::move(toSend));
+    auto result = res.toVector();
+
+    // Assert
+    EXPECT_TRUE(result.size() > 4);
+    EXPECT_EQ(*(result.cend() - 4), 48);
+    EXPECT_EQ(*(result.cend() - 3), 0);
+    EXPECT_EQ(*(result.cend() - 2), 49);
+    EXPECT_EQ(*(result.cend() - 1), 0);
+}
