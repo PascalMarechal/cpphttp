@@ -30,7 +30,7 @@ namespace cpphttp
             void setContentLength(uint32_t length) noexcept;
             void setContentType(const std::string &type) noexcept;
             std::string toString() const noexcept;
-            void appendDataToVector(std::vector<uint8_t> &toFill) const noexcept;
+            std::vector<uint8_t> toVector() const noexcept;
 
         private:
             class impl;

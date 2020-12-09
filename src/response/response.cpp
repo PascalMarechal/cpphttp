@@ -54,8 +54,7 @@ public:
 
     inline std::vector<uint8_t> toVector() const noexcept
     {
-        std::vector<uint8_t> result;
-        m_header.appendDataToVector(result);
+        auto result = m_header.toVector();
         result.insert(result.end(), m_body.cbegin(), m_body.cend());
         return result;
     }

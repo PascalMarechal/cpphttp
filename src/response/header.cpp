@@ -58,10 +58,10 @@ public:
         m_contentType = type;
     }
 
-    inline void appendDataToVector(std::vector<uint8_t> &toFill) const noexcept
+    inline std::vector<uint8_t> toVector() const noexcept
     {
         auto stringValue = toString();
-        toFill.insert(toFill.end(), stringValue.begin(), stringValue.end());
+        return std::vector<uint8_t>(stringValue.begin(), stringValue.end());
     }
 
 private:
@@ -137,7 +137,7 @@ void header::setContentType(const std::string &type) noexcept
     m_impl->setContentType(type);
 }
 
-void header::appendDataToVector(std::vector<uint8_t> &toFill) const noexcept
+std::vector<uint8_t> header::toVector() const noexcept
 {
-    m_impl->appendDataToVector(toFill);
+    return m_impl->toVector();
 }
