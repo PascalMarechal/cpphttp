@@ -31,8 +31,10 @@ namespace cpphttp
             std::regex m_publicFolderRegex;
 
             void setRegex(const std::string &path) noexcept;
-            std::string extractPathFromRequest(const request::request &req) const noexcept;
-            static void setContentType(const request::request &req, response::response &res);
+            inline std::string extractFilePathFromRequest(const request::request &req) const noexcept;
+            inline std::string extractFilePath(const std::string &urlPath) const noexcept;
+            inline void sanitizeExtractedFilePathFromRequest(std::string &path) const noexcept;
+            static void setContentType(const request::request &req, response::response &res) noexcept;
         };
     } // namespace internal
 } // namespace cpphttp

@@ -83,6 +83,23 @@ TEST(Public_Folder, Missing_file_should_not_touch_the_response_and_should_return
     EXPECT_EQ(error, public_folder::MISSING_FILE);
 }
 
+TEST(Public_Folder, Should_be_protected_against_directory_traversal_attacks)
+{
+    // Init
+    public_folder publicFolder;
+    publicFolder.setPublicFolder("public", "data/static_files");
+    auto request = Requests::GetRequestFromPath("/public/../read_test.txt");
+    cpphttp::response::response res;
+    std::string error;
+
+    // Compute
+    publicFolder.handlePublicFiles(*request, res, error);
+
+    // Assert
+    EXPECT_FALSE(res.hasEnded());
+    EXPECT_EQ(error, public_folder::MISSING_FILE);
+}
+
 void formatTest(std::string file, std::string expectedFormat)
 {
     // Init
