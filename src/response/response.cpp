@@ -52,6 +52,14 @@ public:
         return m_header;
     }
 
+    inline std::vector<uint8_t> toVector() const noexcept
+    {
+        std::vector<uint8_t> result;
+        m_header.appendDataToVector(result);
+        result.insert(result.end(), m_body.cbegin(), m_body.cend());
+        return result;
+    }
+
 private:
     cpphttp::response::header m_header;
     std::vector<uint8_t> m_body;
@@ -97,4 +105,9 @@ void response::send(const std::string &data) noexcept
 header &response::header() noexcept
 {
     return m_impl->header();
+}
+
+std::vector<uint8_t> response::toVector() const noexcept
+{
+    return m_impl->toVector();
 }

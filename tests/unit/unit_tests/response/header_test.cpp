@@ -56,7 +56,7 @@ TEST(ResponseHeader, Content_type_can_be_changed)
     EXPECT_EQ(head.getContentType(), imageContentType);
 }
 
-TEST(ResponseHeader, To_Vector)
+TEST(ResponseHeader, Append_data_to_vector)
 {
     // Init
     header head;
@@ -71,11 +71,13 @@ TEST(ResponseHeader, To_Vector)
 
     // Compute
     toFill.clear();
+    toFill.emplace_back(40);
+    toFill.emplace_back(40);
     head.status(status::_202);
     head.setContentLength(450);
     head.appendDataToVector(toFill);
     stringValue = std::string(toFill.cbegin(), toFill.cend());
 
     // Assert
-    EXPECT_EQ(stringValue, "HTTP/1.1 202 Accepted\r\nContent-Type:" + cpphttp::response::header::DEFAULT_CONTENT_TYPE + "\r\nContent-Length: 450\r\nConnection: Keep-Alive\r\n\r\n");
+    EXPECT_EQ(stringValue, "((HTTP/1.1 202 Accepted\r\nContent-Type:" + cpphttp::response::header::DEFAULT_CONTENT_TYPE + "\r\nContent-Length: 450\r\nConnection: Keep-Alive\r\n\r\n");
 }

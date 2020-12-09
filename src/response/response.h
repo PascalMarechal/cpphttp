@@ -19,6 +19,8 @@ namespace cpphttp
             ~response();
             void status(cpphttp::response::status) noexcept;
             std::string toString() const noexcept;
+            std::vector<uint8_t> toVector() const noexcept;
+            
             void write(const std::string &data) noexcept;
             void send(const std::string &data) noexcept;
             void end() noexcept;

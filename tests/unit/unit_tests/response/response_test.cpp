@@ -51,3 +51,26 @@ TEST(Response, Can_access_to_header_directly)
     response res;
     EXPECT_EQ(res.header().getContentType(), header::DEFAULT_CONTENT_TYPE);
 }
+
+TEST(Response, To_vector)
+{
+    // Init
+    response res;
+    res.status(status::_204);
+
+    // Compute
+    auto data = res.toVector();
+    auto stringValue = std::string(data.cbegin(), data.cend());
+
+    // Assert
+    EXPECT_EQ(stringValue, "HTTP/1.1 204 No Content\r\nContent-Type:" + cpphttp::response::header::DEFAULT_CONTENT_TYPE + "\r\nContent-Length: 0" + endOfHeader);
+
+    // Compute
+    res.write("<h1>Hello World!</h1>");
+    res.status(status::_200);
+    data = res.toVector();
+    stringValue = std::string(data.cbegin(), data.cend());
+
+    // Assert
+    EXPECT_EQ(res.toString(), "HTTP/1.1 200 OK\r\nContent-Type:" + cpphttp::response::header::DEFAULT_CONTENT_TYPE + "\r\nContent-Length: 21" + endOfHeader + "<h1>Hello World!</h1>");
+}
