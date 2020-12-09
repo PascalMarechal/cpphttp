@@ -6,6 +6,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 #include "request/version.h"
 #include "response/status.h"
 
@@ -16,7 +17,6 @@ namespace cpphttp
         class header
         {
         public:
-
             static inline const std::string DEFAULT_CONTENT_TYPE = "text/html; charset=UTF-8";
 
             header();
@@ -30,6 +30,7 @@ namespace cpphttp
             void setContentLength(uint32_t length) noexcept;
             void setContentType(const std::string &type) noexcept;
             std::string toString() const noexcept;
+            void appendDataToVector(std::vector<uint8_t> &toFill) const noexcept;
 
         private:
             class impl;

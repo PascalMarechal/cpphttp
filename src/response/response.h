@@ -7,8 +7,6 @@
 
 #include "status.h"
 #include "header.h"
-#include <memory>
-#include <vector>
 
 namespace cpphttp
 {

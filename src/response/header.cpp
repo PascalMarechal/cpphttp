@@ -16,27 +16,27 @@ public:
     impl() : m_status(status::_200), m_contentLength(0), m_contentType(DEFAULT_CONTENT_TYPE)
     {
     }
-    request::version version() const noexcept
+    inline request::version version() const noexcept
     {
         return request::version::_1_1;
     }
-    response::status status() const noexcept
+    inline response::status status() const noexcept
     {
         return m_status;
     }
-    uint32_t contentLength() const noexcept
+    inline uint32_t contentLength() const noexcept
     {
         return m_contentLength;
     }
-    void status(response::status status) noexcept
+    inline void status(response::status status) noexcept
     {
         m_status = status;
     }
-    void setContentLength(uint32_t length) noexcept
+    inline void setContentLength(uint32_t length) noexcept
     {
         m_contentLength = length;
     }
-    std::string toString() const noexcept
+    inline std::string toString() const noexcept
     {
         std::ostringstream result;
 
@@ -48,14 +48,20 @@ public:
         return result.str();
     }
 
-    const std::string &getContentType() const noexcept
+    inline const std::string &getContentType() const noexcept
     {
         return m_contentType;
     }
 
-    void setContentType(const std::string &type) noexcept
+    inline void setContentType(const std::string &type) noexcept
     {
         m_contentType = type;
+    }
+
+    inline void appendDataToVector(std::vector<uint8_t> &toFill) const noexcept
+    {
+        auto stringValue = toString();
+        toFill.insert(toFill.end(), stringValue.begin(), stringValue.end());
     }
 
 private:
@@ -129,4 +135,9 @@ const std::string &header::getContentType() const noexcept
 void header::setContentType(const std::string &type) noexcept
 {
     m_impl->setContentType(type);
+}
+
+void header::appendDataToVector(std::vector<uint8_t> &toFill) const noexcept
+{
+    m_impl->appendDataToVector(toFill);
 }
