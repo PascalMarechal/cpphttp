@@ -33,9 +33,9 @@ cmake --build . -j8
 
 # Compilation has terminated successfully 
 if [ $? -eq 0 ]; then
-    mv libcpphttp* ../bin
+    mv libcpphttp* ../bin 2>/dev/null
     if [ $testOn -eq 1 ]; then
-        mv unittest ../bin
+        mv unittest ../bin 2>/dev/null
         ../bin/unittest
     fi
 fi
