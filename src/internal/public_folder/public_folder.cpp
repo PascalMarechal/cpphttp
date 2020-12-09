@@ -51,15 +51,14 @@ void public_folder::handlePublicFiles(const request::request &req, response::res
         return;
     }
 
-    std::string fullFile = readFile(filePath);
-    if (fullFile.empty())
+    auto fullFile = readBinaryFile(filePath);
+    if (fullFile.size() == 0)
     {
         errorValue = MISSING_FILE;
         return;
     }
     setContentType(req, res);
-    res.send(fullFile);
-    res.end();
+    res.send(std::move(fullFile));
 }
 
 bool public_folder::isPublicFolderRequest(const std::string &path) const noexcept

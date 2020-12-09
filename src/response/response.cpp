@@ -43,6 +43,7 @@ public:
             return;
 
         m_body = std::move(data);
+        m_header.setContentLength(m_body.size());
         end();
     }
 
