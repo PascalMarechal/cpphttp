@@ -51,7 +51,7 @@ TEST(Connection, Read_request_with_body)
   EXPECT_CALL(functionsMock, headerEndMatcher).Times(3);
   EXPECT_CALL(functionsMock, bodyEndMatcher(Requests::EXPECTED_POST_BODY_SIZE)).Times(2);
   EXPECT_CALL(routerMock, process(SameRequest(Requests::POST_REQUEST_HEADER, Requests::POST_REQUEST_BODY))).Times(2);
-  EXPECT_CALL(functionsMock, write(matchSocketMock(socketMock), RouterMock::ExpectedFakeResult)).Times(2);
+  EXPECT_CALL(functionsMock, async_write(matchSocketMock(socketMock), RouterMock::ExpectedFakeResult, _)).Times(2);
   EXPECT_CALL(functionsMock, maxBodySize).Times(2);
   EXPECT_CALL(*socketMock, close).Times(0);
 
@@ -72,7 +72,7 @@ TEST(Connection, Read_request_without_body)
   EXPECT_CALL(functionsMock, createBuffer).Times(2);
   EXPECT_CALL(functionsMock, headerEndMatcher).Times(2);
   EXPECT_CALL(routerMock, process(SameRequest(Requests::GET_REQUEST_HEADER, ""))).Times(1);
-  EXPECT_CALL(functionsMock, write).Times(1);
+  EXPECT_CALL(functionsMock, async_write).Times(1);
   EXPECT_CALL(functionsMock, maxBodySize).Times(1);
   EXPECT_CALL(*socketMock, close).Times(0);
 
@@ -173,7 +173,7 @@ TEST(Connection, Should_accept_full_packet_at_header_stage)
   EXPECT_CALL(functionsMock, headerEndMatcher).Times(2);
   EXPECT_CALL(functionsMock, maxBodySize).Times(1);
   EXPECT_CALL(routerMock, process(SameRequest(Requests::POST_REQUEST_HEADER, Requests::POST_REQUEST_BODY))).Times(1);
-  EXPECT_CALL(functionsMock, write).Times(1);
+  EXPECT_CALL(functionsMock, async_write).Times(1);
   EXPECT_CALL(*socketMock, close).Times(0);
 
   auto c = std::make_shared<connection<SocketMockWrapper, ConnectionFunctionsMock, RouterMock>>(SocketMockWrapper(socketMock), functionsMock, routerMock);
@@ -195,7 +195,7 @@ TEST(Connection, Should_accept_splitted_packet_at_header_stage)
   EXPECT_CALL(functionsMock, maxBodySize).Times(1);
   EXPECT_CALL(functionsMock, bodyEndMatcher).Times(1);
   EXPECT_CALL(routerMock, process(SameRequest(Requests::POST_REQUEST_HEADER, Requests::POST_REQUEST_BODY))).Times(1);
-  EXPECT_CALL(functionsMock, write).Times(1);
+  EXPECT_CALL(functionsMock, async_write).Times(1);
   EXPECT_CALL(*socketMock, close).Times(0);
 
   auto c = std::make_shared<connection<SocketMockWrapper, ConnectionFunctionsMock, RouterMock>>(SocketMockWrapper(socketMock), functionsMock, routerMock);
@@ -219,7 +219,7 @@ TEST(Connection, Should_respond_to_two_succecutives_operations)
   EXPECT_CALL(functionsMock, bodyEndMatcher).Times(1);
   EXPECT_CALL(routerMock, process(SameRequest(Requests::POST_REQUEST_HEADER, Requests::POST_REQUEST_BODY))).Times(1);
   EXPECT_CALL(routerMock, process(SameRequest(Requests::GET_REQUEST_HEADER, ""))).Times(1);
-  EXPECT_CALL(functionsMock, write).Times(2);
+  EXPECT_CALL(functionsMock, async_write).Times(2);
   EXPECT_CALL(*socketMock, close).Times(0);
 
   auto c = std::make_shared<connection<SocketMockWrapper, ConnectionFunctionsMock, RouterMock>>(SocketMockWrapper(socketMock), functionsMock, routerMock);

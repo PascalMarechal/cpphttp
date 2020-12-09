@@ -60,7 +60,11 @@ namespace cpphttp
             void processAndReadNextRequest() noexcept
             {
                 auto response = m_router.process(*m_currentRequest);
-                m_functions.write(m_socket, response);
+                m_functions.async_write(m_socket, response, std::bind(&connection::onWrite, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+            }
+
+            void onWrite(std::error_code error, std::size_t bytesTransferred) noexcept
+            {
                 reset();
                 readHeader();
             }

@@ -28,7 +28,7 @@ public:
 
     MOCK_CONST_METHOD4(async_read_header, void(SocketMockWrapper &, std::string &, HeaderEndMatcher, std::function<void(std::error_code, std::size_t)>));
     MOCK_CONST_METHOD4(async_read_body, void(SocketMockWrapper &, std::string &, BodyEndMatcher, std::function<void(std::error_code, std::size_t)>));
-    MOCK_CONST_METHOD2(write, void(SocketMockWrapper &, const std::string &));
+    MOCK_CONST_METHOD3(async_write, void(SocketMockWrapper &, const std::string &, std::function<void(std::error_code, std::size_t)>));
     MOCK_CONST_METHOD1(createBuffer, std::string &(std::string &));
     MOCK_CONST_METHOD0(headerEndMatcher, HeaderEndMatcher());
     MOCK_CONST_METHOD1(bodyEndMatcher, BodyEndMatcher(std::size_t));
@@ -49,6 +49,7 @@ public:
     void createFakeReadFullPostRequestAtHeaderStage();
     void createFakeReadSplittedPostRequestAtHeaderStage();
     void createFakeReadPostThenGet();
+    void createFakeAsyncWrite();
 
 private:
     uint32_t m_readExactlyCount, m_readUntilCount;
