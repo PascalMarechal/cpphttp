@@ -29,7 +29,7 @@ namespace cpphttp
             router(router &&toCopy);
             router &operator=(router &&toCopy);
 
-            std::string process(cpphttp::request::request &) const;
+            std::vector<uint8_t> process(cpphttp::request::request &) const;
 
             void setPublicFolder(const std::string &path, const std::string &folder) noexcept;
             const std::string &getPublicFolder() const noexcept;

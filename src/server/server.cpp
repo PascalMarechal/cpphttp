@@ -35,7 +35,7 @@ public:
     {
         asio::async_read(socket, buffer, matcher, function);
     }
-    inline static void async_write(asio::ip::tcp::socket &socket, const std::string &buffer, std::function<void(std::error_code, std::size_t)> function) noexcept
+    inline static void async_write(asio::ip::tcp::socket &socket, const std::vector<uint8_t> &buffer, std::function<void(std::error_code, std::size_t)> function) noexcept
     {
         asio::async_write(socket, asio::buffer(buffer), function);
     }

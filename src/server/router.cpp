@@ -17,7 +17,7 @@ using namespace request;
 class router::impl
 {
 public:
-    inline std::string process(cpphttp::request::request &req) const
+    inline std::vector<uint8_t> process(cpphttp::request::request &req) const
     {
         if (!req.isReady())
             throw std::invalid_argument("Invalid requests are not allowed");
@@ -30,14 +30,14 @@ public:
             callFunctions(req, res, errorValue);
 
         if (res.hasEnded())
-            return res.toString();
+            return res.toVector();
 
         callErrorFunctions(errorValue, req, res);
 
         if (!res.hasEnded())
             defaultError(res);
 
-        return res.toString();
+        return res.toVector();
     }
 
     inline void onError(error_function f) noexcept
@@ -149,7 +149,7 @@ router::router() : m_impl(std::make_unique<impl>()) {}
 
 router::~router() {}
 
-std::string router::process(cpphttp::request::request &req) const
+std::vector<uint8_t> router::process(cpphttp::request::request &req) const
 {
     return m_impl->process(req);
 }
