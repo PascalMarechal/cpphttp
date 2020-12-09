@@ -65,6 +65,21 @@ TEST(Strings, URI_decode)
 
 TEST(Strings, Read_full_file)
 {
+    // Compute & Assert
     EXPECT_EQ(readFile("./data/read_test.txt"), "Read this correclty\n");
     EXPECT_EQ(readFile("./wrong/path"), "");
+}
+
+TEST(Strings, Read_full_binary_file)
+{
+    // Compute
+    auto firstFile = readBinaryFile("./data/read_test.txt");
+    auto secondFile = readBinaryFile("./wrong/path");
+    auto realBinaryFile = readBinaryFile("./data/read_test_binary.txt");
+
+    // Assert
+    EXPECT_EQ(std::string(firstFile.cbegin(), firstFile.cend()), "Read this correclty\n");
+    EXPECT_EQ(std::string(secondFile.cbegin(), secondFile.cend()), "");
+    EXPECT_TRUE(realBinaryFile.size() == 4);
+    EXPECT_TRUE(realBinaryFile[1] == 0 && realBinaryFile[3] == 0);
 }

@@ -80,3 +80,10 @@ std::string cpphttp::internal::readFile(const std::string &path)
     return std::string((std::istreambuf_iterator<char>(t)),
                        std::istreambuf_iterator<char>());
 }
+
+std::vector<uint8_t> cpphttp::internal::readBinaryFile(const std::string &path)
+{
+    std::ifstream t(path);
+    return std::vector<uint8_t>((std::istreambuf_iterator<char>(t)),
+                                std::istreambuf_iterator<char>());
+}
