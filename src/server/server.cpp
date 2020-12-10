@@ -36,20 +36,8 @@ public:
         asio::async_read(socket, asio::dynamic_buffer(buffer), matcher, function);
     }
     inline static void async_write(asio::ip::tcp::socket &socket, const std::vector<uint8_t> &buffer, std::function<void(std::error_code, std::size_t)> function) noexcept
-    {
-        signal(SIGPIPE, SIG_IGN);
-        auto fileName = "/src/tests/unit/data/static_files/images/test.png";
-        size_t count_;
-        struct stat statbuf;
-        int result = stat(fileName, &statbuf);
-        count_ = statbuf.st_size;
-
-        cpphttp::response::header head;
-        head.setContentLength(count_);
-        head.setContentType("image/png");
-        auto toSend = head.toString();
-        
-        asio::async_write(socket, asio::buffer(toSend), asio::transfer_exactly(toSend.size()), function);
+    {        
+        asio::async_write(socket, asio::buffer(buffer), asio::transfer_exactly(buffer.size()), function);
     }
 
     inline static asio::detail::transfer_exactly_t bodyEndMatcher(std::size_t size) noexcept
