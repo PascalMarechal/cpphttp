@@ -64,6 +64,27 @@ TEST(Public_Folder, Check_if_request_is_a_public_folder_request)
     EXPECT_TRUE(publicFolder.isPublicFolderRequest("/public/image.jpg"));
 }
 
+TEST(Public_Folder, Get_file_path_if_public_folder_request)
+{
+    // Init
+    public_folder publicFolder;
+    std::filesystem::path cwd = std::filesystem::current_path();
+
+    // Compute
+    publicFolder.setPublicFolder("public", "data/static_files");
+
+    // Assert
+    EXPECT_EQ(publicFolder.getFilePathIfExists("/public/images/test.jpg"), cwd.string() + "/data/static_files/images/test.jpg");
+    EXPECT_EQ(publicFolder.getFilePathIfExists("/somewhere"), "");
+    EXPECT_EQ(publicFolder.getFilePathIfExists("/publico/something"), "");
+
+    // Compute
+    publicFolder.setPublicFolder("public/", "data/static_files");
+
+    // Assert
+    EXPECT_EQ(publicFolder.getFilePathIfExists("/public/image.jpg"), cwd.string() + "/data/static_files/image.jpg");
+}
+
 TEST(Public_Folder, Missing_file_should_not_touch_the_response_and_should_return_error)
 {
     // Init

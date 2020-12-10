@@ -96,3 +96,17 @@ inline std::string public_folder::extractFilePathFromRequest(const request::requ
     sanitizeExtractedFilePathFromRequest(extractedPath);
     return extractedPath;
 }
+
+inline std::string public_folder::extractFilePathFromURL(const std::string &url) const noexcept
+{
+    auto extractedPath = extractFilePath(url);
+    sanitizeExtractedFilePathFromRequest(extractedPath);
+    return extractedPath;
+}
+
+std::string public_folder::getFilePathIfExists(const std::string &url)
+{
+    if (!isPublicFolderRequest(url))
+        return "";
+    return extractFilePathFromURL(url);
+}
