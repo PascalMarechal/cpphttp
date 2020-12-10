@@ -8,6 +8,7 @@
 #include "internal/tools/string.h"
 
 #include <unordered_map>
+#include <sys/stat.h>
 
 using namespace cpphttp::internal;
 
@@ -40,6 +41,16 @@ inline void public_folder::setContentType(const request::request &req, response:
         res.header().setContentType(type->second);
     else
         res.header().setContentType("text/plain");
+}
+
+inline void public_folder::setContentType(const std::string &path, cpphttp::response::header &head) noexcept
+{
+    auto splittedValues = split(path, ".");
+    auto type = contentTypes.find(splittedValues.back());
+    if (type != contentTypes.cend())
+        head.setContentType(type->second);
+    else
+        head.setContentType("text/plain");
 }
 
 void public_folder::handlePublicFiles(const request::request &req, response::response &res, std::string &errorValue) const noexcept
@@ -109,4 +120,16 @@ std::string public_folder::getFilePathIfExists(const std::string &url)
     if (!isPublicFolderRequest(url))
         return "";
     return extractFilePathFromURL(url);
+}
+
+std::string public_folder::getFileHeader(const std::string &path)
+{
+    struct stat statbuf;
+    if (stat(path.c_str(), &statbuf) != 0)
+        return "";
+
+    cpphttp::response::header head;
+    head.setContentLength(statbuf.st_size);
+    setContentType(path, head);
+    return head.toString();
 }

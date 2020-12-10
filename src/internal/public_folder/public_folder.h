@@ -25,6 +25,7 @@ namespace cpphttp
             void handlePublicFiles(const request::request &req, response::response &res, std::string &errorValue) const noexcept;
             bool isPublicFolderRequest(const std::string &path) const noexcept;
             std::string getFilePathIfExists(const std::string &url);
+            std::string getFileHeader(const std::string& path);
 
         private:
             std::string m_publicFolder;
@@ -37,6 +38,7 @@ namespace cpphttp
             inline std::string extractFilePath(const std::string &urlPath) const noexcept;
             inline void sanitizeExtractedFilePathFromRequest(std::string &path) const noexcept;
             inline static void setContentType(const request::request &req, response::response &res) noexcept;
+            inline static void setContentType(const std::string &path, cpphttp::response::header &head) noexcept;
         };
     } // namespace internal
 } // namespace cpphttp

@@ -109,36 +109,38 @@ TEST(Public_Folder, Should_be_protected_against_directory_traversal_attacks)
     // Init
     public_folder publicFolder;
     publicFolder.setPublicFolder("public", "data/static_files");
-    auto request = Requests::GetRequestFromPath("/public/../read_test.txt");
-    cpphttp::response::response res;
-    std::string error;
 
     // Compute
-    publicFolder.handlePublicFiles(*request, res, error);
+    auto path = publicFolder.getFilePathIfExists("/public/../read_test.txt");
 
     // Assert
-    EXPECT_FALSE(res.hasEnded());
-    EXPECT_EQ(error, public_folder::MISSING_FILE);
+    EXPECT_EQ(path, "");
+}
+
+TEST(Public_Folder, Get_file_header_should_be_empty_if_wrong_path)
+{
+    // Init
+    public_folder publicFolder;
+
+    // Compute
+    auto result = publicFolder.getFileHeader("data/static_files/eazeazdqsdazeazdazeazeaz.txt");
+
+    // Assert
+    EXPECT_TRUE(result.empty());
 }
 
 void formatTest(std::string file, std::string expectedFormat)
 {
     // Init
     public_folder publicFolder;
-    publicFolder.setPublicFolder("public", "data/static_files");
-    auto request = Requests::GetRequestFromPath("/public/" + file);
     auto expectedFileData = readFile("data/static_files/" + file);
-    cpphttp::response::response res;
-    std::string error;
 
     // Compute
-    publicFolder.handlePublicFiles(*request, res, error);
-    auto result = res.toString();
+    auto result = publicFolder.getFileHeader("data/static_files/" + file);
 
     // Assert
     EXPECT_THAT(result, HasSubstr("Content-Type:" + expectedFormat));
     EXPECT_FALSE(expectedFileData.empty());
-    EXPECT_THAT(result, HasSubstr(expectedFileData));
 }
 
 TEST(Public_Folder, Unknown_types_should_be_plain_text)
