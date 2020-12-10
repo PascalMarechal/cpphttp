@@ -37,7 +37,7 @@ public:
     }
     inline static void async_write(asio::ip::tcp::socket &socket, const std::vector<uint8_t> &buffer, std::function<void(std::error_code, std::size_t)> function) noexcept
     {
-        asio::async_write(socket, asio::buffer(buffer), function);
+        asio::async_write(socket, asio::buffer(buffer), asio::transfer_exactly(buffer.size()), function);
     }
 
     inline static asio::dynamic_string_buffer<char, std::char_traits<char>, std::allocator<char>> createBuffer(std::string &from) noexcept
