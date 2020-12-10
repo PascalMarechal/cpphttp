@@ -333,12 +333,3 @@ TEST(Router, Should_have_rvalue_copy_and_assignment_operators)
     result = processToString(router3, *Requests::PostRequest);
     testFirstAndSecondFunction(result);
 }
-
-TEST(Router, Get_jpg_from_public_folder)
-{
-    router router;
-    router.setPublicFolder("public", "data/static_files");
-    auto request = Requests::GetRequestFromPath("/public/images/test.jpg");
-    auto result = processToString(router, *request);
-    EXPECT_THAT(result, HasSubstr("Content-Type:image/jpeg"));
-}

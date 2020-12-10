@@ -31,9 +31,6 @@ namespace cpphttp
 
             std::vector<uint8_t> process(cpphttp::request::request &) const;
 
-            void setPublicFolder(const std::string &path, const std::string &folder) noexcept;
-            const std::string &getPublicFolder() const noexcept;
-
             void onError(error_function f) noexcept;
             template <typename T, typename... T2, typename std::enable_if_t<0 != sizeof...(T2), int> = 0>
             void onError(T f, T2... others) noexcept

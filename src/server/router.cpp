@@ -6,7 +6,6 @@
 #include "router.h"
 #include "request/method.h"
 #include "internal/tools/string.h"
-#include "internal/public_folder/public_folder.h"
 #include <regex>
 
 using namespace cpphttp;
@@ -24,10 +23,8 @@ public:
 
         response::response res;
         std::string errorValue;
-        if (m_publicFolder.isPublicFolderRequest(req.header().getPath()))
-            m_publicFolder.handlePublicFiles(req, res, errorValue);
-        else
-            callFunctions(req, res, errorValue);
+
+        callFunctions(req, res, errorValue);
 
         if (res.hasEnded())
             return res.toVector();
@@ -60,16 +57,6 @@ public:
         m_functions.push_back({path, extractRegexFromPath(path), function, method::POST});
     }
 
-    inline void setPublicFolder(const std::string &path, const std::string &folderPath) noexcept
-    {
-        m_publicFolder.setPublicFolder(path, folderPath);
-    }
-
-    const std::string &getPublicFolder() const noexcept
-    {
-        return m_publicFolder.getPublicFolder();
-    }
-
 private:
     struct functionInfo
     {
@@ -81,7 +68,6 @@ private:
 
     std::vector<error_function> m_errorFunctions;
     std::vector<functionInfo> m_functions;
-    internal::public_folder m_publicFolder;
 
     static inline bool validPath(const request::header &header, const functionInfo &info)
     {
@@ -187,14 +173,4 @@ router &router::operator=(router &&toCopy)
     m_impl = std::move(toCopy.m_impl);
     toCopy.m_impl = std::make_unique<impl>();
     return *this;
-}
-
-void router::setPublicFolder(const std::string &path, const std::string &folder) noexcept
-{
-    m_impl->setPublicFolder(path, folder);
-}
-
-const std::string &router::getPublicFolder() const noexcept
-{
-    return m_impl->getPublicFolder();
 }

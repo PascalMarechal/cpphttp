@@ -33,16 +33,6 @@ const std::string &public_folder::getPublicFolder() const noexcept
 const std::unordered_map<std::string_view, const std::string> contentTypes = {
     {"jpeg", "image/jpeg"}, {"jpg", "image/jpeg"}, {"png", "image/png"}, {"tiff", "image/tiff"}, {"tif", "image/tiff"}, {"gif", "image/gif"}, {"svg", "image/svg+xml"}, {"svgz", "image/svg+xml"}, {"ico", "image/x-icon"}, {"js", "application/javascript"}, {"json", "application/json"}, {"pdf", "application/pdf"}, {"css", "text/css"}, {"csv", "text/csv"}, {"html", "text/html; charset=UTF-8"}, {"xml", "text/xml"}};
 
-inline void public_folder::setContentType(const request::request &req, response::response &res) noexcept
-{
-    auto splittedValues = split(req.header().getPath(), ".");
-    auto type = contentTypes.find(splittedValues.back());
-    if (type != contentTypes.cend())
-        res.header().setContentType(type->second);
-    else
-        res.header().setContentType("text/plain");
-}
-
 inline void public_folder::setContentType(const std::string &path, cpphttp::response::header &head) noexcept
 {
     auto splittedValues = split(path, ".");
@@ -51,25 +41,6 @@ inline void public_folder::setContentType(const std::string &path, cpphttp::resp
         head.setContentType(type->second);
     else
         head.setContentType("text/plain");
-}
-
-void public_folder::handlePublicFiles(const request::request &req, response::response &res, std::string &errorValue) const noexcept
-{
-    auto filePath = extractFilePathFromRequest(req);
-    if (filePath.empty())
-    {
-        errorValue = MISSING_FILE;
-        return;
-    }
-
-    auto fullFile = readBinaryFile(filePath);
-    if (fullFile.size() == 0)
-    {
-        errorValue = MISSING_FILE;
-        return;
-    }
-    setContentType(req, res);
-    res.send(std::move(fullFile));
 }
 
 bool public_folder::isPublicFolderRequest(const std::string &path) const noexcept
@@ -99,13 +70,6 @@ inline std::string public_folder::extractFilePath(const std::string &urlPath) co
 {
     std::string endOfPath = urlPath.substr(m_regexPath.size());
     return m_publicFolder + "/" + endOfPath;
-}
-
-inline std::string public_folder::extractFilePathFromRequest(const request::request &req) const noexcept
-{
-    auto extractedPath = extractFilePath(req.header().getPath());
-    sanitizeExtractedFilePathFromRequest(extractedPath);
-    return extractedPath;
 }
 
 inline std::string public_folder::extractFilePathFromURL(const std::string &url) const noexcept

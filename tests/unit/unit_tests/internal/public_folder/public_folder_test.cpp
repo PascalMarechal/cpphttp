@@ -44,26 +44,6 @@ TEST(Public_Folder, Set_empty_public_folder_should_throw)
     EXPECT_THROW(publicFolder.setPublicFolder("somewhere", ""), std::invalid_argument);
 }
 
-TEST(Public_Folder, Check_if_request_is_a_public_folder_request)
-{
-    // Init
-    public_folder publicFolder;
-
-    // Compute
-    publicFolder.setPublicFolder("public", "data/static_files");
-
-    // Assert
-    EXPECT_TRUE(publicFolder.isPublicFolderRequest("/public/test.jpg"));
-    EXPECT_FALSE(publicFolder.isPublicFolderRequest("/somewhere"));
-    EXPECT_FALSE(publicFolder.isPublicFolderRequest("/publico/something"));
-
-    // Compute
-    publicFolder.setPublicFolder("public/", "data/static_files");
-
-    // Assert
-    EXPECT_TRUE(publicFolder.isPublicFolderRequest("/public/image.jpg"));
-}
-
 TEST(Public_Folder, Get_file_path_if_public_folder_request)
 {
     // Init
@@ -83,25 +63,6 @@ TEST(Public_Folder, Get_file_path_if_public_folder_request)
 
     // Assert
     EXPECT_EQ(publicFolder.getFilePathIfExists("/public/image.jpg"), cwd.string() + "/data/static_files/image.jpg");
-}
-
-TEST(Public_Folder, Missing_file_should_not_touch_the_response_and_should_return_error)
-{
-    // Init
-    public_folder publicFolder;
-    publicFolder.setPublicFolder("public", "data/static_files");
-    auto request = Requests::GetRequestFromPath("/public/not_there.jpg");
-    cpphttp::response::response res;
-    std::string error;
-    auto resBefore = res.toString();
-
-    // Compute
-    publicFolder.handlePublicFiles(*request, res, error);
-
-    // Assert
-    EXPECT_FALSE(res.hasEnded());
-    EXPECT_EQ(res.toString(), resBefore);
-    EXPECT_EQ(error, public_folder::MISSING_FILE);
 }
 
 TEST(Public_Folder, Should_be_protected_against_directory_traversal_attacks)
