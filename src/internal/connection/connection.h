@@ -28,12 +28,12 @@ namespace cpphttp
         private:
             inline void readHeader() noexcept
             {
-                m_functions.async_read_header(m_socket, m_functions.createBuffer(m_buffer), m_functions.headerEndMatcher(), std::bind(&connection::onReadHeader, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+                m_functions.async_read_header(m_socket, m_buffer, std::bind(&connection::onReadHeader, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
             }
 
             inline void readBody(std::size_t bytesToRead) noexcept
             {
-                m_functions.async_read_body(m_socket, m_functions.createBuffer(m_buffer), m_functions.bodyEndMatcher(bytesToRead), std::bind(&connection::onReadBody, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+                m_functions.async_read_body(m_socket, m_buffer, m_functions.bodyEndMatcher(bytesToRead), std::bind(&connection::onReadBody, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
             }
 
             void onReadHeader(std::error_code error, std::size_t bytesTransferred) noexcept

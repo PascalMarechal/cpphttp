@@ -22,7 +22,6 @@ ConnectionFunctionsMock::ConnectionFunctionsMock() : m_readExactlyCount(0), m_re
 
 void ConnectionFunctionsMock::createFakePostReadMethods(uint32_t loops)
 {
-    createBufferFunction();
     createFakeReadHeader(loops, Requests::POST_REQUEST_HEADER);
     createFakeReadBody(loops, Requests::POST_REQUEST_BODY);
     createFakeAsyncWrite();
@@ -30,9 +29,8 @@ void ConnectionFunctionsMock::createFakePostReadMethods(uint32_t loops)
 
 void ConnectionFunctionsMock::createFakeReadFullPostRequestAtHeaderStage()
 {
-    createBufferFunction();
     createFakeAsyncWrite();
-    ON_CALL(*this, async_read_header).WillByDefault([this](SocketMockWrapper &socket, std::string &buffer, HeaderEndMatcher matcher, std::function<void(std::error_code, std::size_t)> callback) {
+    ON_CALL(*this, async_read_header).WillByDefault([this](SocketMockWrapper &socket, std::string &buffer, std::function<void(std::error_code, std::size_t)> callback) {
         if (++m_readUntilCount > 1)
             return;
         buffer += Requests::POST_REQUEST_HEADER + "\n" + Requests::POST_REQUEST_BODY;
@@ -42,9 +40,8 @@ void ConnectionFunctionsMock::createFakeReadFullPostRequestAtHeaderStage()
 
 void ConnectionFunctionsMock::createFakeReadSplittedPostRequestAtHeaderStage()
 {
-    createBufferFunction();
     createFakeAsyncWrite();
-    ON_CALL(*this, async_read_header).WillByDefault([this](SocketMockWrapper &socket, std::string &buffer, HeaderEndMatcher matcher, std::function<void(std::error_code, std::size_t)> callback) {
+    ON_CALL(*this, async_read_header).WillByDefault([this](SocketMockWrapper &socket, std::string &buffer, std::function<void(std::error_code, std::size_t)> callback) {
         if (++m_readUntilCount > 1)
             return;
         buffer += Requests::POST_REQUEST_HEADER + "\n" + Requests::POST_REQUEST_BODY.substr(0, 10);
@@ -63,10 +60,9 @@ void ConnectionFunctionsMock::createFakeReadSplittedPostRequestAtHeaderStage()
 
 void ConnectionFunctionsMock::createFakeReadPostThenGet()
 {
-    createBufferFunction();
     createBodyEndMatcher();
     createFakeAsyncWrite();
-    ON_CALL(*this, async_read_header).WillByDefault([this](SocketMockWrapper &socket, std::string &buffer, HeaderEndMatcher matcher, std::function<void(std::error_code, std::size_t)> callback) {
+    ON_CALL(*this, async_read_header).WillByDefault([this](SocketMockWrapper &socket, std::string &buffer, std::function<void(std::error_code, std::size_t)> callback) {
         if (++m_readUntilCount > 2)
             return;
         if (m_readUntilCount == 1)
@@ -86,7 +82,6 @@ void ConnectionFunctionsMock::createFakeReadPostThenGet()
 
 void ConnectionFunctionsMock::createFakeGetReadMethods(uint32_t loops)
 {
-    createBufferFunction();
     createFakeReadHeader(loops, Requests::GET_REQUEST_HEADER);
     createFakeReadBody(loops, "");
     createFakeAsyncWrite();
@@ -94,39 +89,34 @@ void ConnectionFunctionsMock::createFakeGetReadMethods(uint32_t loops)
 
 void ConnectionFunctionsMock::createFakeReadPostRequestWithBigBodyLength()
 {
-    createBufferFunction();
     createFakeReadHeader(1, Requests::POST_REQUEST_HEADER_WITH_BIG_BODY_LENGTH);
 }
 
 void ConnectionFunctionsMock::createErrorInHeaderRead()
 {
-    createBufferFunction();
     createFakeAsyncWrite();
-    ON_CALL(*this, async_read_header).WillByDefault([this](SocketMockWrapper &socket, std::string &buffer, HeaderEndMatcher matcher, std::function<void(std::error_code, std::size_t)> callback) {
+    ON_CALL(*this, async_read_header).WillByDefault([](SocketMockWrapper &socket, std::string &buffer, std::function<void(std::error_code, std::size_t)> callback) {
         callback(std::make_error_code(std::errc::io_error), 0);
     });
 }
 
 void ConnectionFunctionsMock::createReadIncorrectHeaderData()
 {
-    createBufferFunction();
     createFakeReadHeader(1, "wrongHeaderData\r\n\r\n");
 }
 
 void ConnectionFunctionsMock::createErrorInBodyRead()
 {
-    createBufferFunction();
     createBodyEndMatcher();
     createFakeReadHeader(1, Requests::POST_REQUEST_HEADER);
-    ON_CALL(*this, async_read_body).WillByDefault([this](SocketMockWrapper &socket, std::string &buffer, BodyEndMatcher matcher, std::function<void(std::error_code, std::size_t)> callback) {
+    ON_CALL(*this, async_read_body).WillByDefault([](SocketMockWrapper &socket, std::string &buffer, BodyEndMatcher matcher, std::function<void(std::error_code, std::size_t)> callback) {
         callback(std::make_error_code(std::errc::io_error), 0);
     });
 }
 
 void ConnectionFunctionsMock::createFakeReadHeader(uint32_t loops, const std::string &dataToRead)
 {
-    createHeaderEndMatcher();
-    ON_CALL(*this, async_read_header).WillByDefault([this, loops, dataToRead](SocketMockWrapper &socket, std::string &buffer, HeaderEndMatcher matcher, std::function<void(std::error_code, std::size_t)> callback) {
+    ON_CALL(*this, async_read_header).WillByDefault([this, loops, dataToRead](SocketMockWrapper &socket, std::string &buffer, std::function<void(std::error_code, std::size_t)> callback) {
         if (++m_readUntilCount > loops)
             return;
 
@@ -146,24 +136,10 @@ void ConnectionFunctionsMock::createFakeReadBody(uint32_t loops, const std::stri
     });
 }
 
-void ConnectionFunctionsMock::createBufferFunction()
-{
-    ON_CALL(*this, createBuffer).WillByDefault([](std::string &buffer) -> std::string & {
-        return buffer;
-    });
-}
-
 void ConnectionFunctionsMock::createBodyEndMatcher()
 {
     ON_CALL(*this, bodyEndMatcher).WillByDefault([](std::size_t size) -> BodyEndMatcher {
         return BodyEndMatcher(size);
-    });
-}
-
-void ConnectionFunctionsMock::createHeaderEndMatcher()
-{
-    ON_CALL(*this, headerEndMatcher).WillByDefault([]() -> HeaderEndMatcher {
-        return HeaderEndMatcher();
     });
 }
 
@@ -181,7 +157,6 @@ void ConnectionFunctionsMock::createFakeAsyncWrite()
 
 void ConnectionFunctionsMock::createFakeWriteError()
 {
-    createBufferFunction();
     createFakeReadHeader(1, Requests::GET_REQUEST_HEADER);
     ON_CALL(*this, async_write).WillByDefault([](SocketMockWrapper &, const std::string &, std::function<void(std::error_code, std::size_t)> callback) {
         callback(std::make_error_code(std::errc::io_error), 0);
