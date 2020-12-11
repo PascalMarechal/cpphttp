@@ -13,7 +13,7 @@
 using namespace cpphttp::internal;
 using ::testing::HasSubstr;
 
-TEST(Public_Folder, Set_public_folder_will_always_set_absolute_path)
+TEST(Public_Folder, Set_public_folder_will_always_set_absolute_path_and_URL)
 {
     // Init
     public_folder publicFolder;
@@ -21,16 +21,20 @@ TEST(Public_Folder, Set_public_folder_will_always_set_absolute_path)
 
     // Compute
     publicFolder.setPublicFolder("public", "./relative");
-    auto folder = publicFolder.getPublicFolder();
+    auto folder = publicFolder.getPublicFolderPath();
+    auto URL = publicFolder.getPublicFolderURL();
 
     // Assert
     EXPECT_EQ(folder, cwd.string() + "/relative");
+    EXPECT_EQ(URL, "/public/");
 
     // Compute
-    publicFolder.setPublicFolder("public", "/absolute/path");
-    folder = publicFolder.getPublicFolder();
+    publicFolder.setPublicFolder("data", "/absolute/path");
+    folder = publicFolder.getPublicFolderPath();
+    URL = publicFolder.getPublicFolderURL();
 
     // Assert
+    EXPECT_EQ(URL, "/data/");
     EXPECT_EQ(folder, "/absolute/path");
 }
 

@@ -109,6 +109,21 @@ public:
         m_connectionFunctions.setMaxIncomingBodySize(size);
     }
 
+    inline void setPublicFolder(const std::string &path, const std::string &folderPath)
+    {
+        m_publicFolder.setPublicFolder(path, folderPath);
+    }
+
+    inline const std::string &getPublicFolderPath() const noexcept
+    {
+        return m_publicFolder.getPublicFolderPath();
+    }
+
+    inline const std::string &getPublicFolderURL() const noexcept
+    {
+        return m_publicFolder.getPublicFolderURL();
+    }
+
 private:
     void accept() noexcept
     {
@@ -159,4 +174,19 @@ void server::setMaxIncomingHeaderSize(u_int64_t size) noexcept
 void server::setMaxIncomingBodySize(u_int64_t size) noexcept
 {
     m_server_impl->setMaxIncomingBodySize(size);
+}
+
+void server::setPublicFolder(const std::string &path, const std::string &folderPath)
+{
+    m_server_impl->setPublicFolder(path, folderPath);
+}
+
+const std::string &server::getPublicFolderPath() const noexcept
+{
+    return m_server_impl->getPublicFolderPath();
+}
+
+const std::string &server::getPublicFolderURL() const noexcept
+{
+    return m_server_impl->getPublicFolderURL();
 }

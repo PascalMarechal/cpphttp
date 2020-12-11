@@ -5,11 +5,30 @@
  */
 #include <gtest/gtest.h>
 #include <thread>
+#include <filesystem>
 
 #include "common/curl.h"
 #include "server/server.h"
 
 using namespace cpphttp::server;
+
+TEST(Server, Set_public_folder)
+{
+    // Init
+    server testServer(9999);
+    std::filesystem::path cwd = std::filesystem::current_path();
+
+    // Compute
+    testServer.setPublicFolder("path", "somewhere");
+    auto url = testServer.getPublicFolderURL();
+    auto path = testServer.getPublicFolderPath();
+
+    // Assert
+    EXPECT_THROW(testServer.setPublicFolder("", "./relative"), std::invalid_argument);
+    EXPECT_THROW(testServer.setPublicFolder("somewhere", ""), std::invalid_argument);
+    EXPECT_EQ(url, "/path/");
+    EXPECT_EQ(path, cwd.string() + "/somewhere");
+}
 
 TEST(Server, Start_and_stop)
 {

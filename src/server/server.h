@@ -24,6 +24,10 @@ namespace cpphttp
             void setMaxIncomingHeaderSize(u_int64_t size) noexcept;
             void setMaxIncomingBodySize(u_int64_t size) noexcept;
 
+            void setPublicFolder(const std::string &path, const std::string &folderPath);
+            const std::string &getPublicFolderPath() const noexcept;
+            const std::string &getPublicFolderURL() const noexcept;
+
         private:
             class impl;
             std::unique_ptr<impl> m_server_impl;

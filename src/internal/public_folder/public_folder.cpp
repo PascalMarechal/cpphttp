@@ -21,13 +21,13 @@ void public_folder::setPublicFolder(const std::string &path, const std::string &
         throw std::invalid_argument("Missing folder path value in setPublicFolder");
 
     auto folder = std::filesystem::absolute(folderPath).lexically_normal();
-    m_publicFolder = folder.string();
+    m_publicFolderPath = folder.string();
     setRegex(path);
 }
 
-const std::string &public_folder::getPublicFolder() const noexcept
+const std::string &public_folder::getPublicFolderPath() const noexcept
 {
-    return m_publicFolder;
+    return m_publicFolderPath;
 }
 
 const std::unordered_map<std::string_view, const std::string> contentTypes = {
@@ -50,26 +50,26 @@ bool public_folder::isPublicFolderRequest(const std::string &path) const noexcep
 
 void public_folder::setRegex(const std::string &path) noexcept
 {
-    m_regexPath = path;
+    m_publicFolderURL = path;
     if (path[path.size() - 1] != '/')
-        m_regexPath += "/";
+        m_publicFolderURL += "/";
     if (path[0] != '/')
-        m_regexPath = "/" + m_regexPath;
-    m_publicFolderRegex = std::regex(m_regexPath);
+        m_publicFolderURL = "/" + m_publicFolderURL;
+    m_publicFolderRegex = std::regex(m_publicFolderURL);
 }
 
 inline void public_folder::sanitizeExtractedFilePathFromRequest(std::string &path) const noexcept
 {
     path = std::filesystem::absolute(path).lexically_normal();
-    auto matchFolderPath = path.find(m_publicFolder) == 0;
+    auto matchFolderPath = path.find(m_publicFolderPath) == 0;
     if (!matchFolderPath)
         path = "";
 }
 
 inline std::string public_folder::extractFilePath(const std::string &urlPath) const noexcept
 {
-    std::string endOfPath = urlPath.substr(m_regexPath.size());
-    return m_publicFolder + "/" + endOfPath;
+    std::string endOfPath = urlPath.substr(m_publicFolderURL.size());
+    return m_publicFolderPath + "/" + endOfPath;
 }
 
 inline std::string public_folder::extractFilePathFromURL(const std::string &url) const noexcept
@@ -96,4 +96,9 @@ std::string public_folder::getFileHeader(const std::string &path) const noexcept
     head.setContentLength(statbuf.st_size);
     setContentType(path, head);
     return head.toString();
+}
+
+const std::string &public_folder::getPublicFolderURL() const noexcept
+{
+    return m_publicFolderURL;
 }
