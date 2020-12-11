@@ -353,6 +353,7 @@ TEST(Connection, Should_handle_static_file_header_sending_failure)
   ConnectionFunctionsMock functionsMock;
   RouterMock routerMock;
   PublicFolderMock publicFolderMock;
+  functionsMock.createFakeGetReadMethods(2);
   functionsMock.createFakeWriteError();
   publicFolderMock.createFakeFilePathDoesExist(somePath);
   publicFolderMock.createFakeGetFileHeader();
