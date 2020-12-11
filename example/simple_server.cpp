@@ -100,6 +100,9 @@ int main(void)
     myrouter.onGet("/item/:id",
                    [](cpphttp::request::request &req, cpphttp::response::response &res, error_callback) { res.send("Item id is " + req.getParam("id")); });
 
+    // Set the server public folder URL & path
+    myserver.setPublicFolder("/public", "../images");
+
     // Set the router to the server
     myserver.setRouter(std::move(myrouter));
 
