@@ -307,8 +307,8 @@ TEST(Connection, Should_handle_static_file_requests)
   EXPECT_CALL(functionsMock, maxBodySize).Times(2);
   EXPECT_CALL(routerMock, process).Times(0);
   EXPECT_CALL(*socketMock, close).Times(0);
-  EXPECT_CALL(publicFolderMock, getFilePathIfExists("/index")).Times(2).WillOnce(Return(somePath));
-  EXPECT_CALL(publicFolderMock, getFileHeader(somePath)).Times(2).WillOnce(Return(PublicFolderMock::ExpectedFakeResult));
+  EXPECT_CALL(publicFolderMock, getFilePathIfExists("/index")).Times(2).WillRepeatedly(Return(somePath));
+  EXPECT_CALL(publicFolderMock, getFileHeader(somePath)).Times(2).WillRepeatedly(Return(PublicFolderMock::ExpectedFakeResult));
   EXPECT_CALL(functionsMock, sendFile(matchSocketMock(socketMock), somePath)).Times(2);
   EXPECT_CALL(functionsMock, async_task(matchSocketMock(socketMock), _)).Times(2);
 
