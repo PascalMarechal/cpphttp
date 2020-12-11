@@ -20,8 +20,8 @@ namespace cpphttp
         public:
             void setPublicFolder(const std::string &path, const std::string &folderPath);
             const std::string &getPublicFolder() const noexcept;
-            std::string getFilePathIfExists(const std::string &url);
-            std::string getFileHeader(const std::string &path);
+            std::string getFilePathIfExists(const std::string &url) const noexcept;
+            std::string getFileHeader(const std::string &path) const noexcept;
 
         private:
             std::string m_publicFolder;

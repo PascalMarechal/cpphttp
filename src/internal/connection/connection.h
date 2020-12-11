@@ -12,12 +12,12 @@ namespace cpphttp
 {
     namespace internal
     {
-        template <typename Socket, typename ConnectionFunctions, typename Router>
-        class connection : public std::enable_shared_from_this<connection<Socket, ConnectionFunctions, Router>>
+        template <typename Socket, typename ConnectionFunctions, typename Router, typename PublicFolder>
+        class connection : public std::enable_shared_from_this<connection<Socket, ConnectionFunctions, Router, PublicFolder>>
         {
         public:
-            connection(Socket &&sock, const ConnectionFunctions &functions, const Router &router)
-                : m_socket(std::move(sock)), m_functions(functions), m_router(router){};
+            connection(Socket &&sock, const ConnectionFunctions &functions, const Router &router, const PublicFolder &publicFolder)
+                : m_socket(std::move(sock)), m_functions(functions), m_router(router), m_publicFolder(publicFolder){};
 
             void start()
             {
@@ -59,8 +59,21 @@ namespace cpphttp
 
             void processAndReadNextRequest() noexcept
             {
-                auto response = m_router.process(*m_currentRequest);
-                m_functions.async_write(m_socket, response, std::bind(&connection::onWrite, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+                // If static file =>
+                // Send header
+                // And in onWrite2 => Send file
+                // Else
+                auto staticPath = m_publicFolder.getFilePathIfExists(m_currentRequest->header().getPath());
+                if (!staticPath.empty())
+                {
+                    auto headerData = m_publicFolder.getFileHeader(staticPath);
+                    m_functions.async_write(m_socket, headerData, std::bind(&connection::onWrite, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+                }
+                else
+                {
+                    auto response = m_router.process(*m_currentRequest);
+                    m_functions.async_write(m_socket, response, std::bind(&connection::onWrite, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+                }
             }
 
             void onWrite(std::error_code error, std::size_t bytesTransferred) noexcept
@@ -115,6 +128,7 @@ namespace cpphttp
             Socket m_socket;
             const ConnectionFunctions &m_functions;
             const Router &m_router;
+            const PublicFolder &m_publicFolder;
 
             std::string m_buffer;
             std::size_t m_headerSize;

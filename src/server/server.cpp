@@ -7,6 +7,7 @@
 #include "internal/asio.h"
 #include "internal/connection/connection.h"
 #include "internal/connection/match_end_of_header.h"
+#include "internal/public_folder/public_folder.h"
 
 #include <optional>
 
@@ -35,8 +36,8 @@ public:
     {
         asio::async_read(socket, asio::dynamic_buffer(buffer), matcher, function);
     }
-    inline static void async_write(asio::ip::tcp::socket &socket, const std::vector<uint8_t> &buffer, std::function<void(std::error_code, std::size_t)> function) noexcept
-    {        
+    inline static void async_write(asio::ip::tcp::socket &socket, const std::string &buffer, std::function<void(std::error_code, std::size_t)> function) noexcept
+    {
         asio::async_write(socket, asio::buffer(buffer), asio::transfer_exactly(buffer.size()), function);
     }
 
@@ -103,7 +104,7 @@ private:
     {
         m_socket.emplace(m_context);
         m_acceptor.async_accept(*m_socket, [&](std::error_code error) {
-            auto client = std::make_shared<internal::connection<asio::ip::tcp::socket, connectionFunctions, router>>(std::move(*m_socket), m_connectionFunctions, m_router);
+            auto client = std::make_shared<internal::connection<asio::ip::tcp::socket, connectionFunctions, router, internal::public_folder>>(std::move(*m_socket), m_connectionFunctions, m_router, m_publicFolder);
             client->start();
             accept();
         });
@@ -114,6 +115,7 @@ private:
     std::optional<asio::ip::tcp::socket> m_socket;
     router m_router;
     connectionFunctions m_connectionFunctions;
+    internal::public_folder m_publicFolder;
 };
 
 server::server(uint32_t port) : m_server_impl(std::make_unique<impl>(port))

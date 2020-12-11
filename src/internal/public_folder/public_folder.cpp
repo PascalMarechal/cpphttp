@@ -79,14 +79,14 @@ inline std::string public_folder::extractFilePathFromURL(const std::string &url)
     return extractedPath;
 }
 
-std::string public_folder::getFilePathIfExists(const std::string &url)
+std::string public_folder::getFilePathIfExists(const std::string &url) const noexcept
 {
     if (!isPublicFolderRequest(url))
         return "";
     return extractFilePathFromURL(url);
 }
 
-std::string public_folder::getFileHeader(const std::string &path)
+std::string public_folder::getFileHeader(const std::string &path) const noexcept
 {
     struct stat statbuf;
     if (stat(path.c_str(), &statbuf) != 0)

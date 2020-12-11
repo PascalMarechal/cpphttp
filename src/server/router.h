@@ -29,7 +29,7 @@ namespace cpphttp
             router(router &&toCopy);
             router &operator=(router &&toCopy);
 
-            std::vector<uint8_t> process(cpphttp::request::request &) const;
+            std::string process(cpphttp::request::request &) const;
 
             void onError(error_function f) noexcept;
             template <typename T, typename... T2, typename std::enable_if_t<0 != sizeof...(T2), int> = 0>
