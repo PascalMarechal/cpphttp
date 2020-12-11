@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 project(cpphttp CXX)
-project(cpphttp VERSION 0.0.1)
+project(cpphttp VERSION 0.0.2)
 
 set (CMAKE_CXX_STANDARD 17)
 set (CMAKE_CXX_FLAGS_RELEASE "-O2")
