@@ -51,6 +51,16 @@ public:
         return m_maxBodySize;
     }
 
+    inline static bool sendFile(asio::ip::tcp::socket &socket, const std::string &path)
+    {
+        return true;
+    }
+
+    inline static void async_task(asio::ip::tcp::socket &socket, std::function<void()> toCall)
+    {
+        asio::post(socket.get_executor(), toCall);
+    }
+
     inline void setMaxIncomingHeaderSize(uint64_t size) noexcept
     {
         m_matcher.setMaxHeaderSize(size);

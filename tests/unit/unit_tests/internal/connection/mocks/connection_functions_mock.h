@@ -6,6 +6,10 @@
 #pragma once
 #include <gmock/gmock.h>
 #include "socket_mock.h"
+#include "internal/connection/connection.h"
+#include "public_folder_mock.h"
+#include "router_mock.h"
+#include "socket_mock.h"
 
 class BodyEndMatcher
 {
@@ -27,6 +31,8 @@ public:
     MOCK_CONST_METHOD3(async_write, void(SocketMockWrapper &, const std::string &, std::function<void(std::error_code, std::size_t)>));
     MOCK_CONST_METHOD1(bodyEndMatcher, BodyEndMatcher(std::size_t));
     MOCK_CONST_METHOD0(maxBodySize, uint32_t());
+    MOCK_CONST_METHOD2(sendFile, bool(SocketMockWrapper&, const std::string &));
+    MOCK_CONST_METHOD2(async_task, void(SocketMockWrapper&, std::function<void()>));
 
     void createFakePostReadMethods(uint32_t loops);
     void createFakeGetReadMethods(uint32_t loops);
@@ -44,6 +50,8 @@ public:
     void createFakeReadPostThenGet();
     void createFakeAsyncWrite();
     void createFakeWriteError();
+    void createFakeAsyncTask();
+    void createFakeSendFile(bool returnValue);
 
 private:
     uint32_t m_readExactlyCount, m_readUntilCount;

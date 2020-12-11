@@ -162,3 +162,13 @@ void ConnectionFunctionsMock::createFakeWriteError()
         callback(std::make_error_code(std::errc::io_error), 0);
     });
 }
+
+void ConnectionFunctionsMock::createFakeAsyncTask()
+{
+    ON_CALL(*this, async_task).WillByDefault([](SocketMockWrapper &, std::function<void()> toCall) { toCall(); });
+}
+
+void ConnectionFunctionsMock::createFakeSendFile(bool returnValue)
+{
+    ON_CALL(*this, sendFile).WillByDefault(testing::Return(returnValue));
+}

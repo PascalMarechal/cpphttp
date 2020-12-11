@@ -10,9 +10,7 @@
 #include "common/requests.h"
 #include "request/request.h"
 #include "common/matchers/request_matcher.h"
-#include "mocks/router_mock.h"
 #include "mocks/connection_functions_mock.h"
-#include "mocks/public_folder_mock.h"
 
 using namespace cpphttp::internal;
 using namespace ::testing;
@@ -294,21 +292,24 @@ TEST(Connection, Should_handle_static_file_requests)
   RouterMock routerMock;
   PublicFolderMock publicFolderMock;
   auto somePath = "data/something.txt";
-  functionsMock.createFakeGetReadMethods(1);
+  functionsMock.createFakeGetReadMethods(2);
+  functionsMock.createFakeAsyncTask();
+  functionsMock.createFakeSendFile(true);
   publicFolderMock.createFakeFilePathDoesExist(somePath);
   publicFolderMock.createFakeGetFileHeader();
   auto c = std::make_shared<connection<SocketMockWrapper, ConnectionFunctionsMock, RouterMock, PublicFolderMock>>(SocketMockWrapper(socketMock), functionsMock, routerMock, publicFolderMock);
 
   // Assert
-  EXPECT_CALL(functionsMock, async_read_header(matchSocketMock(socketMock), _, _)).Times(2);
+  EXPECT_CALL(functionsMock, async_read_header(matchSocketMock(socketMock), _, _)).Times(3);
   EXPECT_CALL(functionsMock, async_read_body(matchSocketMock(socketMock), _, matchBodyEndMatcher(), _)).Times(0);
-  EXPECT_CALL(functionsMock, async_write(matchSocketMock(socketMock), PublicFolderMock::ExpectedFakeResult, _)).Times(1);
-  EXPECT_CALL(functionsMock, maxBodySize).Times(1);
+  EXPECT_CALL(functionsMock, async_write(matchSocketMock(socketMock), PublicFolderMock::ExpectedFakeResult, _)).Times(2);
+  EXPECT_CALL(functionsMock, maxBodySize).Times(2);
   EXPECT_CALL(routerMock, process).Times(0);
   EXPECT_CALL(*socketMock, close).Times(0);
-  EXPECT_CALL(publicFolderMock, getFilePathIfExists("/index")).Times(1).WillOnce(Return(somePath));
-  EXPECT_CALL(publicFolderMock, getFileHeader(somePath)).Times(1).WillOnce(Return(PublicFolderMock::ExpectedFakeResult));
-  // Expect call sendfile
+  EXPECT_CALL(publicFolderMock, getFilePathIfExists("/index")).Times(2).WillOnce(Return(somePath));
+  EXPECT_CALL(publicFolderMock, getFileHeader(somePath)).Times(2).WillOnce(Return(PublicFolderMock::ExpectedFakeResult));
+  EXPECT_CALL(functionsMock, sendFile(matchSocketMock(socketMock), somePath)).Times(2);
+  EXPECT_CALL(functionsMock, async_task(matchSocketMock(socketMock), _)).Times(2);
 
   // Compute
   c->start();

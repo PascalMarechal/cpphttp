@@ -59,15 +59,11 @@ namespace cpphttp
 
             void processAndReadNextRequest() noexcept
             {
-                // If static file =>
-                // Send header
-                // And in onWrite2 => Send file
-                // Else
-                auto staticPath = m_publicFolder.getFilePathIfExists(m_currentRequest->header().getPath());
-                if (!staticPath.empty())
+                m_filePath = m_publicFolder.getFilePathIfExists(m_currentRequest->header().getPath());
+                if (!m_filePath.empty())
                 {
-                    auto headerData = m_publicFolder.getFileHeader(staticPath);
-                    m_functions.async_write(m_socket, headerData, std::bind(&connection::onWrite, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+                    auto headerData = m_publicFolder.getFileHeader(m_filePath);
+                    m_functions.async_write(m_socket, headerData, std::bind(&connection::onWriteStaticFileHeader, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
                 }
                 else
                 {
@@ -76,12 +72,19 @@ namespace cpphttp
                 }
             }
 
+            void onWriteStaticFileHeader(std::error_code error, std::size_t bytesTransferred) noexcept
+            {
+                m_functions.async_task(m_socket, [ptr = this->shared_from_this()]() {
+                    ptr->m_functions.sendFile(ptr->m_socket, ptr->m_filePath);
+                    ptr->start();
+                });
+            }
+
             void onWrite(std::error_code error, std::size_t bytesTransferred) noexcept
             {
                 if (error)
                     return exit(error);
-                reset();
-                readHeader();
+                start();
             }
 
             inline void exit(std::error_code &error) noexcept
@@ -133,6 +136,7 @@ namespace cpphttp
             std::string m_buffer;
             std::size_t m_headerSize;
             std::unique_ptr<request::request> m_currentRequest;
+            std::string m_filePath;
         };
     } // namespace internal
 } // namespace cpphttp
