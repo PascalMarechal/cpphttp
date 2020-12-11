@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
 project(cpphttpexample CXX)
+
 set (CMAKE_CXX_STANDARD 17)
-set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_INSTALL_RPATH "/usr/local/lib")
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set (CMAKE_CXX_FLAGS_RELEASE "-O2")
+set (CMAKE_INSTALL_RPATH "/usr/local/lib")
+set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 include_directories(/usr/local/include/cpphttp)
 add_executable(simple_server simple_server.cpp)
 

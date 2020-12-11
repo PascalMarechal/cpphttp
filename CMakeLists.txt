@@ -3,6 +3,8 @@ project(cpphttp CXX)
 project(cpphttp VERSION 0.0.1)
 
 set (CMAKE_CXX_STANDARD 17)
+set (CMAKE_CXX_FLAGS_RELEASE "-O2")
+
 option(BUILD_TESTS "Build google tests" OFF)
 option(BUILD_LIBS "Build both libraries" ON)
 
