@@ -74,9 +74,14 @@ namespace cpphttp
 
             void onWriteStaticFileHeader(std::error_code error, std::size_t bytesTransferred) noexcept
             {
+                if (error)
+                    return exit(error);
+
                 m_functions.async_task(m_socket, [ptr = this->shared_from_this()]() {
-                    ptr->m_functions.sendFile(ptr->m_socket, ptr->m_filePath);
-                    ptr->start();
+                    if (ptr->m_functions.sendFile(ptr->m_socket, ptr->m_filePath))
+                        ptr->start();
+                    else
+                        ptr->exit(std::make_error_code(std::errc::io_error));
                 });
             }
 
@@ -87,7 +92,7 @@ namespace cpphttp
                 start();
             }
 
-            inline void exit(std::error_code &error) noexcept
+            inline void exit(std::error_code error) noexcept
             {
                 m_socket.close(error);
             }
