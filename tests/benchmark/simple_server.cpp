@@ -64,6 +64,10 @@ int main(void)
                  "</body>");
     });
 
+    // Set public folder for testing static file speed
+    myserver.setPublicFolder("public", "../../unit/data");
+    std::cout << "Public folder is " << myserver.getPublicFolderPath() << std::endl;
+
     // Set the router to the server
     myserver.setRouter(std::move(myrouter));
 

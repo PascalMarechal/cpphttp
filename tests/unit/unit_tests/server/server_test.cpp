@@ -9,6 +9,7 @@
 
 #include "common/curl.h"
 #include "server/server.h"
+#include "internal/tools/string.h"
 
 using namespace cpphttp::server;
 
@@ -107,3 +108,24 @@ TEST(Server, Can_set_max_body_size)
     testServer.stop();
     testThread.join();
 }
+
+TEST(Server, Can_get_image_from_public_folder)
+{
+    // Init
+    server testServer(9999);
+    testServer.setPublicFolder("public", "data");
+    auto fileToGet = cpphttp::internal::readFile("data/read_test.txt");
+    std::thread testThread([&]() { testServer.start(); });
+
+    // Compute
+    auto page = getPage("http://localhost:9999/public/read_test.txt");
+
+    // Assert
+    EXPECT_FALSE(fileToGet.empty());
+    EXPECT_EQ(page, fileToGet);
+
+    // Clean
+    testServer.stop();
+    testThread.join();
+}
+

@@ -10,6 +10,7 @@
 #include "internal/public_folder/public_folder.h"
 
 #include <optional>
+#include <sys/sendfile.h>
 
 using namespace cpphttp::server;
 
@@ -53,7 +54,28 @@ public:
 
     inline static bool sendFile(asio::ip::tcp::socket &socket, const std::string &path)
     {
-        return true;
+        int flag = 1;
+        setsockopt(socket.native_handle(), SOL_SOCKET, MSG_NOSIGNAL, &flag, sizeof(flag));
+
+        auto fd = open(path.c_str(), O_RDONLY);
+        if (fd < 0)
+            return false;
+
+        struct stat statbuf;
+        auto result = stat(path.c_str(), &statbuf);
+        if (result < 0)
+            return false;
+        size_t count = statbuf.st_size;
+        off_t start = 0;
+        while (true)
+        {
+            static uint64_t totalError = 0;
+            auto res = sendfile64(socket.native_handle(), fd, &start, count - start);
+            if (res == 0)
+                return true;
+            if (res < 0)
+                return false;
+        }
     }
 
     inline static void async_task(asio::ip::tcp::socket &socket, std::function<void()> toCall)
@@ -145,6 +167,7 @@ private:
 
 server::server(uint32_t port) : m_server_impl(std::make_unique<impl>(port))
 {
+    signal(SIGPIPE, SIG_IGN);
 }
 
 server::~server() noexcept
