@@ -25,7 +25,7 @@ namespace cpphttp
             std::string m_path;
             size_t m_size;
             inline void initFileSize() noexcept;
-            inline void setContentType(cpphttp::response::header &head) noexcept;
+            inline void contentType(cpphttp::response::header &head) noexcept;
         };
     } // namespace internal
 } // namespace cpphttp

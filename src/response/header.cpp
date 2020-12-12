@@ -32,7 +32,7 @@ public:
     {
         m_status = status;
     }
-    inline void setContentLength(uint32_t length) noexcept
+    inline void contentLength(uint32_t length) noexcept
     {
         m_contentLength = length;
     }
@@ -48,12 +48,12 @@ public:
         return result.str();
     }
 
-    inline const std::string &getContentType() const noexcept
+    inline const std::string &contentType() const noexcept
     {
         return m_contentType;
     }
 
-    inline void setContentType(const std::string &type) noexcept
+    inline void contentType(const std::string &type) noexcept
     {
         m_contentType = type;
     }
@@ -117,9 +117,9 @@ uint32_t header::contentLength() const noexcept
     return m_impl->contentLength();
 }
 
-void header::setContentLength(uint32_t length) noexcept
+void header::contentLength(uint32_t length) noexcept
 {
-    return m_impl->setContentLength(length);
+    return m_impl->contentLength(length);
 }
 
 std::string header::toString() const noexcept
@@ -127,14 +127,14 @@ std::string header::toString() const noexcept
     return m_impl->toString();
 }
 
-const std::string &header::getContentType() const noexcept
+const std::string &header::contentType() const noexcept
 {
-    return m_impl->getContentType();
+    return m_impl->contentType();
 }
 
-void header::setContentType(const std::string &type) noexcept
+void header::contentType(const std::string &type) noexcept
 {
-    m_impl->setContentType(type);
+    m_impl->contentType(type);
 }
 
 std::vector<uint8_t> header::toVector() const noexcept

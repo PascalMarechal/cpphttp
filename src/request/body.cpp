@@ -14,19 +14,19 @@ public:
     {
     }
 
-    const std::string &getData() const noexcept
+    const std::string &data() const noexcept
     {
         return m_data;
     }
 
-    std::size_t getSize() const noexcept
+    std::size_t size() const noexcept
     {
         return m_data.size();
     }
 
     friend bool operator==(const impl &lhs, const impl &rhs) noexcept
     {
-        return lhs.getSize() == rhs.getSize() &&
+        return lhs.size() == rhs.size() &&
                lhs.m_data == rhs.m_data;
     }
 
@@ -40,14 +40,14 @@ body::body(const std::string_view &data) : m_impl(std::make_unique<impl>(data))
 
 body::~body() {}
 
-const std::string &body::getData() const noexcept
+const std::string &body::data() const noexcept
 {
-    return m_impl->getData();
+    return m_impl->data();
 }
 
-std::size_t body::getSize() const noexcept
+std::size_t body::size() const noexcept
 {
-    return m_impl->getSize();
+    return m_impl->size();
 }
 
 namespace cpphttp

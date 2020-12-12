@@ -29,7 +29,7 @@ namespace cpphttp
             std::string m_publicFolderURL;
             std::regex m_publicFolderRegex;
 
-            inline void setRegex(const std::string &path) noexcept;
+            inline void regex(const std::string &path) noexcept;
             inline bool isPublicFolderRequest(const std::string &path) const noexcept;
             inline std::string extractFilePathFromURL(const std::string &url) const noexcept;
             inline std::string extractFilePath(const std::string &urlPath) const noexcept;

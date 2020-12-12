@@ -18,7 +18,7 @@ void public_folder::publicFolder(const std::string &path, const std::string &fol
 
     auto folder = std::filesystem::absolute(folderPath).lexically_normal();
     m_publicFolderPath = folder.string();
-    setRegex(path);
+    regex(path);
 }
 
 const std::string &public_folder::publicFolderPath() const noexcept
@@ -31,7 +31,7 @@ bool public_folder::isPublicFolderRequest(const std::string &path) const noexcep
     return std::regex_search(path, m_publicFolderRegex, std::regex_constants::match_continuous);
 }
 
-inline void public_folder::setRegex(const std::string &path) noexcept
+inline void public_folder::regex(const std::string &path) noexcept
 {
     m_publicFolderURL = path;
     if (path[path.size() - 1] != '/')

@@ -49,7 +49,7 @@ TEST(Response, Send)
 TEST(Response, Can_access_to_header_directly)
 {
     response res;
-    EXPECT_EQ(res.header().getContentType(), header::DEFAULT_CONTENT_TYPE);
+    EXPECT_EQ(res.header().contentType(), header::DEFAULT_CONTENT_TYPE);
 }
 
 TEST(Response, To_vector)

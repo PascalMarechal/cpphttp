@@ -73,12 +73,12 @@ void connection_functions::async_task(asio::ip::tcp::socket &socket, std::functi
     asio::post(socket.get_executor(), toCall);
 }
 
-void connection_functions::setMaxIncomingHeaderSize(uint64_t size) noexcept
+void connection_functions::maxIncomingHeaderSize(uint64_t size) noexcept
 {
     m_matcher.setMaxHeaderSize(size);
 }
 
-void connection_functions::setMaxIncomingBodySize(uint64_t size) noexcept
+void connection_functions::maxIncomingBodySize(uint64_t size) noexcept
 {
     m_maxBodySize = size;
 }

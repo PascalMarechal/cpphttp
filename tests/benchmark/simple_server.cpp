@@ -75,7 +75,7 @@ int main(void)
     std::cout << "Public folder is " << myserver.publicFolderPath() << std::endl;
 
     // Set the router to the server
-    myserver.setRouter(std::move(myrouter));
+    myserver.router(std::move(myrouter));
 
     // Start the server
     myserver.start();

@@ -7,9 +7,9 @@
 
 RequestMatcher::RequestMatcher(const std::string &header, const std::string &body)
 {
-    m_requestToMatch.setHeader(header);
+    m_requestToMatch.header(header);
     if (body.size())
-        m_requestToMatch.setBody(body);
+        m_requestToMatch.body(body);
 }
 
 bool RequestMatcher::MatchAndExplain(const cpphttp::request::request &req,

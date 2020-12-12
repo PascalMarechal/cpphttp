@@ -22,7 +22,7 @@ auto matchSocketMock(SocketMock *toMatch)
 
 auto matchBodyEndMatcher()
 {
-  return AllOf(Property(&BodyEndMatcher::getSize, Requests::EXPECTED_POST_BODY_SIZE));
+  return AllOf(Property(&BodyEndMatcher::size, Requests::EXPECTED_POST_BODY_SIZE));
 }
 
 TEST(Connection, Creation)

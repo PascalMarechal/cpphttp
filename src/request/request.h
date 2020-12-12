@@ -24,8 +24,8 @@ namespace cpphttp
             request(request &&toCopy) = delete;
             request &operator=(request &&toCopy) = delete;
 
-            void setHeader(const std::string_view &data) noexcept;
-            void setBody(const std::string_view &data) noexcept;
+            void header(const std::string_view &data) noexcept;
+            void body(const std::string_view &data) noexcept;
             void loadParamsFromUrl(const std::string_view &expectedPath) noexcept;
 
             bool isReady() const noexcept;

@@ -49,21 +49,21 @@ TEST(RequestHeader, Complete_header_data)
 {
     header head("GET /index HTTP/1.0\n\n");
     EXPECT_EQ(head.isReady(), true);
-    EXPECT_EQ(head.getMethod(), method::GET);
-    EXPECT_EQ(head.getPath(), "/index");
-    EXPECT_EQ(head.getVersion(), version::_1);
+    EXPECT_EQ(head.method(), method::GET);
+    EXPECT_EQ(head.path(), "/index");
+    EXPECT_EQ(head.version(), version::_1);
 }
 
 TEST(RequestHeader, Read_expected_body_size)
 {
     header head(Requests::POST_REQUEST_HEADER);
-    EXPECT_EQ(head.getExpectedBodySize(), 32);
+    EXPECT_EQ(head.expectedBodySize(), 32);
 }
 
 TEST(RequestHeader, Incorrect_body_size_value)
 {
     header head(Requests::POST_REQUEST_HEADER_WITH_BODY_LENGTH);
-    EXPECT_EQ(head.getExpectedBodySize(), 0);
+    EXPECT_EQ(head.expectedBodySize(), 0);
 }
 
 TEST(RequestHeader, Equality_operators)
@@ -82,14 +82,14 @@ TEST(RequestHeader, Equality_operators)
 TEST(RequestHeader, Should_split_path_with_get_params)
 {
     header head("GET /index?id=21&page=3 HTTP/1.0\n\n");
-    EXPECT_EQ(head.getPath(), "/index");
-    EXPECT_EQ(head.getGetParams(), "id=21&page=3");
+    EXPECT_EQ(head.path(), "/index");
+    EXPECT_EQ(head.getParams(), "id=21&page=3");
 
     header head2("POST /index?id=21&page=3 HTTP/1.0\n\n");
-    EXPECT_EQ(head2.getPath(), "/index?id=21&page=3");
-    EXPECT_EQ(head2.getGetParams(), "");
+    EXPECT_EQ(head2.path(), "/index?id=21&page=3");
+    EXPECT_EQ(head2.getParams(), "");
 
     header head3("PUT /index?id=21&page=3 HTTP/1.0\n\n");
-    EXPECT_EQ(head3.getPath(), "/index?id=21&page=3");
-    EXPECT_EQ(head3.getGetParams(), "");
+    EXPECT_EQ(head3.path(), "/index?id=21&page=3");
+    EXPECT_EQ(head3.getParams(), "");
 }

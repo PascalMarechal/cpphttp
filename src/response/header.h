@@ -24,11 +24,11 @@ namespace cpphttp
             request::version version() const noexcept;
             response::status status() const noexcept;
             uint32_t contentLength() const noexcept;
-            const std::string &getContentType() const noexcept;
+            const std::string &contentType() const noexcept;
 
             void status(response::status status) noexcept;
-            void setContentLength(uint32_t length) noexcept;
-            void setContentType(const std::string &type) noexcept;
+            void contentLength(uint32_t length) noexcept;
+            void contentType(const std::string &type) noexcept;
             std::string toString() const noexcept;
             std::vector<uint8_t> toVector() const noexcept;
 

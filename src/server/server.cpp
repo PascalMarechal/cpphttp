@@ -31,19 +31,19 @@ public:
         m_context.stop();
     }
 
-    inline void setRouter(router &&router) noexcept
+    inline void router(cpphttp::server::router &&router) noexcept
     {
         m_router = std::move(router);
     }
 
-    inline void setMaxIncomingHeaderSize(u_int64_t size) noexcept
+    inline void maxIncomingHeaderSize(u_int64_t size) noexcept
     {
-        m_connectionFunctions.setMaxIncomingHeaderSize(size);
+        m_connectionFunctions.maxIncomingHeaderSize(size);
     }
 
-    inline void setMaxIncomingBodySize(u_int64_t size) noexcept
+    inline void maxIncomingBodySize(u_int64_t size) noexcept
     {
-        m_connectionFunctions.setMaxIncomingBodySize(size);
+        m_connectionFunctions.maxIncomingBodySize(size);
     }
 
     inline void publicFolder(const std::string &path, const std::string &folderPath)
@@ -66,7 +66,7 @@ private:
     {
         m_socket.emplace(m_context);
         m_acceptor.async_accept(*m_socket, [&](std::error_code error) {
-            auto client = std::make_shared<connection<asio::ip::tcp::socket, connection_functions, router, public_folder>>(std::move(*m_socket), m_connectionFunctions, m_router, m_publicFolder);
+            auto client = std::make_shared<connection<asio::ip::tcp::socket, connection_functions, cpphttp::server::router, public_folder>>(std::move(*m_socket), m_connectionFunctions, m_router, m_publicFolder);
             client->start();
             accept();
         });
@@ -75,7 +75,7 @@ private:
     asio::io_context m_context;
     asio::ip::tcp::acceptor m_acceptor;
     std::optional<asio::ip::tcp::socket> m_socket;
-    router m_router;
+    cpphttp::server::router m_router;
     connection_functions m_connectionFunctions;
     public_folder m_publicFolder;
 };
@@ -99,19 +99,19 @@ void server::stop() noexcept
     m_server_impl->stop();
 }
 
-void server::setRouter(router &&router) noexcept
+void server::router(cpphttp::server::router &&router) noexcept
 {
-    m_server_impl->setRouter(std::move(router));
+    m_server_impl->router(std::move(router));
 }
 
-void server::setMaxIncomingHeaderSize(u_int64_t size) noexcept
+void server::maxIncomingHeaderSize(u_int64_t size) noexcept
 {
-    m_server_impl->setMaxIncomingHeaderSize(size);
+    m_server_impl->maxIncomingHeaderSize(size);
 }
 
-void server::setMaxIncomingBodySize(u_int64_t size) noexcept
+void server::maxIncomingBodySize(u_int64_t size) noexcept
 {
-    m_server_impl->setMaxIncomingBodySize(size);
+    m_server_impl->maxIncomingBodySize(size);
 }
 
 void server::publicFolder(const std::string &path, const std::string &folderPath)

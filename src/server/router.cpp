@@ -72,8 +72,8 @@ private:
     static inline bool validPath(const request::header &header, const functionInfo &info)
     {
         if (info.functionMethod == method::UNKNOWN)
-            return std::regex_search(header.getPath(), info.regex, std::regex_constants::match_continuous);
-        return header.getMethod() == info.functionMethod && std::regex_match(header.getPath(), info.regex);
+            return std::regex_search(header.path(), info.regex, std::regex_constants::match_continuous);
+        return header.method() == info.functionMethod && std::regex_match(header.path(), info.regex);
     }
 
     inline void callFunctions(request::request &req, response::response &res, std::string &errorValue) const noexcept

@@ -22,29 +22,29 @@ uint32_t Requests::EXPECTED_POST_BODY_SIZE = 32;
 std::unique_ptr<cpphttp::request::request> getCorrectPostRequest()
 {
     auto req = std::make_unique<cpphttp::request::request>();
-    req->setHeader(Requests::POST_REQUEST_HEADER);
-    req->setBody(Requests::POST_REQUEST_BODY);
+    req->header(Requests::POST_REQUEST_HEADER);
+    req->body(Requests::POST_REQUEST_BODY);
     return req;
 }
 
 std::unique_ptr<cpphttp::request::request> getCorrectGetRequest()
 {
     auto req = std::make_unique<cpphttp::request::request>();
-    req->setHeader(Requests::GET_REQUEST_HEADER);
+    req->header(Requests::GET_REQUEST_HEADER);
     return req;
 }
 
 std::unique_ptr<cpphttp::request::request> getGetRequestWithParam()
 {
     auto req = std::make_unique<cpphttp::request::request>();
-    req->setHeader(Requests::GET_REQUEST_HEADER_WITH_PARAM);
+    req->header(Requests::GET_REQUEST_HEADER_WITH_PARAM);
     return req;
 }
 
 std::unique_ptr<cpphttp::request::request> getGetRequestWithTailingParams()
 {
     auto req = std::make_unique<cpphttp::request::request>();
-    req->setHeader(Requests::GET_REQUEST_HEADER_WITH_PARAM2);
+    req->header(Requests::GET_REQUEST_HEADER_WITH_PARAM2);
     return req;
 }
 
@@ -56,6 +56,6 @@ std::unique_ptr<cpphttp::request::request> Requests::GetRequestWithTailingParams
 std::unique_ptr<cpphttp::request::request> Requests::GetRequestFromPath(const std::string &path)
 {
     auto req = std::make_unique<cpphttp::request::request>();
-    req->setHeader("GET " + path + " HTTP/1.1\n\n");
+    req->header("GET " + path + " HTTP/1.1\n\n");
     return req;
 }

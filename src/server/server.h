@@ -20,9 +20,9 @@ namespace cpphttp
 
             void start() noexcept;
             void stop() noexcept;
-            void setRouter(router &&router) noexcept;
-            void setMaxIncomingHeaderSize(u_int64_t size) noexcept;
-            void setMaxIncomingBodySize(u_int64_t size) noexcept;
+            void router(router &&router) noexcept;
+            void maxIncomingHeaderSize(u_int64_t size) noexcept;
+            void maxIncomingBodySize(u_int64_t size) noexcept;
 
             void publicFolder(const std::string &path, const std::string &folderPath);
             const std::string &publicFolderPath() const noexcept;

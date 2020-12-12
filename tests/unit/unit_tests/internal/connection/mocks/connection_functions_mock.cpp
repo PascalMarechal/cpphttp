@@ -10,7 +10,7 @@ BodyEndMatcher::BodyEndMatcher(std::size_t s) : m_size(s)
 {
 }
 
-std::size_t BodyEndMatcher::getSize() const
+std::size_t BodyEndMatcher::size() const
 {
     return m_size;
 }

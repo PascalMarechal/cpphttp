@@ -28,7 +28,7 @@ public:
         if (hasEnded())
             return;
         m_body.insert(m_body.end(), data.cbegin(), data.cend());
-        m_header.setContentLength(m_body.size());
+        m_header.contentLength(m_body.size());
     }
 
     inline void send(const std::string &data) noexcept
@@ -43,7 +43,7 @@ public:
             return;
 
         m_body = std::move(data);
-        m_header.setContentLength(m_body.size());
+        m_header.contentLength(m_body.size());
         end();
     }
 

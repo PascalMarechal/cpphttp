@@ -11,13 +11,13 @@ using namespace cpphttp::request;
 TEST(Body, Empty_body)
 {
     body body("");
-    EXPECT_EQ(body.getSize(), 0);
+    EXPECT_EQ(body.size(), 0);
 }
 
 TEST(Body, Filled_body)
 {
     body body("Something");
-    EXPECT_EQ(body.getSize(), 9);
+    EXPECT_EQ(body.size(), 9);
 }
 
 TEST(Body, Equality_operators)

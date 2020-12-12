@@ -15,7 +15,7 @@ class BodyEndMatcher
 {
 public:
     BodyEndMatcher(std::size_t);
-    std::size_t getSize() const;
+    std::size_t size() const;
 
 private:
     std::size_t m_size;

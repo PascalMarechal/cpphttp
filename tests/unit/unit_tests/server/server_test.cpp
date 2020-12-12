@@ -59,7 +59,7 @@ TEST(Server, Can_use_defined_router_functions)
     r.onGet("/url", [&](cpphttp::request::request &req, cpphttp::response::response &res, error_callback error) {
         res.send(message);
     });
-    testServer.setRouter(std::move(r));
+    testServer.router(std::move(r));
     std::thread testThread([&]() { testServer.start(); });
 
     auto page = getPage("http://localhost:9999/url");
@@ -77,8 +77,8 @@ TEST(Server, Can_set_max_header_size)
     r.onGet("/url", [&](cpphttp::request::request &req, cpphttp::response::response &res, error_callback error) {
         res.send(message);
     });
-    testServer.setRouter(std::move(r));
-    testServer.setMaxIncomingHeaderSize(6);
+    testServer.router(std::move(r));
+    testServer.maxIncomingHeaderSize(6);
     std::thread testThread([&]() { testServer.start(); });
 
     auto page = getPage("http://localhost:9999/url");
@@ -96,8 +96,8 @@ TEST(Server, Can_set_max_body_size)
     r.onPost("/post", [&](cpphttp::request::request &req, cpphttp::response::response &res, error_callback error) {
         res.send(message);
     });
-    testServer.setRouter(std::move(r));
-    testServer.setMaxIncomingBodySize(12);
+    testServer.router(std::move(r));
+    testServer.maxIncomingBodySize(12);
     std::thread testThread([&]() { testServer.start(); });
 
     auto page = postPage("http://localhost:9999/post", "name=daniel&project=curl");

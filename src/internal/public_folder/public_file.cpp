@@ -32,8 +32,8 @@ std::string public_file::header() noexcept
         return "";
 
     cpphttp::response::header head;
-    head.setContentLength(m_size);
-    setContentType(head);
+    head.contentLength(m_size);
+    contentType(head);
     return head.toString();
 }
 
@@ -49,12 +49,12 @@ inline void public_file::initFileSize() noexcept
 const std::unordered_map<std::string_view, const std::string> contentTypes = {
     {"jpeg", "image/jpeg"}, {"jpg", "image/jpeg"}, {"png", "image/png"}, {"tiff", "image/tiff"}, {"tif", "image/tiff"}, {"gif", "image/gif"}, {"svg", "image/svg+xml"}, {"svgz", "image/svg+xml"}, {"ico", "image/x-icon"}, {"js", "application/javascript"}, {"json", "application/json"}, {"pdf", "application/pdf"}, {"css", "text/css"}, {"csv", "text/csv"}, {"html", "text/html; charset=UTF-8"}, {"xml", "text/xml"}};
 
-inline void public_file::setContentType(cpphttp::response::header &head) noexcept
+inline void public_file::contentType(cpphttp::response::header &head) noexcept
 {
     auto splittedValues = split(m_path, ".");
     auto type = contentTypes.find(splittedValues.back());
     if (type != contentTypes.cend())
-        head.setContentType(type->second);
+        head.contentType(type->second);
     else
-        head.setContentType("text/plain");
+        head.contentType("text/plain");
 }

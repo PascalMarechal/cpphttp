@@ -61,7 +61,7 @@ int main(void)
     // Example of onAll function
     // All path except the three ones above will call this function (order matters!)
     myrouter.onAll("/", [](cpphttp::request::request &req, cpphttp::response::response &res, error_callback) {
-        std::cout << "Visited path : " << req.header().getPath() << std::endl;
+        std::cout << "Visited path : " << req.header().path() << std::endl;
     });
 
     // Example of saving a parameter and use it later
@@ -110,7 +110,7 @@ int main(void)
     myserver.publicFolder("/public", "../images");
 
     // Set the router to the server
-    myserver.setRouter(std::move(myrouter));
+    myserver.router(std::move(myrouter));
 
     // Start the server
     myserver.start();

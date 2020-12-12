@@ -22,11 +22,11 @@ namespace cpphttp
             ~header();
 
             bool isReady() const noexcept;
-            method getMethod() const noexcept;
-            version getVersion() const noexcept;
-            const std::string &getPath() const noexcept;
-            const std::string &getGetParams() const noexcept;
-            uint32_t getExpectedBodySize() const noexcept;
+            cpphttp::request::method method() const noexcept;
+            cpphttp::request::version version() const noexcept;
+            const std::string &path() const noexcept;
+            const std::string &getParams() const noexcept;
+            uint32_t expectedBodySize() const noexcept;
 
             friend bool operator==(const header &lhs, const header &rhs) noexcept;
             friend bool operator!=(const header &lhs, const header &rhs) noexcept;

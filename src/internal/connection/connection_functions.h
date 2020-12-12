@@ -31,8 +31,8 @@ namespace cpphttp
             uint64_t maxBodySize() const noexcept;
             static bool sendFile(asio::ip::tcp::socket &socket, const std::unique_ptr<cpphttp::internal::public_file> &file);
             static void async_task(asio::ip::tcp::socket &socket, std::function<void()> toCall);
-            void setMaxIncomingHeaderSize(uint64_t size) noexcept;
-            void setMaxIncomingBodySize(uint64_t size) noexcept;
+            void maxIncomingHeaderSize(uint64_t size) noexcept;
+            void maxIncomingBodySize(uint64_t size) noexcept;
 
         private:
             cpphttp::internal::match_end_of_header m_matcher;

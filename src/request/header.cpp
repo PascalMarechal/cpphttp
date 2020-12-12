@@ -25,33 +25,33 @@ public:
         return m_ready;
     }
 
-    inline method getMethod() const noexcept
+    inline cpphttp::request::method method() const noexcept
     {
         return m_method;
     }
 
-    inline version getVersion() const noexcept
+    inline cpphttp::request::version version() const noexcept
     {
         return m_version;
     }
-    inline const std::string &getPath() const noexcept
+    inline const std::string &path() const noexcept
     {
         return m_path;
     }
 
-    inline const std::string &getGetParams() const noexcept
+    inline const std::string &getParams() const noexcept
     {
         return m_getParams;
     }
 
-    inline uint32_t getExpectedBodySize() const noexcept
+    inline uint32_t expectedBodySize() const noexcept
     {
         return m_expectedBodysize;
     }
 
     inline void setPath(const std::string_view &path) noexcept
     {
-        if (!extractGetPath(path))
+        if (!extractpath(path))
             m_path = path;
     }
 
@@ -92,7 +92,7 @@ private:
 
     inline void parseRequestLine(const std::string_view &line) noexcept
     {
-        if (getMethod() != method::UNKNOWN)
+        if (method() != method::UNKNOWN)
             return;
 
         auto values = split(line, " ");
@@ -138,7 +138,7 @@ private:
         m_ready = m_method != method::UNKNOWN && m_version != version::UNKNOWN && m_path.size() > 0;
     }
 
-    inline bool extractGetPath(const std::string_view &path) noexcept
+    inline bool extractpath(const std::string_view &path) noexcept
     {
         if (m_method != method::GET)
             return false;
@@ -152,17 +152,17 @@ private:
     }
 
     bool m_ready;
-    method m_method;
-    version m_version;
+    cpphttp::request::method m_method;
+    cpphttp::request::version m_version;
     uint32_t m_expectedBodysize;
     std::string m_path;
     std::string m_getParams;
 
-    const inline static std::unordered_map<std::string_view, method> METHOD_MAPPING =
+    const inline static std::unordered_map<std::string_view, cpphttp::request::method> METHOD_MAPPING =
         {{"GET", method::GET}, {"POST", method::POST}, {"DELETE", method::DELETE}, {"PUT", method::PUT}, {"HEAD", method::HEAD}, {"PATCH", method::PATCH}};
 
     const static std::unordered_map<std::string_view, std::function<void(header::impl *, std::string &&)>> FILL_FUNCTIONS;
-    const inline static std::unordered_map<std::string_view, version> VERSION_MAPPING =
+    const inline static std::unordered_map<std::string_view, cpphttp::request::version> VERSION_MAPPING =
         {{"1.0", version::_1}, {"1.1", version::_1_1}};
 };
 
@@ -182,29 +182,29 @@ bool header::isReady() const noexcept
     return m_impl->isReady();
 }
 
-method header::getMethod() const noexcept
+cpphttp::request::method header::method() const noexcept
 {
-    return m_impl->getMethod();
+    return m_impl->method();
 }
 
-version header::getVersion() const noexcept
+cpphttp::request::version header::version() const noexcept
 {
-    return m_impl->getVersion();
+    return m_impl->version();
 }
 
-const std::string &header::getPath() const noexcept
+const std::string &header::path() const noexcept
 {
-    return m_impl->getPath();
+    return m_impl->path();
 }
 
-const std::string &header::getGetParams() const noexcept
+const std::string &header::getParams() const noexcept
 {
-    return m_impl->getGetParams();
+    return m_impl->getParams();
 }
 
-uint32_t header::getExpectedBodySize() const noexcept
+uint32_t header::expectedBodySize() const noexcept
 {
-    return m_impl->getExpectedBodySize();
+    return m_impl->expectedBodySize();
 }
 
 namespace cpphttp

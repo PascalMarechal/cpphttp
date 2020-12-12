@@ -17,23 +17,23 @@ public:
         if (m_header && m_header->isReady())
         {
             if (!m_body)
-                return m_header->getExpectedBodySize() == 0;
+                return m_header->expectedBodySize() == 0;
             else
-                return m_header->getExpectedBodySize() == m_body->getSize();
+                return m_header->expectedBodySize() == m_body->size();
         }
         return false;
     }
 
-    inline void setHeader(const std::string_view &data) noexcept
+    inline void header(const std::string_view &data) noexcept
     {
         m_header = std::make_unique<cpphttp::request::header>(data);
-        extractParameters(m_header->getGetParams());
+        extractParameters(m_header->getParams());
     }
 
-    inline void setBody(const std::string_view &data) noexcept
+    inline void body(const std::string_view &data) noexcept
     {
-        m_body = std::make_unique<body>(data);
-        if (m_header && m_header->getMethod() == method::POST)
+        m_body = std::make_unique<cpphttp::request::body>(data);
+        if (m_header && m_header->method() == method::POST)
             extractParameters(data);
     }
     inline const cpphttp::request::header &header() const
@@ -88,7 +88,7 @@ public:
     inline void loadParamsFromUrl(std::string_view expectedPath) noexcept
     {
         auto splittedExpectedPath = internal::split(expectedPath, "/");
-        auto splittedUrl = internal::split(m_header->getPath(), "/");
+        auto splittedUrl = internal::split(m_header->path(), "/");
         auto pos = 0;
         for (const auto &val : splittedExpectedPath)
         {
@@ -116,7 +116,7 @@ private:
     }
 
     std::unique_ptr<cpphttp::request::header> m_header;
-    std::unique_ptr<body> m_body;
+    std::unique_ptr<cpphttp::request::body> m_body;
     std::unordered_map<std::string, std::string> m_values;
     std::unordered_map<std::string, std::string> m_param_values;
 };
@@ -135,14 +135,14 @@ const header &request::header() const
     return m_impl->header();
 }
 
-void request::setHeader(const std::string_view &data) noexcept
+void request::header(const std::string_view &data) noexcept
 {
-    m_impl->setHeader(data);
+    m_impl->header(data);
 }
 
-void request::setBody(const std::string_view &data) noexcept
+void request::body(const std::string_view &data) noexcept
 {
-    m_impl->setBody(data);
+    m_impl->body(data);
 }
 
 void request::set(const std::string &name, const std::string &value) noexcept

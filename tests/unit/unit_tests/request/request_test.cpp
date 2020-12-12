@@ -12,30 +12,30 @@ using namespace cpphttp::request;
 TEST(Request, Complete_request_with_no_body)
 {
     request req;
-    req.setHeader(Requests::GET_REQUEST_HEADER);
+    req.header(Requests::GET_REQUEST_HEADER);
     EXPECT_TRUE(req.isReady());
 }
 
 TEST(Request, Complete_request_with_missing_body)
 {
     request req;
-    req.setHeader(Requests::POST_REQUEST_HEADER);
+    req.header(Requests::POST_REQUEST_HEADER);
     EXPECT_FALSE(req.isReady());
 }
 
 TEST(Request, Complete_request_with_incomplete_body)
 {
     request req;
-    req.setHeader(Requests::POST_REQUEST_HEADER);
-    req.setBody("too short");
+    req.header(Requests::POST_REQUEST_HEADER);
+    req.body("too short");
     EXPECT_FALSE(req.isReady());
 }
 
 TEST(Request, Complete_request_with_complete_body)
 {
     request req;
-    req.setHeader(Requests::POST_REQUEST_HEADER);
-    req.setBody(Requests::POST_REQUEST_BODY);
+    req.header(Requests::POST_REQUEST_HEADER);
+    req.body(Requests::POST_REQUEST_BODY);
     EXPECT_TRUE(req.isReady());
 }
 
@@ -44,34 +44,34 @@ TEST(Request, Get_header)
     request req;
     EXPECT_THROW(req.header(), std::invalid_argument);
 
-    req.setHeader("Something");
+    req.header("Something");
     EXPECT_NO_THROW(req.header());
 }
 
 TEST(Request, Equality_operators)
 {
     request req;
-    req.setHeader(Requests::POST_REQUEST_HEADER);
-    req.setBody(Requests::POST_REQUEST_BODY);
+    req.header(Requests::POST_REQUEST_HEADER);
+    req.body(Requests::POST_REQUEST_BODY);
     request req2;
-    req2.setHeader(Requests::POST_REQUEST_HEADER);
-    req2.setBody(Requests::POST_REQUEST_BODY);
+    req2.header(Requests::POST_REQUEST_HEADER);
+    req2.body(Requests::POST_REQUEST_BODY);
     EXPECT_TRUE(req == req2);
 
     request req3, req4;
     EXPECT_TRUE(req3 == req4);
     EXPECT_TRUE(req != req3);
 
-    req3.setHeader(Requests::POST_REQUEST_HEADER);
+    req3.header(Requests::POST_REQUEST_HEADER);
     EXPECT_TRUE(req3 != req);
 
-    req3.setBody("nooope");
+    req3.body("nooope");
     EXPECT_TRUE(req3 != req);
 
-    req4.setBody(Requests::POST_REQUEST_BODY);
+    req4.body(Requests::POST_REQUEST_BODY);
     EXPECT_TRUE(req4 != req);
 
-    req2.setHeader("noope");
+    req2.header("noope");
     EXPECT_TRUE(req != req2);
 }
 
@@ -105,13 +105,13 @@ TEST(Request, Get_request_should_have_tailing_params_loaded)
 TEST(Request, Request_should_load_url_param_according_to_expected_path)
 {
     request req;
-    req.setHeader(Requests::GET_REQUEST_HEADER_WITH_PARAM);
+    req.header(Requests::GET_REQUEST_HEADER_WITH_PARAM);
     req.loadParamsFromUrl("/item/:index");
 
     EXPECT_EQ(req.getParam("index"), "13");
 
     request req2;
-    req2.setHeader(Requests::GET_REQUEST_HEADER_WITH_PARAM2);
+    req2.header(Requests::GET_REQUEST_HEADER_WITH_PARAM2);
     req2.loadParamsFromUrl("/complex/:val/:text/url");
     EXPECT_EQ(req2.getParam("val"), "13");
     EXPECT_EQ(req2.getParam("text"), "hello");
@@ -126,8 +126,8 @@ TEST(Request, should_get_post_data_from_form_urlencoded_body)
 TEST(Request, should_get_UTF8_post_data_from_form_urlencoded_body)
 {
     request req;
-    req.setHeader(Requests::POST_REQUEST_HEADER);
-    req.setBody(Requests::POST_REQUEST_BODY_WITH_UTF8);
+    req.header(Requests::POST_REQUEST_HEADER);
+    req.body(Requests::POST_REQUEST_BODY_WITH_UTF8);
     EXPECT_EQ(req.getParam("home"), "òby");
     EXPECT_EQ(req.getParam("favorite+flavor"), "flÿ");
 }
@@ -135,7 +135,7 @@ TEST(Request, should_get_UTF8_post_data_from_form_urlencoded_body)
 TEST(Request, Get_request_should_have_UTF8_tailing_params_loaded)
 {
     request req;
-    req.setHeader(Requests::GET_REQUEST_HEADER_WITH_UTF8_PARAM);
+    req.header(Requests::GET_REQUEST_HEADER_WITH_UTF8_PARAM);
     EXPECT_EQ(req.getParam("id"), "24");
     EXPECT_EQ(req.getParam("location"), "Nîmes");
     EXPECT_EQ(req.getParam("email"), "test@test.fr");

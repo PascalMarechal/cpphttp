@@ -59,7 +59,7 @@ namespace cpphttp
 
             void processAndReadNextRequest() noexcept
             {
-                m_file = m_publicFolder.publicFile(m_currentRequest->header().getPath());
+                m_file = m_publicFolder.publicFile(m_currentRequest->header().path());
                 if (m_file)
                     m_functions.async_write(m_socket, m_file->header(), std::bind(&connection::onWriteStaticFileHeader, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
                 else
@@ -98,22 +98,22 @@ namespace cpphttp
             {
                 std::string_view bufferView = m_buffer;
                 m_headerSize = bytesTransferred;
-                m_currentRequest->setHeader(bufferView.substr(0, m_headerSize));
-                return m_currentRequest->header().isReady() && m_currentRequest->header().getExpectedBodySize() <= m_functions.maxBodySize();
+                m_currentRequest->header(bufferView.substr(0, m_headerSize));
+                return m_currentRequest->header().isReady() && m_currentRequest->header().expectedBodySize() <= m_functions.maxBodySize();
             }
 
             inline void bodySetup(std::size_t from) noexcept
             {
-                auto size = m_currentRequest->header().getExpectedBodySize();
+                auto size = m_currentRequest->header().expectedBodySize();
                 if (!size)
                     return;
                 std::string_view bufferView = m_buffer;
-                m_currentRequest->setBody(bufferView.substr(from, size));
+                m_currentRequest->body(bufferView.substr(from, size));
             }
 
             inline std::size_t bodyBytesToRead(std::size_t bytesTransferred) noexcept
             {
-                auto expectedBodySize = m_currentRequest->header().getExpectedBodySize();
+                auto expectedBodySize = m_currentRequest->header().expectedBodySize();
                 if (!expectedBodySize)
                     return 0;
 

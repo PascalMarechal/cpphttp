@@ -240,7 +240,7 @@ TEST(Router, Get_functions_should_fail_if_path_is_different_or_incomplete)
 std::string processGetRootPath(router &router)
 {
     request req;
-    req.setHeader("GET / HTTP/1.1 \n\n");
+    req.header("GET / HTTP/1.1 \n\n");
     return processToString(router, req);
 }
 

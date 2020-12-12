@@ -16,8 +16,8 @@ namespace cpphttp
         public:
             body(const std::string_view &data);
             ~body();
-            const std::string &getData() const noexcept;
-            std::size_t getSize() const noexcept;
+            const std::string &data() const noexcept;
+            std::size_t size() const noexcept;
 
             friend bool operator==(const body &lhs, const body &rhs) noexcept;
             friend bool operator!=(const body &lhs, const body &rhs) noexcept;
