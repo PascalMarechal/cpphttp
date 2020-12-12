@@ -107,7 +107,7 @@ int main(void)
     });
     
     // Set the server public folder URL & path
-    myserver.setPublicFolder("/public", "../images");
+    myserver.publicFolder("/public", "../images");
 
     // Set the router to the server
     myserver.setRouter(std::move(myrouter));

@@ -59,12 +59,9 @@ namespace cpphttp
 
             void processAndReadNextRequest() noexcept
             {
-                std::string headerData;
-                m_filePath = m_publicFolder.getFilePathIfExists(m_currentRequest->header().getPath());
-                if (!m_filePath.empty())
-                    headerData = m_publicFolder.getFileHeader(m_filePath);
-                if (!headerData.empty())
-                    m_functions.async_write(m_socket, headerData, std::bind(&connection::onWriteStaticFileHeader, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+                m_file = m_publicFolder.publicFile(m_currentRequest->header().getPath());
+                if (m_file)
+                    m_functions.async_write(m_socket, m_file->header(), std::bind(&connection::onWriteStaticFileHeader, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
                 else
                 {
                     auto response = m_router.process(*m_currentRequest);
@@ -78,7 +75,7 @@ namespace cpphttp
                     return exit(error);
 
                 m_functions.async_task(m_socket, [ptr = this->shared_from_this()]() {
-                    if (ptr->m_functions.sendFile(ptr->m_socket, ptr->m_filePath))
+                    if (ptr->m_functions.sendFile(ptr->m_socket, ptr->m_file))
                         ptr->start();
                     else
                         ptr->exit(std::make_error_code(std::errc::io_error));
@@ -141,7 +138,7 @@ namespace cpphttp
             std::string m_buffer;
             std::size_t m_headerSize;
             std::unique_ptr<request::request> m_currentRequest;
-            std::string m_filePath;
+            decltype(m_publicFolder.publicFile("")) m_file;
         };
     } // namespace internal
 } // namespace cpphttp

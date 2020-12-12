@@ -8,194 +8,92 @@
 
 #include "internal/public_folder/public_folder.h"
 #include "common/requests.h"
-#include "internal/tools/string.h"
 
 using namespace cpphttp::internal;
 using ::testing::HasSubstr;
 
-TEST(Public_Folder, Set_public_folder_will_always_set_absolute_path_and_URL)
+TEST(PublicFolder, Setting_public_folder_will_always_set_absolute_path_and_URL)
 {
     // Init
     public_folder publicFolder;
     std::filesystem::path cwd = std::filesystem::current_path();
 
     // Compute
-    publicFolder.setPublicFolder("public", "./relative");
-    auto folder = publicFolder.getPublicFolderPath();
-    auto URL = publicFolder.getPublicFolderURL();
+    publicFolder.publicFolder("public", "./relative");
+    auto folder = publicFolder.publicFolderPath();
+    auto URL = publicFolder.publicFolderURL();
 
     // Assert
     EXPECT_EQ(folder, cwd.string() + "/relative");
     EXPECT_EQ(URL, "/public/");
 
     // Compute
-    publicFolder.setPublicFolder("data", "/absolute/path");
-    folder = publicFolder.getPublicFolderPath();
-    URL = publicFolder.getPublicFolderURL();
+    publicFolder.publicFolder("data", "/absolute/path");
+    folder = publicFolder.publicFolderPath();
+    URL = publicFolder.publicFolderURL();
 
     // Assert
     EXPECT_EQ(URL, "/data/");
     EXPECT_EQ(folder, "/absolute/path");
 }
 
-TEST(Public_Folder, Set_empty_public_folder_should_throw)
+TEST(PublicFolder, Setting_empty_public_folder_should_throw)
 {
     // Init
     public_folder publicFolder;
 
     // Assert
-    EXPECT_THROW(publicFolder.setPublicFolder("", "./relative"), std::invalid_argument);
-    EXPECT_THROW(publicFolder.setPublicFolder("somewhere", ""), std::invalid_argument);
+    EXPECT_THROW(publicFolder.publicFolder("", "./relative"), std::invalid_argument);
+    EXPECT_THROW(publicFolder.publicFolder("somewhere", ""), std::invalid_argument);
 }
 
-TEST(Public_Folder, Get_file_path_if_public_folder_request)
+TEST(PublicFolder, Get_file_if_public_folder_request)
 {
     // Init
     public_folder publicFolder;
-    std::filesystem::path cwd = std::filesystem::current_path();
+    publicFolder.publicFolder("public", "data/static_files");
 
     // Compute
-    publicFolder.setPublicFolder("public", "data/static_files");
+    auto file = publicFolder.publicFile("/public/images/test.jpg");
 
     // Assert
-    EXPECT_EQ(publicFolder.getFilePathIfExists("/public/images/test.jpg"), cwd.string() + "/data/static_files/images/test.jpg");
-    EXPECT_EQ(publicFolder.getFilePathIfExists("/somewhere"), "");
-    EXPECT_EQ(publicFolder.getFilePathIfExists("/publico/something"), "");
+    EXPECT_TRUE(file != nullptr);
 
     // Compute
-    publicFolder.setPublicFolder("public/", "data/static_files");
+    file = publicFolder.publicFile("/somewhere");
 
     // Assert
-    EXPECT_EQ(publicFolder.getFilePathIfExists("/public/image.jpg"), cwd.string() + "/data/static_files/image.jpg");
+    EXPECT_EQ(file, nullptr);
+
+    // Compute
+    file = publicFolder.publicFile("/publico/something");
+
+    // Assert
+    EXPECT_EQ(file, nullptr);
 }
 
-TEST(Public_Folder, Should_be_protected_against_directory_traversal_attacks)
+TEST(PublicFolder, Should_be_protected_against_directory_traversal_attacks)
 {
     // Init
     public_folder publicFolder;
-    publicFolder.setPublicFolder("public", "data/static_files");
+    publicFolder.publicFolder("public", "data/static_files");
 
     // Compute
-    auto path = publicFolder.getFilePathIfExists("/public/../read_test.txt");
+    auto file = publicFolder.publicFile("/public/../read_test.txt");
 
     // Assert
-    EXPECT_EQ(path, "");
+    EXPECT_EQ(file, nullptr);
 }
 
-TEST(Public_Folder, Get_file_header_should_be_empty_if_wrong_path)
+TEST(PublicFolder, Get_file_header_should_be_empty_if_wrong_path)
 {
     // Init
     public_folder publicFolder;
+    publicFolder.publicFolder("public", "data/static_files");
 
     // Compute
-    auto result = publicFolder.getFileHeader("data/static_files/eazeazdqsdazeazdazeazeaz.txt");
+    auto file = publicFolder.publicFile("/public/eazeazdqsdazeazdazeazeaz.txt");
 
     // Assert
-    EXPECT_TRUE(result.empty());
-}
-
-void formatTest(std::string file, std::string expectedFormat)
-{
-    // Init
-    public_folder publicFolder;
-    auto expectedFileData = readFile("data/static_files/" + file);
-
-    // Compute
-    auto result = publicFolder.getFileHeader("data/static_files/" + file);
-
-    // Assert
-    EXPECT_THAT(result, HasSubstr("Content-Type:" + expectedFormat));
-    EXPECT_FALSE(expectedFileData.empty());
-}
-
-TEST(Public_Folder, Unknown_types_should_be_plain_text)
-{
-    formatTest("text/test.unknown", "text/plain");
-    formatTest("text/test.unknown2", "text/plain");
-}
-
-// Images
-
-TEST(Public_Folder, Get_jpg_from_public_folder)
-{
-    formatTest("images/test.jpg", "image/jpeg");
-}
-
-TEST(Public_Folder, Get_jpeg_from_public_folder)
-{
-    formatTest("images/test.jpeg", "image/jpeg");
-}
-
-TEST(Public_Folder, Get_png_from_public_folder)
-{
-    formatTest("images/test.png", "image/png");
-}
-
-TEST(Public_Folder, Get_tiff_from_public_folder)
-{
-    formatTest("images/test.tiff", "image/tiff");
-}
-
-TEST(Public_Folder, Get_tif_from_public_folder)
-{
-    formatTest("images/test.tif", "image/tiff");
-}
-
-TEST(Public_Folder, Get_gif_from_public_folder)
-{
-    formatTest("images/test.gif", "image/gif");
-}
-
-TEST(Public_Folder, Get_svg_from_public_folder)
-{
-    formatTest("images/test.svg", "image/svg+xml");
-}
-
-TEST(Public_Folder, Get_svgz_from_public_folder)
-{
-    formatTest("images/test.svgz", "image/svg+xml");
-}
-
-TEST(Public_Folder, Get_ico_from_public_folder)
-{
-    formatTest("images/test.ico", "image/x-icon");
-}
-
-// Applications
-
-TEST(Public_Folder, Get_js_from_public_folder)
-{
-    formatTest("applications/test.js", "application/javascript");
-}
-
-TEST(Public_Folder, Get_json_from_public_folder)
-{
-    formatTest("applications/test.json", "application/json");
-}
-
-TEST(Public_Folder, Get_pdf_from_public_folder)
-{
-    formatTest("applications/test.pdf", "application/pdf");
-}
-
-// Text
-
-TEST(Public_Folder, Get_css_from_public_folder)
-{
-    formatTest("text/test.css", "text/css");
-}
-
-TEST(Public_Folder, Get_csv_from_public_folder)
-{
-    formatTest("text/test.csv", "text/csv");
-}
-
-TEST(Public_Folder, Get_html_from_public_folder)
-{
-    formatTest("text/test.html", "text/html; charset=UTF-8");
-}
-
-TEST(Public_Folder, Get_xml_from_public_folder)
-{
-    formatTest("text/test.xml", "text/xml");
+    EXPECT_EQ(file, nullptr);
 }

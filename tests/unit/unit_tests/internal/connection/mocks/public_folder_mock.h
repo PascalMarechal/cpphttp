@@ -6,16 +6,24 @@
 #pragma once
 #include <gmock/gmock.h>
 
+class PublicFileMock
+{
+public:
+    PublicFileMock(std::string value);
+    std::string header() const noexcept;
+
+private:
+    std::string m_value;
+};
+
 class PublicFolderMock
 {
 public:
     static inline std::string ExpectedFakeResult = "Some File Header Data...";
-
-    MOCK_CONST_METHOD1(getFilePathIfExists, std::string(const std::string &));
-    MOCK_CONST_METHOD1(getFileHeader, std::string(const std::string &));
+    static inline std::shared_ptr<PublicFileMock> ExpectedFakeFile = std::make_shared<PublicFileMock>(ExpectedFakeResult);
     
-    void createFakeFilePathDoesNotExist();
-    void createFakeFilePathDoesExist(const std::string &path);
-    void createFakeGetFileHeader();
-    void createFakeGetMissingFileHeader();
+    MOCK_CONST_METHOD1(publicFile, std::shared_ptr<PublicFileMock>(const std::string &));
+
+    void createFakeGetPublicFile();
+    void createFakeGetMissingPublicFile();
 };

@@ -5,14 +5,10 @@
  */
 
 #include "public_folder.h"
-#include "internal/tools/string.h"
-
-#include <unordered_map>
-#include <sys/stat.h>
 
 using namespace cpphttp::internal;
 
-void public_folder::setPublicFolder(const std::string &path, const std::string &folderPath)
+void public_folder::publicFolder(const std::string &path, const std::string &folderPath)
 {
     if (path.empty())
         throw std::invalid_argument("Missing path value in setPublicFolder");
@@ -25,22 +21,9 @@ void public_folder::setPublicFolder(const std::string &path, const std::string &
     setRegex(path);
 }
 
-const std::string &public_folder::getPublicFolderPath() const noexcept
+const std::string &public_folder::publicFolderPath() const noexcept
 {
     return m_publicFolderPath;
-}
-
-const std::unordered_map<std::string_view, const std::string> contentTypes = {
-    {"jpeg", "image/jpeg"}, {"jpg", "image/jpeg"}, {"png", "image/png"}, {"tiff", "image/tiff"}, {"tif", "image/tiff"}, {"gif", "image/gif"}, {"svg", "image/svg+xml"}, {"svgz", "image/svg+xml"}, {"ico", "image/x-icon"}, {"js", "application/javascript"}, {"json", "application/json"}, {"pdf", "application/pdf"}, {"css", "text/css"}, {"csv", "text/csv"}, {"html", "text/html; charset=UTF-8"}, {"xml", "text/xml"}};
-
-inline void public_folder::setContentType(const std::string &path, cpphttp::response::header &head) noexcept
-{
-    auto splittedValues = split(path, ".");
-    auto type = contentTypes.find(splittedValues.back());
-    if (type != contentTypes.cend())
-        head.setContentType(type->second);
-    else
-        head.setContentType("text/plain");
 }
 
 bool public_folder::isPublicFolderRequest(const std::string &path) const noexcept
@@ -48,7 +31,7 @@ bool public_folder::isPublicFolderRequest(const std::string &path) const noexcep
     return std::regex_search(path, m_publicFolderRegex, std::regex_constants::match_continuous);
 }
 
-void public_folder::setRegex(const std::string &path) noexcept
+inline void public_folder::setRegex(const std::string &path) noexcept
 {
     m_publicFolderURL = path;
     if (path[path.size() - 1] != '/')
@@ -79,26 +62,25 @@ inline std::string public_folder::extractFilePathFromURL(const std::string &url)
     return extractedPath;
 }
 
-std::string public_folder::getFilePathIfExists(const std::string &url) const noexcept
+inline std::string public_folder::getFilePathIfExists(const std::string &url) const noexcept
 {
     if (!isPublicFolderRequest(url))
         return "";
     return extractFilePathFromURL(url);
 }
 
-std::string public_folder::getFileHeader(const std::string &path) const noexcept
-{
-    struct stat statbuf;
-    if (stat(path.c_str(), &statbuf) != 0)
-        return "";
-
-    cpphttp::response::header head;
-    head.setContentLength(statbuf.st_size);
-    setContentType(path, head);
-    return head.toString();
-}
-
-const std::string &public_folder::getPublicFolderURL() const noexcept
+const std::string &public_folder::publicFolderURL() const noexcept
 {
     return m_publicFolderURL;
+}
+
+std::unique_ptr<public_file> public_folder::publicFile(const std::string &url) const noexcept
+{
+    auto path = getFilePathIfExists(url);
+    if (path.empty())
+        return nullptr;
+    auto result = std::make_unique<public_file>(path);
+    if (result->size() == 0)
+        return nullptr;
+    return result;
 }

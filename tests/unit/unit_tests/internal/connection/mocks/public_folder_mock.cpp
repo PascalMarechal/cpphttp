@@ -5,22 +5,21 @@
  */
 #include "public_folder_mock.h"
 
-void PublicFolderMock::createFakeFilePathDoesNotExist()
+void PublicFolderMock::createFakeGetPublicFile()
 {
-    ON_CALL(*this, getFilePathIfExists).WillByDefault(testing::Return(""));
+    ON_CALL(*this, publicFile).WillByDefault(testing::Return(ExpectedFakeFile));
 }
 
-void PublicFolderMock::createFakeFilePathDoesExist(const std::string &path)
+void PublicFolderMock::createFakeGetMissingPublicFile()
 {
-    ON_CALL(*this, getFilePathIfExists).WillByDefault([path](const std::string &) { return path; });
+    ON_CALL(*this, publicFile).WillByDefault(testing::Return(nullptr));
 }
 
-void PublicFolderMock::createFakeGetFileHeader()
+PublicFileMock::PublicFileMock(std::string value) : m_value(std::move(value))
 {
-    ON_CALL(*this, getFileHeader).WillByDefault(testing::Return(ExpectedFakeResult));
 }
 
-void PublicFolderMock::createFakeGetMissingFileHeader()
+std::string PublicFileMock::header() const noexcept
 {
-    ON_CALL(*this, getFileHeader).WillByDefault(testing::Return(""));
+    return m_value;
 }

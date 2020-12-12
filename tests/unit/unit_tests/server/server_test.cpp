@@ -20,13 +20,13 @@ TEST(Server, Set_public_folder)
     std::filesystem::path cwd = std::filesystem::current_path();
 
     // Compute
-    testServer.setPublicFolder("path", "somewhere");
-    auto url = testServer.getPublicFolderURL();
-    auto path = testServer.getPublicFolderPath();
+    testServer.publicFolder("path", "somewhere");
+    auto url = testServer.publicFolderURL();
+    auto path = testServer.publicFolderPath();
 
     // Assert
-    EXPECT_THROW(testServer.setPublicFolder("", "./relative"), std::invalid_argument);
-    EXPECT_THROW(testServer.setPublicFolder("somewhere", ""), std::invalid_argument);
+    EXPECT_THROW(testServer.publicFolder("", "./relative"), std::invalid_argument);
+    EXPECT_THROW(testServer.publicFolder("somewhere", ""), std::invalid_argument);
     EXPECT_EQ(url, "/path/");
     EXPECT_EQ(path, cwd.string() + "/somewhere");
 }
@@ -113,7 +113,7 @@ TEST(Server, Can_get_image_from_public_folder)
 {
     // Init
     server testServer(9999);
-    testServer.setPublicFolder("public", "data");
+    testServer.publicFolder("public", "data");
     auto fileToGet = cpphttp::internal::readFile("data/read_test.txt");
     std::thread testThread([&]() { testServer.start(); });
 

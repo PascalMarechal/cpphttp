@@ -52,20 +52,16 @@ public:
         return m_maxBodySize;
     }
 
-    inline static bool sendFile(asio::ip::tcp::socket &socket, const std::string &path)
+    inline static bool sendFile(asio::ip::tcp::socket &socket, const std::unique_ptr<cpphttp::internal::public_file> &file)
     {
         int flag = 1;
         setsockopt(socket.native_handle(), SOL_SOCKET, MSG_NOSIGNAL, &flag, sizeof(flag));
 
-        auto fd = open(path.c_str(), O_RDONLY);
+        auto fd = open(file->path().c_str(), O_RDONLY);
         if (fd < 0)
             return false;
 
-        struct stat statbuf;
-        auto result = stat(path.c_str(), &statbuf);
-        if (result < 0)
-            return false;
-        size_t count = statbuf.st_size;
+        size_t count = file->size();
         off_t start = 0;
         while (true)
         {
@@ -131,19 +127,19 @@ public:
         m_connectionFunctions.setMaxIncomingBodySize(size);
     }
 
-    inline void setPublicFolder(const std::string &path, const std::string &folderPath)
+    inline void publicFolder(const std::string &path, const std::string &folderPath)
     {
-        m_publicFolder.setPublicFolder(path, folderPath);
+        m_publicFolder.publicFolder(path, folderPath);
     }
 
-    inline const std::string &getPublicFolderPath() const noexcept
+    inline const std::string &publicFolderPath() const noexcept
     {
-        return m_publicFolder.getPublicFolderPath();
+        return m_publicFolder.publicFolderPath();
     }
 
-    inline const std::string &getPublicFolderURL() const noexcept
+    inline const std::string &publicFolderURL() const noexcept
     {
-        return m_publicFolder.getPublicFolderURL();
+        return m_publicFolder.publicFolderURL();
     }
 
 private:
@@ -199,17 +195,17 @@ void server::setMaxIncomingBodySize(u_int64_t size) noexcept
     m_server_impl->setMaxIncomingBodySize(size);
 }
 
-void server::setPublicFolder(const std::string &path, const std::string &folderPath)
+void server::publicFolder(const std::string &path, const std::string &folderPath)
 {
-    m_server_impl->setPublicFolder(path, folderPath);
+    m_server_impl->publicFolder(path, folderPath);
 }
 
-const std::string &server::getPublicFolderPath() const noexcept
+const std::string &server::publicFolderPath() const noexcept
 {
-    return m_server_impl->getPublicFolderPath();
+    return m_server_impl->publicFolderPath();
 }
 
-const std::string &server::getPublicFolderURL() const noexcept
+const std::string &server::publicFolderURL() const noexcept
 {
-    return m_server_impl->getPublicFolderURL();
+    return m_server_impl->publicFolderURL();
 }

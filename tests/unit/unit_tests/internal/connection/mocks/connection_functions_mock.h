@@ -31,7 +31,7 @@ public:
     MOCK_CONST_METHOD3(async_write, void(SocketMockWrapper &, const std::string &, std::function<void(std::error_code, std::size_t)>));
     MOCK_CONST_METHOD1(bodyEndMatcher, BodyEndMatcher(std::size_t));
     MOCK_CONST_METHOD0(maxBodySize, uint32_t());
-    MOCK_CONST_METHOD2(sendFile, bool(SocketMockWrapper&, const std::string &));
+    MOCK_CONST_METHOD2(sendFile, bool(SocketMockWrapper&, const std::shared_ptr<PublicFileMock> &));
     MOCK_CONST_METHOD2(async_task, void(SocketMockWrapper&, std::function<void()>));
 
     void createFakePostReadMethods(uint32_t loops);
