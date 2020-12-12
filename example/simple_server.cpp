@@ -100,6 +100,12 @@ int main(void)
     myrouter.onGet("/item/:id",
                    [](cpphttp::request::request &req, cpphttp::response::response &res, error_callback) { res.send("Item id is " + req.getParam("id")); });
 
+    // If nothing has been found send 404 error
+    myrouter.onAll("/", [](cpphttp::request::request &req, cpphttp::response::response &res, error_callback) {
+        res.status(status::_404);
+        res.send("Oops this page is missing");
+    });
+    
     // Set the server public folder URL & path
     myserver.setPublicFolder("/public", "../images");
 
