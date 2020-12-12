@@ -23,13 +23,13 @@ TEST(PublicFile, Get_file_path)
     EXPECT_EQ(publicFile.path(), wrongPath);
 }
 
-TEST(PublicFile, Missing_file_should_return_zero_size)
+TEST(PublicFile, Missing_file_should_return_max_size)
 {
     // Init
     public_file publicFile(wrongPath);
 
     // Assert
-    EXPECT_EQ(publicFile.size(), 0);
+    EXPECT_EQ(publicFile.size(), std::numeric_limits<size_t>::max());
 }
 
 TEST(PublicFile, Missing_file_should_return_empty_header)

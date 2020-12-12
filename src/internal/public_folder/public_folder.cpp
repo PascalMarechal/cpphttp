@@ -80,7 +80,7 @@ std::unique_ptr<public_file> public_folder::publicFile(const std::string &url) c
     if (path.empty())
         return nullptr;
     auto result = std::make_unique<public_file>(path);
-    if (result->size() == 0)
+    if (result->size() == std::numeric_limits<size_t>::max())
         return nullptr;
     return result;
 }

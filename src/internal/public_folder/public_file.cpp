@@ -28,7 +28,7 @@ size_t public_file::size() noexcept
 
 std::string public_file::header() noexcept
 {
-    if (!m_size)
+    if (m_size == std::numeric_limits<size_t>::max())
         return "";
 
     cpphttp::response::header head;
@@ -41,7 +41,7 @@ inline void public_file::initFileSize() noexcept
 {
     struct stat statbuf;
     if (stat(m_path.c_str(), &statbuf) != 0)
-        m_size = 0;
+        m_size = std::numeric_limits<size_t>::max();
     else
         m_size = statbuf.st_size;
 }
