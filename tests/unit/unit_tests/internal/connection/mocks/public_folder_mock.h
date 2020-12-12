@@ -17,4 +17,5 @@ public:
     void createFakeFilePathDoesNotExist();
     void createFakeFilePathDoesExist(const std::string &path);
     void createFakeGetFileHeader();
+    void createFakeGetMissingFileHeader();
 };

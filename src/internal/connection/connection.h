@@ -59,12 +59,12 @@ namespace cpphttp
 
             void processAndReadNextRequest() noexcept
             {
+                std::string headerData;
                 m_filePath = m_publicFolder.getFilePathIfExists(m_currentRequest->header().getPath());
                 if (!m_filePath.empty())
-                {
-                    auto headerData = m_publicFolder.getFileHeader(m_filePath);
+                    headerData = m_publicFolder.getFileHeader(m_filePath);
+                if (!headerData.empty())
                     m_functions.async_write(m_socket, headerData, std::bind(&connection::onWriteStaticFileHeader, this->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
-                }
                 else
                 {
                     auto response = m_router.process(*m_currentRequest);

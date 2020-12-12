@@ -64,8 +64,14 @@ int main(void)
                  "</body>");
     });
 
+    // If nothing has been found send 404 error
+    myrouter.onAll("/", [](cpphttp::request::request &req, cpphttp::response::response &res, error_callback) {
+        res.status(status::_404);
+        res.send("Oops this page is missing");
+    });
+
     // Set public folder for testing static file speed
-    myserver.setPublicFolder("public", "../../unit/data");
+    myserver.setPublicFolder("public", "../../unit/data/static_files");
     std::cout << "Public folder is " << myserver.getPublicFolderPath() << std::endl;
 
     // Set the router to the server

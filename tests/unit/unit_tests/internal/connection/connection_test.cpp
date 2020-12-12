@@ -307,8 +307,8 @@ TEST(Connection, Should_handle_static_file_requests)
   EXPECT_CALL(functionsMock, maxBodySize).Times(2);
   EXPECT_CALL(routerMock, process).Times(0);
   EXPECT_CALL(*socketMock, close).Times(0);
-  EXPECT_CALL(publicFolderMock, getFilePathIfExists("/index")).Times(2).WillRepeatedly(Return(somePath));
-  EXPECT_CALL(publicFolderMock, getFileHeader(somePath)).Times(2).WillRepeatedly(Return(PublicFolderMock::ExpectedFakeResult));
+  EXPECT_CALL(publicFolderMock, getFilePathIfExists("/index")).Times(2);
+  EXPECT_CALL(publicFolderMock, getFileHeader(somePath)).Times(2);
   EXPECT_CALL(functionsMock, sendFile(matchSocketMock(socketMock), somePath)).Times(2);
   EXPECT_CALL(functionsMock, async_task(matchSocketMock(socketMock), _)).Times(2);
 
@@ -337,8 +337,8 @@ TEST(Connection, Should_handle_static_file_send_failure)
   EXPECT_CALL(functionsMock, maxBodySize).Times(1);
   EXPECT_CALL(routerMock, process).Times(0);
   EXPECT_CALL(*socketMock, close).Times(1);
-  EXPECT_CALL(publicFolderMock, getFilePathIfExists("/index")).Times(1).WillOnce(Return(somePath));
-  EXPECT_CALL(publicFolderMock, getFileHeader(somePath)).Times(1).WillOnce(Return(PublicFolderMock::ExpectedFakeResult));
+  EXPECT_CALL(publicFolderMock, getFilePathIfExists("/index")).Times(1);
+  EXPECT_CALL(publicFolderMock, getFileHeader(somePath)).Times(1);
   EXPECT_CALL(functionsMock, sendFile(matchSocketMock(socketMock), somePath)).Times(1);
   EXPECT_CALL(functionsMock, async_task(matchSocketMock(socketMock), _)).Times(1);
 
@@ -366,8 +366,37 @@ TEST(Connection, Should_handle_static_file_header_sending_failure)
   EXPECT_CALL(functionsMock, maxBodySize).Times(1);
   EXPECT_CALL(routerMock, process).Times(0);
   EXPECT_CALL(*socketMock, close).Times(1);
-  EXPECT_CALL(publicFolderMock, getFilePathIfExists("/index")).Times(1).WillOnce(Return(somePath));
-  EXPECT_CALL(publicFolderMock, getFileHeader(somePath)).Times(1).WillOnce(Return(PublicFolderMock::ExpectedFakeResult));
+  EXPECT_CALL(publicFolderMock, getFilePathIfExists("/index")).Times(1);
+  EXPECT_CALL(publicFolderMock, getFileHeader(somePath)).Times(1);
+  EXPECT_CALL(functionsMock, sendFile).Times(0);
+  EXPECT_CALL(functionsMock, async_task).Times(0);
+
+  // Compute
+  c->start();
+}
+
+TEST(Connection, Should_redirect_to_compute_if_file_is_missing)
+{
+  // Init
+  auto socketMock = new SocketMock();
+  ConnectionFunctionsMock functionsMock;
+  RouterMock routerMock;
+  PublicFolderMock publicFolderMock;
+  functionsMock.createFakeGetReadMethods(1);
+  functionsMock.createFakeAsyncTask();
+  publicFolderMock.createFakeFilePathDoesExist(somePath);
+  publicFolderMock.createFakeGetMissingFileHeader();
+  auto c = std::make_shared<connection<SocketMockWrapper, ConnectionFunctionsMock, RouterMock, PublicFolderMock>>(SocketMockWrapper(socketMock), functionsMock, routerMock, publicFolderMock);
+
+  // Assert
+  EXPECT_CALL(functionsMock, async_read_header(matchSocketMock(socketMock), _, _)).Times(2);
+  EXPECT_CALL(functionsMock, async_read_body(matchSocketMock(socketMock), _, matchBodyEndMatcher(), _)).Times(0);
+  EXPECT_CALL(functionsMock, async_write(matchSocketMock(socketMock), _, _)).Times(1);
+  EXPECT_CALL(functionsMock, maxBodySize).Times(1);
+  EXPECT_CALL(routerMock, process).Times(1);
+  EXPECT_CALL(*socketMock, close).Times(0);
+  EXPECT_CALL(publicFolderMock, getFilePathIfExists("/index")).Times(1);
+  EXPECT_CALL(publicFolderMock, getFileHeader(somePath)).Times(1);
   EXPECT_CALL(functionsMock, sendFile).Times(0);
   EXPECT_CALL(functionsMock, async_task).Times(0);
 

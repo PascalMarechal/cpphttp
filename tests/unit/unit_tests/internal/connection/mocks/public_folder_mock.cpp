@@ -19,3 +19,8 @@ void PublicFolderMock::createFakeGetFileHeader()
 {
     ON_CALL(*this, getFileHeader).WillByDefault(testing::Return(ExpectedFakeResult));
 }
+
+void PublicFolderMock::createFakeGetMissingFileHeader()
+{
+    ON_CALL(*this, getFileHeader).WillByDefault(testing::Return(""));
+}
